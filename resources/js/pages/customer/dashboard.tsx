@@ -56,6 +56,7 @@ type Props = {
         tierBadge: string;
         nextTier: string;
         points: number;
+        lifetimePoints?: number;
         pointsToNextTier: number;
         tierProgress: number;
         claims?: ClaimItem[];
@@ -131,7 +132,7 @@ export default function CustomerDashboard({ loyalty }: Props) {
     };
 
     return (
-        <CustomerLayout activeTab="dashboard">
+        <CustomerLayout activeTab="home">
             <Head title="Member Rewards E-Wallet - Honda Loyalty" />
 
             <div className="space-y-6 max-w-4xl mx-auto w-full">
@@ -197,11 +198,16 @@ export default function CustomerDashboard({ loyalty }: Props) {
                                 </button>
                             </div>
 
-                            <div className="flex items-baseline gap-2">
+                            <div className="flex items-baseline gap-2 flex-wrap">
                                 <div className="text-3xl sm:text-4xl font-black tracking-tight text-white font-sans">
                                     {showPoints ? loyalty.points.toLocaleString('id-ID') : '••••••'}
                                 </div>
                                 <span className="text-sm font-bold text-red-400 uppercase">POIN</span>
+                                {loyalty.lifetimePoints !== undefined && (
+                                    <span className="text-[11px] font-mono px-2 py-0.5 rounded-full bg-white/10 text-zinc-300 border border-white/10 ml-auto">
+                                        Akumulasi: {loyalty.lifetimePoints.toLocaleString('id-ID')} Pts
+                                    </span>
+                                )}
                             </div>
 
                             {/* Tier Progress Bar */}

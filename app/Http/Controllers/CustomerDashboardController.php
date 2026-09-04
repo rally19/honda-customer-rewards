@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\MemberTier;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -12,15 +13,47 @@ class CustomerDashboardController extends Controller
     {
         $user = $request->user();
 
-        // Dummy / template data untuk dashboard pelanggan
+        $tier = $user->tier instanceof MemberTier
+            ? $user->tier
+            : MemberTier::calculate((int) $user->lifetime_points);
+
+        $realHistories = $user->activityHistories()
+            ->with(['admin:id,name'])
+            ->latest()
+            ->take(10)
+            ->get()
+            ->map(fn ($h) => [
+                'id' => (string) $h->id,
+                'title' => $h->activity_name,
+                'dealer' => $h->admin?->name ? 'AHASS (Petugas: '.$h->admin->name.')' : 'Bengkel AHASS Resmi',
+                'points' => (int) $h->points,
+                'type' => 'credit',
+                'date' => $h->created_at?->format('d M Y, H:i') ?? '-',
+            ])->toArray();
+
+        $dummyFallbackTransactions = [
+            [
+                'id' => 'tx-welcome',
+                'title' => 'Bonus Selamat Datang Member Honda',
+                'dealer' => 'Sistem Honda Customer Rewards',
+                'points' => 50,
+                'type' => 'credit',
+                'date' => $user->created_at?->format('d M Y, H:i') ?? 'Baru saja',
+            ],
+        ];
+
+        $transactions = ! empty($realHistories) ? $realHistories : $dummyFallbackTransactions;
+
         $loyaltyData = [
             'memberId' => (string) $user->id,
-            'tier' => 'Red Member',
-            'tierBadge' => 'RED',
-            'nextTier' => 'Gold Member',
-            'points' => 1250,
-            'pointsToNextTier' => 750,
-            'tierProgress' => 62, // persentase
+            'tier' => $tier->value.' Member',
+            'tierBadge' => strtoupper($tier->value),
+            'tierLevel' => $tier->value,
+            'nextTier' => $tier->nextTier() ? $tier->nextTier()->value.' Member' : 'Maksimal',
+            'points' => (int) $user->points,
+            'lifetimePoints' => (int) $user->lifetime_points,
+            'pointsToNextTier' => $tier->pointsToNextTier((int) $user->lifetime_points),
+            'tierProgress' => $tier->progress((int) $user->lifetime_points),
             'claims' => [
                 [
                     'id' => 'CLM-8921',
@@ -72,40 +105,7 @@ class CustomerDashboardController extends Controller
                     'status' => 'Tersedia',
                 ],
             ],
-            'transactions' => [
-                [
-                    'id' => 'tx1',
-                    'title' => 'Servis Berkala & Tune Up AHASS',
-                    'dealer' => 'AHASS Mitra Motor Utama',
-                    'points' => 150,
-                    'type' => 'credit',
-                    'date' => '02 Sep 2026',
-                ],
-                [
-                    'id' => 'tx2',
-                    'title' => 'Beli Ban Tubeless & Oli SPX2',
-                    'dealer' => 'Dealer Honda Anper',
-                    'points' => 60,
-                    'type' => 'credit',
-                    'date' => '28 Agu 2026',
-                ],
-                [
-                    'id' => 'tx3',
-                    'title' => 'Penukaran Voucher Diskon Servis AHASS',
-                    'dealer' => 'Aplikasi Customer Rewards',
-                    'points' => -150,
-                    'type' => 'debit',
-                    'date' => '14 Agu 2026',
-                ],
-                [
-                    'id' => 'tx4',
-                    'title' => 'Bonus Selamat Datang Member Baru',
-                    'dealer' => 'Sistem Reward Digital',
-                    'points' => 50,
-                    'type' => 'credit',
-                    'date' => '01 Agu 2026',
-                ],
-            ],
+            'transactions' => $transactions,
             'raffleTickets' => [
                 ['number' => 'UND-84920-A', 'period' => 'Undian Spesial Hari Pelanggan 2026'],
                 ['number' => 'UND-84921-B', 'period' => 'Undian Spesial Hari Pelanggan 2026'],

@@ -1,5 +1,5 @@
 import { Link, usePage } from '@inertiajs/react';
-import { Award, LayoutDashboard, Shield, Smartphone, Users, Wrench } from 'lucide-react';
+import { Award, LayoutDashboard, QrCode, Shield, Smartphone, Users, Wrench } from 'lucide-react';
 import AppLogo from '@/components/app-logo';
 import { NavFooter } from '@/components/nav-footer';
 import { NavMain } from '@/components/nav-main';
@@ -27,6 +27,16 @@ export function AppSidebar() {
                       title: 'Admin Dashboard',
                       href: '/admin/dashboard',
                       icon: LayoutDashboard,
+                  },
+                  {
+                      title: 'Scan / Input Poin',
+                      href: '/admin/scan',
+                      icon: QrCode,
+                  },
+                  {
+                      title: 'Manajemen Aktivitas',
+                      href: '/admin/activities',
+                      icon: Award,
                   },
                   {
                       title: 'Manajemen User',

@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\UserRole;
+use App\Models\Activity;
+use App\Models\ActivityHistory;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-use Inertia\Response;
 
 class AdminDashboardController extends Controller
 {
@@ -31,10 +33,15 @@ class AdminDashboardController extends Controller
                 'email' => $user->email,
                 'phone_number' => $user->phone_number ?? '-',
                 'address' => $user->address ?? '-',
-                'role' => $user->role instanceof \App\Enums\UserRole ? $user->role->value : (string) $user->role,
+                'role' => $user->role instanceof UserRole ? $user->role->value : (string) $user->role,
                 'is_verified' => ! is_null($user->email_verified_at),
                 'joined_at' => $user->created_at?->format('d M Y, H:i') ?? '-',
             ]);
+
+        $totalPointsCirculating = (int) User::sum('points');
+        $totalLifetimePoints = (int) User::sum('lifetime_points');
+        $totalActivitiesCount = Activity::count();
+        $totalActivitiesAwarded = ActivityHistory::count();
 
         // Key metrics summary
         $stats = [
@@ -42,7 +49,10 @@ class AdminDashboardController extends Controller
             'totalAdmins' => $totalAdmins,
             'verifiedRate' => ($totalMembers + $totalAdmins) > 0 ? round(($verifiedMembers / ($totalMembers + $totalAdmins)) * 100) : 100,
             'newMembersThisWeek' => $newMembersThisWeek,
-            'totalPointsCirculating' => 348500,
+            'totalPointsCirculating' => $totalPointsCirculating > 0 ? $totalPointsCirculating : 348500,
+            'totalLifetimePoints' => $totalLifetimePoints,
+            'totalActivitiesCount' => $totalActivitiesCount,
+            'totalActivitiesAwarded' => $totalActivitiesAwarded,
             'totalPointsRedeemed' => 124200,
             'activeVouchersCount' => 5,
             'pendingServiceClaims' => 4,

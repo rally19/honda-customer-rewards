@@ -1,5 +1,6 @@
 import { createInertiaApp } from '@inertiajs/react';
 import type { ReactNode } from 'react';
+import { createRoot, hydrateRoot, type Root } from 'react-dom/client';
 import { Toaster } from '@/components/ui/sonner';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { initializeTheme } from '@/hooks/use-appearance';
@@ -32,13 +33,29 @@ void createInertiaApp({
         }
     },
     strictMode: true,
-    withApp(app) {
-        return (
+    setup({ el, App, props }) {
+        const appElement = (
             <TooltipProvider delayDuration={0}>
-                {app}
+                <App {...props} />
                 <Toaster />
             </TooltipProvider>
         );
+
+        if (!el) {
+            return appElement;
+        }
+
+        if (el.hasAttribute('data-server-rendered')) {
+            hydrateRoot(el, appElement);
+            el.removeAttribute('data-server-rendered');
+            return;
+        }
+
+        const container = el as HTMLElement & { __reactRoot?: Root };
+        if (!container.__reactRoot) {
+            container.__reactRoot = createRoot(el);
+        }
+        container.__reactRoot.render(appElement);
     },
     progress: {
         color: '#DC2626', // Honda Racing Red
