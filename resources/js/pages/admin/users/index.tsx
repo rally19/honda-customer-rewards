@@ -8,6 +8,7 @@ import {
     Copy,
     Download,
     Edit3,
+    Filter,
     KeyRound,
     Lock,
     Mail,
@@ -38,6 +39,7 @@ import {
     DialogTitle,
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
+import PasswordInput from '@/components/password-input';
 import AppLayout from '@/layouts/app-layout';
 import type { User as AuthUser } from '@/types';
 
@@ -94,6 +96,12 @@ export default function AdminUsersIndex({ users, filters, stats }: Props) {
     const [createModalOpen, setCreateModalOpen] = useState(false);
     const [editingUser, setEditingUser] = useState<UserItem | null>(null);
     const [deletingUser, setDeletingUser] = useState<UserItem | null>(null);
+
+    const [filterModalOpen, setFilterModalOpen] = useState(false);
+    const [tempRole, setTempRole] = useState(filters.role || 'all');
+    const [tempStatus, setTempStatus] = useState(filters.status || 'all');
+
+    const activeFilterCount = (selectedRole !== 'all' ? 1 : 0) + (selectedStatus !== 'all' ? 1 : 0);
 
     // Create User Form
     const createForm = useForm({
@@ -354,99 +362,29 @@ export default function AdminUsersIndex({ users, filters, stats }: Props) {
                             )}
                         </div>
 
-                        {/* Filter Buttons */}
-                        <div className="flex flex-wrap items-center gap-2.5">
-                            {/* Role Filter */}
-                            <div className="flex items-center gap-1 bg-zinc-100 dark:bg-zinc-800 p-1 rounded-xl text-xs">
-                                <button
-                                    type="button"
-                                    onClick={() => {
-                                        setSelectedRole('all');
-                                        applyFilters(searchQuery, 'all', selectedStatus);
-                                    }}
-                                    className={`px-3 py-1.5 rounded-lg font-bold transition-all cursor-pointer ${
-                                        selectedRole === 'all'
-                                            ? 'bg-white dark:bg-zinc-900 text-zinc-900 dark:text-white shadow-xs'
-                                            : 'text-zinc-600 dark:text-zinc-400'
-                                    }`}
-                                >
-                                    Semua Role
-                                </button>
-                                <button
-                                    type="button"
-                                    onClick={() => {
-                                        setSelectedRole('user');
-                                        applyFilters(searchQuery, 'user', selectedStatus);
-                                    }}
-                                    className={`px-3 py-1.5 rounded-lg font-bold transition-all cursor-pointer ${
-                                        selectedRole === 'user'
-                                            ? 'bg-white dark:bg-zinc-900 text-zinc-900 dark:text-white shadow-xs'
-                                            : 'text-zinc-600 dark:text-zinc-400'
-                                    }`}
-                                >
-                                    Member
-                                </button>
-                                <button
-                                    type="button"
-                                    onClick={() => {
-                                        setSelectedRole('admin');
-                                        applyFilters(searchQuery, 'admin', selectedStatus);
-                                    }}
-                                    className={`px-3 py-1.5 rounded-lg font-bold transition-all cursor-pointer ${
-                                        selectedRole === 'admin'
-                                            ? 'bg-white dark:bg-zinc-900 text-zinc-900 dark:text-white shadow-xs'
-                                            : 'text-zinc-600 dark:text-zinc-400'
-                                    }`}
-                                >
-                                    Admin
-                                </button>
-                            </div>
-
-                            {/* Verification Filter */}
-                            <div className="flex items-center gap-1 bg-zinc-100 dark:bg-zinc-800 p-1 rounded-xl text-xs">
-                                <button
-                                    type="button"
-                                    onClick={() => {
-                                        setSelectedStatus('all');
-                                        applyFilters(searchQuery, selectedRole, 'all');
-                                    }}
-                                    className={`px-3 py-1.5 rounded-lg font-medium transition-all cursor-pointer ${
-                                        selectedStatus === 'all'
-                                            ? 'bg-white dark:bg-zinc-900 text-zinc-900 dark:text-white shadow-xs'
-                                            : 'text-zinc-600 dark:text-zinc-400'
-                                    }`}
-                                >
-                                    Status: Semua
-                                </button>
-                                <button
-                                    type="button"
-                                    onClick={() => {
-                                        setSelectedStatus('verified');
-                                        applyFilters(searchQuery, selectedRole, 'verified');
-                                    }}
-                                    className={`px-3 py-1.5 rounded-lg font-medium transition-all cursor-pointer ${
-                                        selectedStatus === 'verified'
-                                            ? 'bg-white dark:bg-zinc-900 text-emerald-600 shadow-xs font-bold'
-                                            : 'text-zinc-600 dark:text-zinc-400'
-                                    }`}
-                                >
-                                    Terverifikasi
-                                </button>
-                                <button
-                                    type="button"
-                                    onClick={() => {
-                                        setSelectedStatus('unverified');
-                                        applyFilters(searchQuery, selectedRole, 'unverified');
-                                    }}
-                                    className={`px-3 py-1.5 rounded-lg font-medium transition-all cursor-pointer ${
-                                        selectedStatus === 'unverified'
-                                            ? 'bg-white dark:bg-zinc-900 text-amber-600 shadow-xs font-bold'
-                                            : 'text-zinc-600 dark:text-zinc-400'
-                                    }`}
-                                >
-                                    Belum Verifikasi
-                                </button>
-                            </div>
+                        {/* Actions: Filter Modal Trigger & Export */}
+                        <div className="flex items-center gap-2.5">
+                            <Button
+                                variant="outline"
+                                onClick={() => {
+                                    setTempRole(selectedRole);
+                                    setTempStatus(selectedStatus);
+                                    setFilterModalOpen(true);
+                                }}
+                                className={`text-xs h-9.5 gap-2 rounded-xl transition-all cursor-pointer ${
+                                    activeFilterCount > 0
+                                        ? 'border-red-300 dark:border-red-900 bg-red-50/70 dark:bg-red-950/40 text-red-600 dark:text-red-400 font-bold'
+                                        : 'text-zinc-700 dark:text-zinc-300'
+                                }`}
+                            >
+                                <Filter className="size-3.5 text-red-600" />
+                                <span>Filter</span>
+                                {activeFilterCount > 0 && (
+                                    <span className="size-5 rounded-full bg-red-600 text-white text-[10px] font-black flex items-center justify-center">
+                                        {activeFilterCount}
+                                    </span>
+                                )}
+                            </Button>
 
                             <Button
                                 size="sm"
@@ -465,6 +403,59 @@ export default function AdminUsersIndex({ users, filters, stats }: Props) {
                             </Button>
                         </div>
                     </div>
+
+                    {/* Active Filter Chips */}
+                    {activeFilterCount > 0 && (
+                        <div className="px-6 py-2.5 bg-zinc-50/70 dark:bg-zinc-950/40 border-b border-zinc-200/80 dark:border-zinc-800 flex flex-wrap items-center gap-2 text-xs">
+                            <span className="text-zinc-400 text-[11px] font-medium">Filter Aktif:</span>
+
+                            {selectedRole !== 'all' && (
+                                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-red-100 dark:bg-red-950/60 text-red-700 dark:text-red-300 font-semibold text-[11px]">
+                                    Role: {selectedRole === 'admin' ? 'Admin' : 'Member'}
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            setSelectedRole('all');
+                                            applyFilters(searchQuery, 'all', selectedStatus);
+                                        }}
+                                        className="hover:text-red-900 cursor-pointer"
+                                        title="Hapus filter role"
+                                    >
+                                        <X className="size-3" />
+                                    </button>
+                                </span>
+                            )}
+
+                            {selectedStatus !== 'all' && (
+                                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 font-semibold text-[11px]">
+                                    Status: {selectedStatus === 'verified' ? 'Terverifikasi' : 'Belum Verifikasi'}
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            setSelectedStatus('all');
+                                            applyFilters(searchQuery, selectedRole, 'all');
+                                        }}
+                                        className="hover:text-emerald-900 cursor-pointer"
+                                        title="Hapus filter status"
+                                    >
+                                        <X className="size-3" />
+                                    </button>
+                                </span>
+                            )}
+
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    setSelectedRole('all');
+                                    setSelectedStatus('all');
+                                    applyFilters(searchQuery, 'all', 'all');
+                                }}
+                                className="text-[11px] text-zinc-500 hover:text-red-600 underline ml-1 cursor-pointer"
+                            >
+                                Reset Semua
+                            </button>
+                        </div>
+                    )}
 
                     {/* Table */}
                     <div className="overflow-x-auto">
@@ -714,8 +705,7 @@ export default function AdminUsersIndex({ users, filters, stats }: Props) {
                             <label className="font-bold block mb-1 text-zinc-800 dark:text-zinc-200">
                                 Kata Sandi Awal
                             </label>
-                            <Input
-                                type="password"
+                            <PasswordInput
                                 value={createForm.data.password}
                                 onChange={(e) => createForm.setData('password', e.target.value)}
                                 placeholder="Minimal 8 karakter"
@@ -853,8 +843,7 @@ export default function AdminUsersIndex({ users, filters, stats }: Props) {
                                     <KeyRound className="size-3.5 text-zinc-500" />
                                     Ubah Kata Sandi (Opsional)
                                 </label>
-                                <Input
-                                    type="password"
+                                <PasswordInput
                                     value={editForm.data.password}
                                     onChange={(e) => editForm.setData('password', e.target.value)}
                                     placeholder="Biarkan kosong jika tidak ingin mengubah sandi"
@@ -946,6 +935,141 @@ export default function AdminUsersIndex({ users, filters, stats }: Props) {
                             className="text-xs h-9 rounded-xl font-bold bg-rose-600 hover:bg-rose-700"
                         >
                             Ya, Hapus Pengguna Ini
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+
+            {/* MODAL: FILTER PENGGUNA */}
+            <Dialog open={filterModalOpen} onOpenChange={setFilterModalOpen}>
+                <DialogContent className="sm:max-w-md rounded-3xl p-6">
+                    <DialogHeader>
+                        <DialogTitle className="text-lg font-bold flex items-center gap-2 text-zinc-900 dark:text-zinc-100">
+                            <div className="size-8 rounded-xl bg-red-50 dark:bg-red-950/60 text-red-600 flex items-center justify-center">
+                                <Filter className="size-4" />
+                            </div>
+                            Filter Data Pengguna
+                        </DialogTitle>
+                        <DialogDescription className="text-xs">
+                            Saring data pengguna berdasarkan tipe role akun dan status verifikasi email
+                        </DialogDescription>
+                    </DialogHeader>
+
+                    <div className="space-y-5 py-2 text-xs">
+                        {/* Pilihan Role */}
+                        <div className="space-y-2">
+                            <label className="font-bold text-zinc-800 dark:text-zinc-200 block">
+                                Role Akun
+                            </label>
+                            <div className="grid grid-cols-3 gap-2">
+                                <button
+                                    type="button"
+                                    onClick={() => setTempRole('all')}
+                                    className={`p-3 rounded-2xl border text-center transition-all cursor-pointer ${
+                                        tempRole === 'all'
+                                            ? 'border-red-600 bg-red-50/70 dark:bg-red-950/50 text-red-600 font-bold shadow-xs'
+                                            : 'border-zinc-200 dark:border-zinc-800 hover:border-zinc-300 text-zinc-700 dark:text-zinc-300'
+                                    }`}
+                                >
+                                    Semua Role
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => setTempRole('user')}
+                                    className={`p-3 rounded-2xl border text-center transition-all cursor-pointer ${
+                                        tempRole === 'user'
+                                            ? 'border-red-600 bg-red-50/70 dark:bg-red-950/50 text-red-600 font-bold shadow-xs'
+                                            : 'border-zinc-200 dark:border-zinc-800 hover:border-zinc-300 text-zinc-700 dark:text-zinc-300'
+                                    }`}
+                                >
+                                    Member
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => setTempRole('admin')}
+                                    className={`p-3 rounded-2xl border text-center transition-all cursor-pointer ${
+                                        tempRole === 'admin'
+                                            ? 'border-red-600 bg-red-50/70 dark:bg-red-950/50 text-red-600 font-bold shadow-xs'
+                                            : 'border-zinc-200 dark:border-zinc-800 hover:border-zinc-300 text-zinc-700 dark:text-zinc-300'
+                                    }`}
+                                >
+                                    Admin
+                                </button>
+                            </div>
+                        </div>
+
+                        {/* Pilihan Status Verifikasi */}
+                        <div className="space-y-2 pt-3 border-t border-zinc-100 dark:border-zinc-800">
+                            <label className="font-bold text-zinc-800 dark:text-zinc-200 block">
+                                Status Verifikasi Email
+                            </label>
+                            <div className="grid grid-cols-3 gap-2">
+                                <button
+                                    type="button"
+                                    onClick={() => setTempStatus('all')}
+                                    className={`p-3 rounded-2xl border text-center transition-all cursor-pointer ${
+                                        tempStatus === 'all'
+                                            ? 'border-red-600 bg-red-50/70 dark:bg-red-950/50 text-red-600 font-bold shadow-xs'
+                                            : 'border-zinc-200 dark:border-zinc-800 hover:border-zinc-300 text-zinc-700 dark:text-zinc-300'
+                                    }`}
+                                >
+                                    Status: Semua
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => setTempStatus('verified')}
+                                    className={`p-3 rounded-2xl border text-center transition-all cursor-pointer ${
+                                        tempStatus === 'verified'
+                                            ? 'border-emerald-600 bg-emerald-50/70 dark:bg-emerald-950/50 text-emerald-600 font-bold shadow-xs'
+                                            : 'border-zinc-200 dark:border-zinc-800 hover:border-zinc-300 text-zinc-700 dark:text-zinc-300'
+                                    }`}
+                                >
+                                    Terverifikasi
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => setTempStatus('unverified')}
+                                    className={`p-3 rounded-2xl border text-center transition-all cursor-pointer ${
+                                        tempStatus === 'unverified'
+                                            ? 'border-amber-600 bg-amber-50/70 dark:bg-amber-950/50 text-amber-600 font-bold shadow-xs'
+                                            : 'border-zinc-200 dark:border-zinc-800 hover:border-zinc-300 text-zinc-700 dark:text-zinc-300'
+                                    }`}
+                                >
+                                    Belum Verifikasi
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <DialogFooter className="gap-2 sm:gap-0 pt-3">
+                        <Button
+                            type="button"
+                            variant="outline"
+                            onClick={() => {
+                                setTempRole('all');
+                                setTempStatus('all');
+                                setSelectedRole('all');
+                                setSelectedStatus('all');
+                                applyFilters(searchQuery, 'all', 'all');
+                                setFilterModalOpen(false);
+                                toast.success('Filter telah direset ke default.');
+                            }}
+                            className="text-xs h-9.5 rounded-xl"
+                        >
+                            Reset Filter
+                        </Button>
+                        <Button
+                            type="button"
+                            onClick={() => {
+                                setSelectedRole(tempRole);
+                                setSelectedStatus(tempStatus);
+                                applyFilters(searchQuery, tempRole, tempStatus);
+                                setFilterModalOpen(false);
+                                toast.success('Filter berhasil diterapkan.');
+                            }}
+                            className="bg-red-600 hover:bg-red-700 text-white font-bold text-xs h-9.5 px-5 rounded-xl"
+                        >
+                            Terapkan Filter
                         </Button>
                     </DialogFooter>
                 </DialogContent>
