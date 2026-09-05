@@ -194,8 +194,9 @@ export default function CustomerLayout({
                     </Link>
 
                     {/* Tab 2: Riwayat Poin */}
-                    <a
-                        href="/dashboard#riwayat"
+                    <Link
+                        href="/history"
+                        prefetch
                         className={`flex flex-col items-center gap-1 py-1 px-3 transition-colors ${
                             activeTab === 'history'
                                 ? 'text-red-600 dark:text-red-500 font-bold'
@@ -204,7 +205,7 @@ export default function CustomerLayout({
                     >
                         <Clock className="size-5" />
                         <span className="text-[10px]">Riwayat</span>
-                    </a>
+                    </Link>
 
                     {/* Tab 3 (Tengah - Elevated / Floating Action Button): Scan QR ID MEMBER */}
                     <div className="-mt-7">

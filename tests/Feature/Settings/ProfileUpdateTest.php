@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\UserRole;
 use App\Models\User;
 
 test('profile page is displayed', function () {
@@ -90,12 +91,12 @@ test('correct password must be provided to delete account', function () {
 
 test('user has role user by default and admin state works', function () {
     $regularUser = User::factory()->create();
-    expect($regularUser->role)->toBe(\App\Enums\UserRole::User);
+    expect($regularUser->role)->toBe(UserRole::User);
     expect($regularUser->isUser())->toBeTrue();
     expect($regularUser->isAdmin())->toBeFalse();
 
     $adminUser = User::factory()->admin()->create();
-    expect($adminUser->role)->toBe(\App\Enums\UserRole::Admin);
+    expect($adminUser->role)->toBe(UserRole::Admin);
     expect($adminUser->isAdmin())->toBeTrue();
     expect($adminUser->isUser())->toBeFalse();
 });

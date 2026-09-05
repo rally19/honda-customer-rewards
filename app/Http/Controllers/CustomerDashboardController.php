@@ -19,8 +19,8 @@ class CustomerDashboardController extends Controller
 
         $realHistories = $user->activityHistories()
             ->with(['admin:id,name'])
-            ->latest()
-            ->take(10)
+            ->latest('created_at')
+            ->take(3)
             ->get()
             ->map(fn ($h) => [
                 'id' => (string) $h->id,

@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use App\Models\User;
-use Illuminate\Contracts\Auth\StatefulGuard;
 use Illuminate\Contracts\Cache\Repository;
 use Laravel\Fortify\TwoFactorAuthenticationProvider;
 use PragmaRX\Google2FA\Google2FA;
@@ -24,7 +23,6 @@ class CustomTwoFactorAuthenticationProvider extends TwoFactorAuthenticationProvi
      *
      * @param  string  $secret
      * @param  string  $code
-     * @return bool
      */
     public function verify($secret, $code): bool
     {

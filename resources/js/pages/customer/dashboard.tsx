@@ -95,9 +95,12 @@ export default function CustomerDashboard({ loyalty }: Props) {
                 {/* ========================================================================= */}
                 {/* 1. DIGITAL REWARDS MEMBER CARD (HERO SECTION)                             */}
                 {/* ========================================================================= */}
-                <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-red-600 via-red-700 to-zinc-950 p-6 sm:p-8 text-white shadow-xl shadow-red-950/20 border border-red-500/30">
+                <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-red-600 via-red-700 to-zinc-950 p-6 sm:p-8 text-white shadow-xl shadow-red-950/20 bg-clip-padding">
+                    {/* Outline / Border Overlay (rendered above gradient & watermark so corners are never covered) */}
+                    <div className="pointer-events-none absolute inset-0 rounded-3xl border border-red-500/40 ring-1 ring-inset ring-white/15 z-20" />
+
                     {/* Watermark Logo Honda Wing */}
-                    <div className="pointer-events-none absolute -right-12 -bottom-16 opacity-15 select-none">
+                    <div className="pointer-events-none absolute -right-12 -bottom-16 opacity-15 select-none z-0">
                         <img
                             src="/images/logo/honda_logo_white.png"
                             alt="Honda"
@@ -387,21 +390,31 @@ export default function CustomerDashboard({ loyalty }: Props) {
                 </section>
 
                 {/* ========================================================================= */}
-                {/* 6. MUTASI RIWAYAT POIN TERBARU (ACTIVITY STATEMENT)                       */}
+                {/* 6. MUTASI RIWAYAT POIN TERBARU (BRIEF SUMMARY)                            */}
                 {/* ========================================================================= */}
                 <section id="riwayat" className="rounded-2xl border border-zinc-200/90 bg-white p-5 shadow-xs dark:border-zinc-800 dark:bg-zinc-900">
                     <div className="flex items-center justify-between border-b border-zinc-100 pb-3 dark:border-zinc-800">
                         <div className="flex items-center gap-2">
                             <Clock className="size-4 text-red-600" />
-                            <h3 className="text-sm font-bold uppercase tracking-wider text-zinc-900 dark:text-zinc-100">
-                                Riwayat Poin Terakhir
-                            </h3>
+                            <div>
+                                <h3 className="text-sm font-bold uppercase tracking-wider text-zinc-900 dark:text-zinc-100">
+                                    Riwayat Poin Terakhir
+                                </h3>
+                                <p className="text-[11px] text-zinc-500">Ringkasan mutasi terbaru</p>
+                            </div>
                         </div>
-                        <span className="text-xs text-zinc-500">Mutasi Transaksi</span>
+                        <Link
+                            href="/history"
+                            prefetch
+                            className="inline-flex items-center gap-1 text-xs font-bold text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 transition-colors group"
+                        >
+                            <span>Lihat Semua</span>
+                            <ChevronRight className="size-3.5 group-hover:translate-x-0.5 transition-transform" />
+                        </Link>
                     </div>
 
                     <div className="divide-y divide-zinc-100 dark:divide-zinc-800/80">
-                        {loyalty.transactions.map((tx) => (
+                        {loyalty.transactions.slice(0, 3).map((tx) => (
                             <div key={tx.id} className="flex items-center justify-between py-3.5">
                                 <div className="flex items-center gap-3">
                                     <div
@@ -440,6 +453,17 @@ export default function CustomerDashboard({ loyalty }: Props) {
                                 </div>
                             </div>
                         ))}
+                    </div>
+
+                    <div className="mt-4 pt-3 border-t border-zinc-100 dark:border-zinc-800/60">
+                        <Link
+                            href="/history"
+                            prefetch
+                            className="flex w-full items-center justify-center gap-2 rounded-xl border border-zinc-200/90 bg-zinc-50/80 py-2.5 text-xs font-semibold text-zinc-700 transition-all hover:bg-red-50 hover:text-red-600 hover:border-red-200 dark:border-zinc-800 dark:bg-zinc-800/40 dark:text-zinc-300 dark:hover:bg-red-950/30 dark:hover:text-red-400 dark:hover:border-red-900/50"
+                        >
+                            <span>Buka Halaman Riwayat Lengkap & Rincian Struk</span>
+                            <ChevronRight className="size-3.5" />
+                        </Link>
                     </div>
                 </section>
             </div>

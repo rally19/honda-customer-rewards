@@ -6,6 +6,7 @@ use App\Http\Controllers\AdminScanController;
 use App\Http\Controllers\AdminUserController;
 use App\Http\Controllers\Auth\TwoFactorEmailController;
 use App\Http\Controllers\CustomerDashboardController;
+use App\Http\Controllers\CustomerHistoryController;
 use Illuminate\Support\Facades\Route;
 
 Route::inertia('/', 'welcome')->name('home');
@@ -13,6 +14,7 @@ Route::inertia('/', 'welcome')->name('home');
 Route::middleware(['auth', 'verified'])->group(function () {
     // Customer Dashboard (E-Wallet / Digital Member Rewards)
     Route::get('dashboard', CustomerDashboardController::class)->name('dashboard');
+    Route::get('history', CustomerHistoryController::class)->name('customer.history');
 
     // Admin Portal & Management
     Route::get('admin/dashboard', AdminDashboardController::class)->name('admin.dashboard');
