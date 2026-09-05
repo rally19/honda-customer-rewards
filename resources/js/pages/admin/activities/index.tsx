@@ -515,11 +515,11 @@ export default function AdminActivitiesIndex({
                                             const csv = activities
                                                 .map(
                                                     (a) =>
-                                                        `"${a.id}","${a.name}","${a.points}","${a.is_active ? 'Aktif' : 'Nonaktif'}","${a.histories_count}","${a.created_at}"`
+                                                        `"${a.id}","${a.name.replace(/"/g, '""')}","${(a.description || '').replace(/"/g, '""')}","${a.points}","${a.is_active ? 'Aktif' : 'Nonaktif'}","${a.histories_count}","${a.created_at}"`
                                                 )
                                                 .join('\n');
                                             const header =
-                                                '"ID Aktivitas","Nama Aktivitas","Default Poin","Status","Total Pemakaian","Dibuat Pada"\n';
+                                                '"ID Aktivitas","Nama Aktivitas","Deskripsi Aktivitas","Default Poin","Status","Total Pemakaian","Dibuat Pada"\n';
                                             exportCsv('katalog-aktivitas-honda.csv', header + csv, 'Data Aktivitas (CSV)');
                                         }}
                                         className="text-xs h-9.5 gap-1.5 rounded-xl cursor-pointer"

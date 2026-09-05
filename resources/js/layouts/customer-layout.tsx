@@ -222,8 +222,9 @@ export default function CustomerLayout({
                     </div>
 
                     {/* Tab 4: Reward / Katalog */}
-                    <a
-                        href="/dashboard#reward"
+                    <Link
+                        href="/rewards"
+                        prefetch
                         className={`flex flex-col items-center gap-1 py-1 px-3 transition-colors ${
                             activeTab === 'rewards'
                                 ? 'text-red-600 dark:text-red-500 font-bold'
@@ -232,7 +233,7 @@ export default function CustomerLayout({
                     >
                         <Gift className="size-5" />
                         <span className="text-[10px]">Reward</span>
-                    </a>
+                    </Link>
 
                     {/* Tab 5: Akun / Pengaturan */}
                     <Link

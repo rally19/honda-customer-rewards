@@ -16,6 +16,7 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call(ActivitySeeder::class);
+        $this->call(RewardSeeder::class);
 
         if (! User::where('email', 'test@example.com')->exists()) {
             User::factory()->create([

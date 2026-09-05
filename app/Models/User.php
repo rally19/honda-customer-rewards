@@ -113,6 +113,14 @@ class User extends Authenticatable implements MustVerifyEmail, PasskeyUser
     }
 
     /**
+     * Get the point exchanges for the user.
+     */
+    public function pointExchanges(): HasMany
+    {
+        return $this->hasMany(PointExchange::class);
+    }
+
+    /**
      * Award points to this user for an activity and update tier level.
      */
     public function awardPoints(Activity $activity, int $points, ?User $admin = null, ?string $notes = null): ActivityHistory

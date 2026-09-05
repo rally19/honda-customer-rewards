@@ -275,21 +275,22 @@ export default function CustomerDashboard({ loyalty }: Props) {
                             </span>
                         </div>
 
-                        {/* Tukar Voucher Hadiah */}
-                        <a
-                            href="#voucher"
+                        {/* Tukar Voucher & Hadiah */}
+                        <Link
+                            href="/rewards"
+                            prefetch
                             className="flex flex-col items-center text-center gap-1.5 p-3.5 rounded-2xl border border-zinc-200/80 bg-white dark:border-zinc-800 dark:bg-zinc-900 hover:border-red-400 transition-all cursor-pointer group shadow-xs"
                         >
                             <div className="flex size-11 items-center justify-center rounded-2xl bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 group-hover:scale-105 transition-transform">
                                 <Gift className="size-5" />
                             </div>
                             <span className="text-[11px] font-semibold text-zinc-800 dark:text-zinc-200 leading-tight">
-                                Tukar Voucher
+                                Tukar Reward
                             </span>
                             <span className="text-[9px] font-bold text-blue-600 dark:text-blue-400">
-                                Hadiah & Diskon
+                                Katalog Poin
                             </span>
-                        </a>
+                        </Link>
 
                         {/* Referral Teman */}
                         <div
