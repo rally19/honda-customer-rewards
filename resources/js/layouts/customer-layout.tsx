@@ -191,24 +191,24 @@ export default function CustomerLayout({
                         <div className="hidden sm:block h-6 w-px bg-zinc-200 dark:bg-zinc-800" />
 
                         {/* User Profile Pill */}
-                        <div className="flex items-center gap-2.5">
-                            <div className="flex size-9 items-center justify-center rounded-full bg-gradient-to-tr from-red-600 to-rose-500 text-white font-bold text-xs shadow-xs">
+                        <div className="flex items-center gap-2 sm:gap-2.5 min-w-0">
+                            <div className="flex size-8 sm:size-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-tr from-red-600 to-rose-500 text-white font-bold text-xs shadow-xs">
                                 {user?.name ? user.name.charAt(0).toUpperCase() : 'U'}
                             </div>
-                            <div className="leading-tight">
-                                <div className="flex items-center gap-1.5">
-                                    <span className="text-xs font-bold text-zinc-900 dark:text-zinc-100 truncate max-w-[130px] sm:max-w-[180px]">
+                            <div className="leading-tight min-w-0">
+                                <div className="flex items-center gap-1.5 min-w-0">
+                                    <span className="text-xs font-bold text-zinc-900 dark:text-zinc-100 truncate max-w-[90px] xs:max-w-[120px] sm:max-w-[180px]">
                                         Halo, {user?.name?.split(' ')[0]} 👋
                                     </span>
                                     <span
-                                        className={`hidden sm:inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-extrabold border ${tierInfo.badgeClass}`}
+                                        className={`inline-flex items-center gap-1 rounded-full px-1.5 sm:px-2 py-0.5 text-[9px] sm:text-[10px] font-extrabold border shrink-0 ${tierInfo.badgeClass}`}
                                         title={`Level Member: ${tierInfo.name}`}
                                     >
                                         <Award className="size-2.5 shrink-0" />
                                         {tierInfo.badge}
                                     </span>
                                 </div>
-                                <span className="text-[10px] text-zinc-500 dark:text-zinc-400 font-mono">
+                                <span className="text-[10px] text-zinc-500 dark:text-zinc-400 font-mono block truncate">
                                     ID: {formattedMemberId}
                                 </span>
                             </div>
