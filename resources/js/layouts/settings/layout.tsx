@@ -1,4 +1,4 @@
-import { Link, router } from '@inertiajs/react';
+import { Link, router, usePage } from '@inertiajs/react';
 import { useState, type PropsWithChildren } from 'react';
 import Heading from '@/components/heading';
 import { Button } from '@/components/ui/button';
@@ -17,8 +17,8 @@ import { edit as editAppearance } from '@/routes/appearance';
 import { edit } from '@/routes/profile';
 import { edit as editSecurity } from '@/routes/security';
 import { logout } from '@/routes';
-import type { NavItem } from '@/types';
-import { User, Shield, Palette, LogOut } from 'lucide-react';
+import type { NavItem, User as AuthUser } from '@/types';
+import { User, Shield, Palette, LogOut, LayoutDashboard } from 'lucide-react';
 
 const sidebarNavItems: NavItem[] = [
     {
@@ -39,6 +39,9 @@ const sidebarNavItems: NavItem[] = [
 ];
 
 export default function SettingsLayout({ children }: PropsWithChildren) {
+    const { auth } = usePage<{ auth?: { user?: AuthUser } }>().props;
+    const role = typeof auth?.user?.role === 'string' ? auth?.user?.role : (auth?.user?.role as { value?: string } | undefined)?.value;
+    const isAdmin = role === 'admin';
     const { isCurrentOrParentUrl } = useCurrentUrl();
     const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
@@ -92,6 +95,26 @@ export default function SettingsLayout({ children }: PropsWithChildren) {
                             <LogOut className="h-4 w-4 mr-2" />
                             Keluar dari Akun
                         </Button>
+
+                        {/* Tombol ke Admin Dashboard jika role admin (di bawah tombol keluar akun) */}
+                        {isAdmin && (
+                            <Button
+                                size="sm"
+                                variant="ghost"
+                                asChild
+                                className={cn(
+                                    'justify-start rounded-xl font-semibold whitespace-nowrap cursor-pointer text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white',
+                                    {
+                                        'bg-red-50 text-red-700 dark:bg-red-950/60 dark:text-red-400 font-bold': isCurrentOrParentUrl('/admin/dashboard'),
+                                    }
+                                )}
+                            >
+                                <Link href="/admin/dashboard">
+                                    <LayoutDashboard className="h-4 w-4 mr-2" />
+                                    Admin Dashboard
+                                </Link>
+                            </Button>
+                        )}
                     </nav>
                 </aside>
 

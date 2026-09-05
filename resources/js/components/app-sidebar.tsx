@@ -20,42 +20,41 @@ export function AppSidebar() {
     const { auth } = usePage<{ auth?: { user: User } }>().props;
     const isAdmin = auth?.user?.role === 'admin';
 
-    const mainNavItems: NavItem[] = [
-        ...(isAdmin
-            ? [
-                  {
-                      title: 'Admin Dashboard',
-                      href: '/admin/dashboard',
-                      icon: LayoutDashboard,
-                  },
-                  {
-                      title: 'Scan / Input Poin',
-                      href: '/admin/scan',
-                      icon: QrCode,
-                  },
-                  {
-                      title: 'Manajemen Aktivitas',
-                      href: '/admin/activities',
-                      icon: Award,
-                  },
-                  {
-                      title: 'Manajemen Reward',
-                      href: '/admin/rewards',
-                      icon: Gift,
-                  },
-                  {
-                      title: 'Manajemen User',
-                      href: '/admin/users',
-                      icon: Users,
-                  },
-              ]
-            : []),
-        {
-            title: 'Member E-Wallet',
-            href: dashboard(),
-            icon: Smartphone,
-        },
-    ];
+    const mainNavItems: NavItem[] = isAdmin
+        ? [
+              {
+                  title: 'Admin Dashboard',
+                  href: '/admin/dashboard',
+                  icon: LayoutDashboard,
+              },
+              {
+                  title: 'Scan / Input Poin',
+                  href: '/admin/scan',
+                  icon: QrCode,
+              },
+              {
+                  title: 'Manajemen Aktivitas',
+                  href: '/admin/activities',
+                  icon: Award,
+              },
+              {
+                  title: 'Manajemen Reward',
+                  href: '/admin/rewards',
+                  icon: Gift,
+              },
+              {
+                  title: 'Manajemen User',
+                  href: '/admin/users',
+                  icon: Users,
+              },
+          ]
+        : [
+              {
+                  title: 'User Dashboard',
+                  href: dashboard(),
+                  icon: Smartphone,
+              },
+          ];
 
     const footerNavItems: NavItem[] = [
         {
