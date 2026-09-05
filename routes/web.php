@@ -16,6 +16,7 @@ Route::inertia('/', 'welcome')->name('home');
 Route::middleware(['auth', 'verified'])->group(function () {
     // Customer Dashboard (E-Wallet / Digital Member Rewards)
     Route::get('dashboard', CustomerDashboardController::class)->name('dashboard');
+    Route::get('activities', CustomerHistoryController::class)->name('customer.activities');
     Route::get('history', CustomerHistoryController::class)->name('customer.history');
     Route::get('rewards', [CustomerRewardController::class, 'index'])->name('customer.rewards');
     Route::post('rewards/{reward}/claim', [CustomerRewardController::class, 'claim'])->name('customer.rewards.claim');

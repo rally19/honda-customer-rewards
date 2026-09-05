@@ -136,3 +136,40 @@ test('customer only sees their own activity histories and not other users', func
         ->where('histories.data.0.title', 'Servis Motor User 1')
     );
 });
+
+test('customer can access activities page and see list of earning activities', function () {
+    $user = User::factory()->create(['role' => UserRole::User->value]);
+
+    Activity::create([
+        'name' => 'Ganti Oli AHM MPX',
+        'points' => 50,
+        'description' => 'Penggantian oli resmi',
+        'is_active' => true,
+    ]);
+
+    Activity::create([
+        'name' => 'Servis Lengkap AHASS',
+        'points' => 150,
+        'description' => 'Servis berkala resmi',
+        'is_active' => true,
+    ]);
+
+    Activity::create([
+        'name' => 'Aktivitas Nonaktif',
+        'points' => 10,
+        'description' => 'Tidak aktif',
+        'is_active' => false,
+    ]);
+
+    $response = $this
+        ->actingAs($user)
+        ->get(route('customer.activities'));
+
+    $response->assertOk();
+    $response->assertInertia(fn (Assert $page) => $page
+        ->component('customer/history')
+        ->has('earningActivities')
+        ->where('earningActivities.0.points', 150)
+        ->where('earningActivities.0.name', 'Servis Lengkap AHASS')
+    );
+});

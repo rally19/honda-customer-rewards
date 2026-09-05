@@ -75,7 +75,7 @@ class HandleInertiaRequests extends Middleware
                     'description' => $act->activity_name.($act->notes ? " ({$act->notes})" : ''),
                     'time' => $act->created_at?->diffForHumans() ?? 'Baru saja',
                     'timestamp' => $act->created_at?->timestamp ?? 0,
-                    'link' => '/history',
+                    'link' => '/activities',
                     'points' => $pts,
                     'status' => 'completed',
                 ];

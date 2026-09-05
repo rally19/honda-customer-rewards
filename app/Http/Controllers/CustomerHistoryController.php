@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Enums\MemberTier;
+use App\Models\Activity;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -63,6 +64,18 @@ class CustomerHistoryController extends Controller
             'links' => $paginated->linkCollection()->toArray(),
         ];
 
+        // Daftar aktivitas resmi yang dapat menghasilkan poin rewards
+        $earningActivities = Activity::where('is_active', true)
+            ->orderByDesc('points')
+            ->get()
+            ->map(fn (Activity $a) => [
+                'id' => (string) $a->id,
+                'name' => $a->name,
+                'points' => (int) $a->points,
+                'description' => $a->description ?? '',
+            ])
+            ->all();
+
         $stats = [
             'currentPoints' => (int) $user->points,
             'lifetimePoints' => (int) $user->lifetime_points,
@@ -77,6 +90,7 @@ class CustomerHistoryController extends Controller
 
         return Inertia::render('customer/history', [
             'histories' => $histories,
+            'earningActivities' => $earningActivities,
             'stats' => $stats,
             'filters' => [
                 'search' => $search ?? '',

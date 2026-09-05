@@ -2,6 +2,7 @@ import { Head, Link, router } from '@inertiajs/react';
 import {
     ArrowDownRight,
     ArrowLeft,
+    ArrowRight,
     ArrowUpRight,
     Award,
     Calendar,
@@ -17,6 +18,7 @@ import {
     Flame,
     Gift,
     Info,
+    QrCode,
     RotateCcw,
     Search,
     Shield,
@@ -77,8 +79,16 @@ type Stats = {
     tierBadge: string;
 };
 
+type EarningActivity = {
+    id: string;
+    name: string;
+    points: number;
+    description: string;
+};
+
 type Props = {
     histories: PaginatedHistories;
+    earningActivities?: EarningActivity[];
     stats: Stats;
     filters: {
         search: string;
@@ -89,6 +99,7 @@ type Props = {
 
 export default function CustomerHistoryPage({
     histories,
+    earningActivities = [],
     stats,
     filters,
     memberId,
@@ -97,6 +108,13 @@ export default function CustomerHistoryPage({
     const [selectedPeriod, setSelectedPeriod] = useState(filters.period || 'all');
     const [selectedHistory, setSelectedHistory] = useState<HistoryItem | null>(null);
     const [copiedTxId, setCopiedTxId] = useState<string | null>(null);
+    const [activeTab, setActiveTab] = useState<'history' | 'earning'>(() => {
+        if (typeof window !== 'undefined') {
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('tab') === 'earning') return 'earning';
+        }
+        return 'history';
+    });
 
     const formattedMemberId = memberId
         .padStart(10, '0')
@@ -105,7 +123,7 @@ export default function CustomerHistoryPage({
     const handleSearchSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         router.get(
-            '/history',
+            '/activities',
             {
                 search: search.trim() || undefined,
                 period: selectedPeriod !== 'all' ? selectedPeriod : undefined,
@@ -120,7 +138,7 @@ export default function CustomerHistoryPage({
     const handlePeriodChange = (period: string) => {
         setSelectedPeriod(period);
         router.get(
-            '/history',
+            '/activities',
             {
                 search: search.trim() || undefined,
                 period: period !== 'all' ? period : undefined,
@@ -135,7 +153,7 @@ export default function CustomerHistoryPage({
     const handleResetFilters = () => {
         setSearch('');
         setSelectedPeriod('all');
-        router.get('/history', {}, { preserveState: true, preserveScroll: true });
+        router.get('/activities', {}, { preserveState: true, preserveScroll: true });
     };
 
     const handleCopyTxId = (id: string) => {
@@ -176,8 +194,8 @@ export default function CustomerHistoryPage({
     const isFiltered = !!filters.search || filters.period !== 'all';
 
     return (
-        <CustomerLayout activeTab="history">
-            <Head title="Riwayat Poin & Transaksi - Honda Loyalty Rewards" />
+        <CustomerLayout activeTab="activities">
+            <Head title="Aktivitas & Perolehan Poin - Honda Loyalty Rewards" />
 
             <div className="space-y-6 max-w-4xl mx-auto w-full pb-8">
                 {/* ========================================================================= */}
@@ -198,10 +216,10 @@ export default function CustomerHistoryPage({
                             </div>
                             <div>
                                 <h1 className="text-xl sm:text-2xl font-black tracking-tight text-zinc-900 dark:text-white">
-                                    Riwayat Transaksi & Poin
+                                    Aktivitas & Perolehan Poin
                                 </h1>
                                 <p className="text-xs text-zinc-500 dark:text-zinc-400">
-                                    Daftar lengkap perolehan poin reward dari servis dan transaksi resmi Honda
+                                    Periksa riwayat transaksi servis Anda di AHASS serta daftar aktivitas resmi Honda yang dapat menghasilkan poin rewards
                                 </p>
                             </div>
                         </div>
@@ -299,79 +317,142 @@ export default function CustomerHistoryPage({
                 </div>
 
                 {/* ========================================================================= */}
-                {/* 3. TOOLBAR PENCARIAN & FILTER                                             */}
+                {/* 3. TABS NAVIGASI: RIWAYAT AKTIVITAS & DAFTAR AKTIVITAS BERHADIAH POIN     */}
                 {/* ========================================================================= */}
-                <div className="rounded-2xl border border-zinc-200/90 bg-white p-4 shadow-xs dark:border-zinc-800 dark:bg-zinc-900 space-y-3">
-                    <form onSubmit={handleSearchSubmit} className="flex flex-col sm:flex-row gap-2">
-                        <div className="relative flex-1">
-                            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-zinc-400" />
-                            <Input
-                                type="text"
-                                value={search}
-                                onChange={(e) => setSearch(e.target.value)}
-                                placeholder="Cari nama aktivitas, nomor ID transaksi (#10 digit), atau catatan..."
-                                className="pl-9 pr-8 text-xs rounded-xl bg-zinc-50/70 dark:bg-zinc-950 border-zinc-200 dark:border-zinc-800 focus:border-red-500"
-                            />
-                            {search && (
-                                <button
-                                    type="button"
-                                    onClick={() => setSearch('')}
-                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200"
-                                >
-                                    <X className="size-3.5" />
-                                </button>
-                            )}
-                        </div>
-                        <div className="flex items-center gap-2">
-                            <Button
-                                type="submit"
-                                size="sm"
-                                className="rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-semibold px-4"
-                            >
-                                Cari
-                            </Button>
-                            {isFiltered && (
-                                <Button
-                                    type="button"
-                                    onClick={handleResetFilters}
-                                    variant="outline"
-                                    size="sm"
-                                    className="rounded-xl text-xs border-zinc-200 dark:border-zinc-800"
-                                    title="Reset semua filter"
-                                >
-                                    <RotateCcw className="size-3.5 mr-1" />
-                                    Reset
-                                </Button>
-                            )}
-                        </div>
-                    </form>
-
-                    {/* Filter Periode Pills */}
-                    <div className="flex items-center gap-1.5 overflow-x-auto pb-1 pt-1 text-xs no-scrollbar">
-                        <span className="text-[11px] font-semibold text-zinc-400 mr-1 shrink-0 flex items-center gap-1">
-                            <Filter className="size-3" /> Periode:
+                <div className="flex items-center gap-2 p-1.5 rounded-2xl bg-zinc-200/60 dark:bg-zinc-800/60 border border-zinc-200/80 dark:border-zinc-700/60">
+                    <button
+                        type="button"
+                        onClick={() => setActiveTab('history')}
+                        className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                            activeTab === 'history'
+                                ? 'bg-white dark:bg-zinc-900 text-zinc-900 dark:text-white shadow-xs'
+                                : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white'
+                        }`}
+                    >
+                        <Clock className="size-4 text-red-600 dark:text-red-500" />
+                        <span>Riwayat Aktivitas Saya</span>
+                        <span className="ml-1 rounded-full px-2 py-0.5 text-[10px] font-bold bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300">
+                            {histories.total}
                         </span>
-                        {[
-                            { id: 'all', label: 'Semua Waktu' },
-                            { id: 'this_month', label: 'Bulan Ini' },
-                            { id: 'last_3_months', label: '3 Bulan Terakhir' },
-                            { id: 'this_year', label: 'Tahun Ini' },
-                        ].map((p) => (
-                            <button
-                                key={p.id}
-                                type="button"
-                                onClick={() => handlePeriodChange(p.id)}
-                                className={`rounded-xl px-3 py-1 text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
-                                    selectedPeriod === p.id
-                                        ? 'bg-red-600 text-white shadow-xs'
-                                        : 'bg-zinc-100 text-zinc-600 hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-700'
-                                }`}
-                            >
-                                {p.label}
-                            </button>
-                        ))}
-                    </div>
+                    </button>
+
+                    <button
+                        type="button"
+                        onClick={() => setActiveTab('earning')}
+                        className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                            activeTab === 'earning'
+                                ? 'bg-white dark:bg-zinc-900 text-zinc-900 dark:text-white shadow-xs'
+                                : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white'
+                        }`}
+                    >
+                        <Sparkles className="size-4 text-amber-500" />
+                        <span>Aktivitas Berhadiah Poin</span>
+                        <span className="ml-1 rounded-full px-2 py-0.5 text-[10px] font-bold bg-amber-100 text-amber-800 dark:bg-amber-950/80 dark:text-amber-300">
+                            {earningActivities.length} Pilihan
+                        </span>
+                    </button>
                 </div>
+
+                {/* TAB 1: RIWAYAT AKTIVITAS TRANSAKSI SAYA */}
+                {activeTab === 'history' && (
+                    <div className="space-y-6">
+                        {/* Callout Banner ke Daftar Aktivitas */}
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-2xl bg-gradient-to-r from-red-600/10 via-amber-500/10 to-transparent border border-red-200/70 dark:border-red-900/40">
+                            <div className="flex items-center gap-3">
+                                <div className="flex size-10 items-center justify-center rounded-xl bg-red-600 text-white shrink-0 shadow-sm">
+                                    <Sparkles className="size-5" />
+                                </div>
+                                <div>
+                                    <h3 className="text-xs font-bold text-zinc-900 dark:text-white">
+                                        Ingin Menambah Poin Rewards Anda?
+                                    </h3>
+                                    <p className="text-[11px] text-zinc-600 dark:text-zinc-400">
+                                        Terdapat {earningActivities.length} aktivitas resmi servis di AHASS yang dapat menghasilkan hingga ratusan poin setiap transaksi.
+                                    </p>
+                                </div>
+                            </div>
+                            <Button
+                                type="button"
+                                onClick={() => setActiveTab('earning')}
+                                className="bg-red-600 hover:bg-red-700 text-white text-xs font-bold rounded-xl h-9 px-4 shrink-0 cursor-pointer shadow-xs"
+                            >
+                                Lihat Daftar Aktivitas
+                                <ArrowRight className="size-3.5 ml-1.5" />
+                            </Button>
+                        </div>
+
+                        {/* Toolbar Pencarian & Filter */}
+                        <div className="rounded-2xl border border-zinc-200/90 bg-white p-4 shadow-xs dark:border-zinc-800 dark:bg-zinc-900 space-y-3">
+                            <form onSubmit={handleSearchSubmit} className="flex flex-col sm:flex-row gap-2">
+                                <div className="relative flex-1">
+                                    <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-zinc-400" />
+                                    <Input
+                                        type="text"
+                                        value={search}
+                                        onChange={(e) => setSearch(e.target.value)}
+                                        placeholder="Cari nama aktivitas, nomor ID transaksi (#10 digit), atau catatan..."
+                                        className="pl-9 pr-8 text-xs rounded-xl bg-zinc-50/70 dark:bg-zinc-950 border-zinc-200 dark:border-zinc-800 focus:border-red-500"
+                                    />
+                                    {search && (
+                                        <button
+                                            type="button"
+                                            onClick={() => setSearch('')}
+                                            className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200"
+                                        >
+                                            <X className="size-3.5" />
+                                        </button>
+                                    )}
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <Button
+                                        type="submit"
+                                        size="sm"
+                                        className="rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-semibold px-4"
+                                    >
+                                        Cari
+                                    </Button>
+                                    {isFiltered && (
+                                        <Button
+                                            type="button"
+                                            onClick={handleResetFilters}
+                                            variant="outline"
+                                            size="sm"
+                                            className="rounded-xl text-xs border-zinc-200 dark:border-zinc-800"
+                                            title="Reset semua filter"
+                                        >
+                                            <RotateCcw className="size-3.5 mr-1" />
+                                            Reset
+                                        </Button>
+                                    )}
+                                </div>
+                            </form>
+
+                            {/* Filter Periode Pills */}
+                            <div className="flex items-center gap-1.5 overflow-x-auto pb-1 pt-1 text-xs no-scrollbar">
+                                <span className="text-[11px] font-semibold text-zinc-400 mr-1 shrink-0 flex items-center gap-1">
+                                    <Filter className="size-3" /> Periode:
+                                </span>
+                                {[
+                                    { id: 'all', label: 'Semua Waktu' },
+                                    { id: 'this_month', label: 'Bulan Ini' },
+                                    { id: 'last_3_months', label: '3 Bulan Terakhir' },
+                                    { id: 'this_year', label: 'Tahun Ini' },
+                                ].map((p) => (
+                                    <button
+                                        key={p.id}
+                                        type="button"
+                                        onClick={() => handlePeriodChange(p.id)}
+                                        className={`rounded-xl px-3 py-1 text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
+                                            selectedPeriod === p.id
+                                                ? 'bg-red-600 text-white shadow-xs'
+                                                : 'bg-zinc-100 text-zinc-600 hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-700'
+                                        }`}
+                                    >
+                                        {p.label}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
 
                 {/* ========================================================================= */}
                 {/* 4. DAFTAR MUTASI RIWAYAT TRANSAKSI                                        */}
@@ -593,6 +674,160 @@ export default function CustomerHistoryPage({
                     )}
                 </div>
             </div>
+        )}
+
+        {/* TAB 2: DAFTAR AKTIVITAS YANG BISA MEMPEROLEH POIN (KATALOG AKTIVITAS RESMI) */}
+        {activeTab === 'earning' && (
+            <div className="space-y-6">
+                {/* Banner Panduan Cara Dapat Poin */}
+                <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-red-600 via-red-700 to-zinc-950 p-6 sm:p-8 text-white shadow-xl shadow-red-950/20">
+                    <div className="pointer-events-none absolute -right-6 -bottom-10 opacity-15 select-none">
+                        <img
+                            src="/images/logo/honda_logo_white.png"
+                            alt="Honda"
+                            className="w-64 sm:w-80 h-auto"
+                        />
+                    </div>
+
+                    <div className="relative z-10 space-y-4 max-w-2xl">
+                        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-white/20 backdrop-blur-md border border-white/30 text-white shadow-xs">
+                            <Sparkles className="size-3.5 text-amber-300" />
+                            Panduan Perolehan Poin AHASS
+                        </div>
+
+                        <div>
+                            <h2 className="text-xl sm:text-2xl md:text-3xl font-black tracking-tight text-white">
+                                Cara Kumpulkan Poin Rewards
+                            </h2>
+                            <p className="text-xs sm:text-sm text-red-100/90 mt-1.5 leading-relaxed">
+                                Setiap kali Anda melakukan servis motor Honda atau pembelian suku cadang asli di bengkel resmi AHASS, tunjukkan ID Member Anda untuk mendapatkan poin reward otomatis yang terakumulasi seumur hidup!
+                            </p>
+                        </div>
+
+                        {/* Step Grid */}
+                        <div className="grid grid-cols-1 sm:grid-cols-4 gap-2.5 pt-1 text-xs">
+                            <div className="p-3 rounded-2xl bg-white/10 backdrop-blur-sm border border-white/15">
+                                <span className="font-mono text-red-300 text-[10px] font-bold">LANGKAH 1</span>
+                                <p className="font-bold text-white mt-1">Kunjungi AHASS</p>
+                                <p className="text-[10px] text-red-200/80 mt-0.5">Datang ke bengkel resmi AHASS terdekat.</p>
+                            </div>
+                            <div className="p-3 rounded-2xl bg-white/10 backdrop-blur-sm border border-white/15">
+                                <span className="font-mono text-red-300 text-[10px] font-bold">LANGKAH 2</span>
+                                <p className="font-bold text-white mt-1">Pilih Servis</p>
+                                <p className="text-[10px] text-red-200/80 mt-0.5">Lakukan servis motor atau beli sparepart asli.</p>
+                            </div>
+                            <div className="p-3 rounded-2xl bg-white/10 backdrop-blur-sm border border-white/15">
+                                <span className="font-mono text-red-300 text-[10px] font-bold">LANGKAH 3</span>
+                                <p className="font-bold text-white mt-1">Tunjukkan ID QR</p>
+                                <p className="text-[10px] text-red-200/80 mt-0.5">Kasir / staf akan memindai QR Member Anda.</p>
+                            </div>
+                            <div className="p-3 rounded-2xl bg-white/10 backdrop-blur-sm border border-white/15">
+                                <span className="font-mono text-red-300 text-[10px] font-bold">LANGKAH 4</span>
+                                <p className="font-bold text-white mt-1">Poin Masuk!</p>
+                                <p className="text-[10px] text-red-200/80 mt-0.5">Poin langsung otomatis masuk ke e-wallet.</p>
+                            </div>
+                        </div>
+
+                        <div className="pt-2">
+                            <Button
+                                type="button"
+                                onClick={() => window.dispatchEvent(new CustomEvent('open-customer-qr-modal'))}
+                                className="bg-white hover:bg-red-50 text-red-700 text-xs font-bold rounded-xl h-10 px-5 shadow-md cursor-pointer"
+                            >
+                                <QrCode className="size-4 mr-2 text-red-600" />
+                                Tunjukkan QR ID Member Saya
+                            </Button>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Daftar Kartu Aktivitas Berhadiah Poin */}
+                <div className="space-y-3">
+                    <div className="flex items-center justify-between px-1">
+                        <div>
+                            <h2 className="text-sm sm:text-base font-black tracking-tight text-zinc-900 dark:text-white">
+                                Daftar Aktivitas Resmi Berhadiah Poin
+                            </h2>
+                            <p className="text-xs text-zinc-500 dark:text-zinc-400">
+                                Pilih jenis perawatan atau transaksi berikut di AHASS untuk klaim poin
+                            </p>
+                        </div>
+                        <Badge variant="outline" className="text-xs font-semibold px-2.5 py-1">
+                            {earningActivities.length} Aktivitas Tersedia
+                        </Badge>
+                    </div>
+
+                    {earningActivities.length === 0 ? (
+                        <div className="p-8 text-center rounded-2xl border border-zinc-200/90 bg-white dark:border-zinc-800 dark:bg-zinc-900 text-zinc-500">
+                            <Clock className="size-8 mx-auto mb-2 opacity-50" />
+                            <p className="text-xs font-semibold">Belum ada aktivitas terdaftar saat ini.</p>
+                        </div>
+                    ) : (
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            {earningActivities.map((act) => (
+                                <div
+                                    key={act.id}
+                                    className="flex flex-col justify-between p-5 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200/90 dark:border-zinc-800 shadow-xs hover:border-red-500/40 hover:shadow-md transition-all group"
+                                >
+                                    <div className="space-y-3">
+                                        <div className="flex items-start justify-between gap-3">
+                                            <div
+                                                className={`flex size-11 shrink-0 items-center justify-center rounded-2xl border shadow-xs group-hover:scale-105 transition-transform ${getActivityBg(
+                                                    act.name,
+                                                )}`}
+                                            >
+                                                {getActivityIcon(act.name)}
+                                            </div>
+                                            <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-black bg-emerald-100 text-emerald-800 dark:bg-emerald-950/80 dark:text-emerald-300 border border-emerald-300/80 dark:border-emerald-800 shadow-xs">
+                                                <Coins className="size-3.5 text-emerald-600 dark:text-emerald-400" />
+                                                +{act.points.toLocaleString('id-ID')} Poin
+                                            </span>
+                                        </div>
+
+                                        <div>
+                                            <h3 className="text-sm sm:text-base font-bold text-zinc-900 dark:text-white group-hover:text-red-600 dark:group-hover:text-red-400 transition-colors">
+                                                {act.name}
+                                            </h3>
+                                            <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1 leading-relaxed">
+                                                {act.description || 'Lakukan aktivitas servis resmi ini di seluruh jaringan bengkel AHASS.'}
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <div className="mt-4 pt-3 border-t border-zinc-100 dark:border-zinc-800 flex items-center justify-between text-xs">
+                                        <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-zinc-500 dark:text-zinc-400">
+                                            <Shield className="size-3 text-red-600" />
+                                            Bengkel Resmi AHASS
+                                        </span>
+                                        <Button
+                                            type="button"
+                                            size="sm"
+                                            onClick={() => window.dispatchEvent(new CustomEvent('open-customer-qr-modal'))}
+                                            className="rounded-xl bg-red-50 text-red-700 hover:bg-red-600 hover:text-white dark:bg-red-950/50 dark:text-red-300 dark:hover:bg-red-600 dark:hover:text-white border border-red-200 dark:border-red-900/50 text-[11px] font-bold h-8 px-3 transition-colors cursor-pointer"
+                                        >
+                                            <QrCode className="size-3 mr-1.5" />
+                                            Tunjukkan ID
+                                        </Button>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+
+                    <div className="text-center pt-4">
+                        <button
+                            type="button"
+                            onClick={() => setActiveTab('history')}
+                            className="inline-flex items-center gap-1.5 text-xs font-semibold text-zinc-500 hover:text-red-600 dark:text-zinc-400 dark:hover:text-red-400 cursor-pointer transition-colors"
+                        >
+                            <Clock className="size-3.5" />
+                            <span>Lihat Riwayat Transaksi & Catatan Mutasi Saya &rarr;</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        )}
+    </div>
 
             {/* ========================================================================= */}
             {/* 5. MODAL RINCIAN TRANSAKSI DIGITAL RESMI                                  */}

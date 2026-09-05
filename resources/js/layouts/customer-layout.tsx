@@ -26,7 +26,7 @@ import type { NotificationItem, User } from '@/types';
 
 type CustomerLayoutProps = {
     children: ReactNode;
-    activeTab?: 'home' | 'history' | 'rewards' | 'profile';
+    activeTab?: 'home' | 'history' | 'activities' | 'rewards' | 'profile';
 };
 
 export default function CustomerLayout({
@@ -374,11 +374,11 @@ export default function CustomerLayout({
 
                                     <div className="mt-3 pt-2.5 border-t border-zinc-100 dark:border-zinc-800 flex items-center justify-between text-[11px]">
                                         <Link
-                                            href="/history"
+                                            href="/activities"
                                             onClick={() => setNotifOpen(false)}
                                             className="text-red-600 dark:text-red-400 hover:underline font-semibold flex items-center gap-1 cursor-pointer"
                                         >
-                                            <span>Riwayat Aktivitas & Poin</span>
+                                            <span>Aktivitas & Riwayat Poin</span>
                                             <ArrowRight className="size-3" />
                                         </Link>
                                         <Link
@@ -427,18 +427,18 @@ export default function CustomerLayout({
                         <span className="text-[10px]">Beranda</span>
                     </Link>
 
-                    {/* Tab 2: Riwayat Poin */}
+                    {/* Tab 2: Aktivitas */}
                     <Link
-                        href="/history"
+                        href="/activities"
                         prefetch
                         className={`flex flex-col items-center gap-1 py-1 px-3 transition-colors ${
-                            activeTab === 'history'
+                            activeTab === 'history' || activeTab === 'activities'
                                 ? 'text-red-600 dark:text-red-500 font-bold'
                                 : 'text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-200 font-medium'
                         }`}
                     >
                         <Clock className="size-5" />
-                        <span className="text-[10px]">Riwayat</span>
+                        <span className="text-[10px]">Aktivitas</span>
                     </Link>
 
                     {/* Tab 3 (Tengah - Elevated / Floating Action Button): Scan QR ID MEMBER */}
