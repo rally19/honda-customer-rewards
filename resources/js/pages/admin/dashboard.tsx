@@ -20,6 +20,7 @@ import {
     Flame,
     Gift,
     HelpCircle,
+    History,
     Info,
     LayoutDashboard,
     Mail,
@@ -27,7 +28,7 @@ import {
     MessageCircle,
     Phone,
     Plus,
-    Receipt,
+    QrCode,
     RefreshCw,
     Search,
     Shield,
@@ -85,7 +86,7 @@ type Voucher = {
 
 type PointClaim = {
     id: string;
-    receipt_number: string;
+    transaction_code?: string;
     member_name: string;
     member_id: string;
     phone_number?: string;
@@ -238,7 +239,7 @@ export default function AdminDashboard({
                             Portal Administrasi Loyalty & Verifikasi Poin
                         </h1>
                         <p className="text-xs md:text-sm text-red-100/90 leading-relaxed">
-                            Pusat validasi mandiri klaim poin struk transaksi resmi Honda & AHASS, pemantauan database pengguna terdaftar, dan pengelolaan katalog voucher reward.
+                            Pusat pemantauan aktivitas loyalitas Honda & AHASS, pencatatan transaksi poin, database pengguna terdaftar, dan pengelolaan katalog reward.
                         </p>
                     </div>
 
@@ -250,14 +251,13 @@ export default function AdminDashboard({
                             <Smartphone className="size-4 text-red-600" />
                             Tampilan Member E-Wallet
                         </Link>
-                        <Button
-                            onClick={() => setActiveTab('claims')}
-                            variant="outline"
-                            className="bg-black/30 hover:bg-black/50 border-white/30 text-white text-xs md:text-sm font-semibold rounded-xl h-10 px-4 cursor-pointer"
+                        <Link
+                            href="/admin/scan"
+                            className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-xs md:text-sm font-bold bg-black/30 hover:bg-black/50 border border-white/30 text-white active:scale-95 transition-all shadow-md cursor-pointer"
                         >
-                            <Receipt className="size-4 mr-1.5 text-amber-300" />
-                            Verifikasi Struk ({pendingClaimsCount})
-                        </Button>
+                            <QrCode className="size-4 text-amber-300" />
+                            Scan / Input Poin
+                        </Link>
                     </div>
                 </div>
 
@@ -314,23 +314,23 @@ export default function AdminDashboard({
                         </div>
                     </div>
 
-                    {/* Metric 3: Klaim Poin Transaksi */}
+                    {/* Metric 3: Log Transaksi Poin */}
                     <div className="bg-white dark:bg-zinc-900 border border-zinc-200/80 dark:border-zinc-800 p-5 rounded-2xl shadow-xs hover:border-red-500/40 hover:shadow-md transition-all relative overflow-hidden group">
                         <div className="absolute top-0 right-0 w-24 h-24 bg-blue-500/5 rounded-bl-full pointer-events-none group-hover:scale-110 transition-transform" />
                         <div className="flex items-center justify-between text-zinc-500 dark:text-zinc-400">
                             <span className="text-xs font-bold uppercase tracking-wider text-zinc-600 dark:text-zinc-300">
-                                Klaim Poin Masuk
+                                Transaksi Poin Masuk
                             </span>
                             <div className="size-10 rounded-xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 flex items-center justify-center">
-                                <Receipt className="size-5" />
+                                <History className="size-5" />
                             </div>
                         </div>
                         <div className="mt-3">
                             <div className="text-3xl font-black tracking-tight text-zinc-900 dark:text-zinc-50 flex items-center gap-2">
-                                <span>{pendingClaimsCount}</span>
+                                <span>{claims.length}</span>
                                 {pendingClaimsCount > 0 ? (
                                     <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-700 dark:text-amber-400 border border-amber-300 dark:border-amber-700/50">
-                                        Perlu Verifikasi
+                                        Perlu Validasi
                                     </span>
                                 ) : (
                                     <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-700 dark:text-emerald-400">
@@ -339,7 +339,7 @@ export default function AdminDashboard({
                                 )}
                             </div>
                             <div className="flex items-center gap-1.5 mt-1.5 text-xs text-zinc-500 dark:text-zinc-400">
-                                <span>Total <strong>{claims.length} pengajuan struk</strong> tercatat</span>
+                                <span>Total <strong>{claims.length} transaksi poin</strong> tercatat</span>
                             </div>
                         </div>
                     </div>
@@ -407,8 +407,8 @@ export default function AdminDashboard({
                                     : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800'
                             }`}
                         >
-                            <Receipt className="size-4" />
-                            Verifikasi Klaim Poin
+                            <History className="size-4" />
+                            Log Transaksi Poin
                             {pendingClaimsCount > 0 && (
                                 <span className="text-[11px] px-2 py-0.5 rounded-full bg-amber-500 text-white font-black animate-pulse">
                                     {pendingClaimsCount}
@@ -474,22 +474,22 @@ export default function AdminDashboard({
                             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-900 dark:text-amber-200">
                                 <div className="flex items-center gap-3">
                                     <div className="size-10 rounded-xl bg-amber-500 text-white flex items-center justify-center shrink-0">
-                                        <Receipt className="size-5" />
+                                        <History className="size-5" />
                                     </div>
                                     <div>
                                         <h4 className="font-bold text-sm">
-                                            {pendingClaimsCount} Pengajuan Klaim Poin Menunggu Verifikasi Struk
+                                            {pendingClaimsCount} Transaksi Poin Menunggu Validasi Petugas
                                         </h4>
                                         <p className="text-xs text-amber-800/90 dark:text-amber-300">
-                                            Member telah mengunggah rincian nomor struk transaksi resmi. Tinjau dan setujui untuk mengkreditkan poin.
+                                            Terdapat transaksi pemberian poin reward yang dapat ditinjau dan disetujui langsung oleh Administrator.
                                         </p>
                                     </div>
                                 </div>
                                 <Button
                                     onClick={() => setActiveTab('claims')}
-                                    className="bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold rounded-xl h-9 px-4 shrink-0 shadow-xs"
+                                    className="bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold rounded-xl h-9 px-4 shrink-0 shadow-xs cursor-pointer"
                                 >
-                                    Tinjau Klaim Struk
+                                    Tinjau Transaksi
                                     <ArrowRight className="size-3.5 ml-1.5" />
                                 </Button>
                             </div>
@@ -502,11 +502,11 @@ export default function AdminDashboard({
                                     <div className="flex items-center justify-between mb-5">
                                         <div>
                                             <h2 className="text-base font-bold text-zinc-900 dark:text-white flex items-center gap-2">
-                                                <Receipt className="size-4 text-red-600" />
-                                                Antrean Verifikasi Klaim Poin Transaksi
+                                                <History className="size-4 text-red-600" />
+                                                Antrean Verifikasi Transaksi Poin
                                             </h2>
                                             <p className="text-xs text-zinc-500">
-                                                Daftar pengajuan struk transaksi dari member yang menunggu validasi admin
+                                                Daftar pencatatan transaksi pemberian poin dari member AHASS yang menunggu validasi admin
                                             </p>
                                         </div>
                                         <button
@@ -533,9 +533,11 @@ export default function AdminDashboard({
                                                         <span className="font-bold text-sm text-zinc-900 dark:text-zinc-100">
                                                             {claim.member_name}
                                                         </span>
-                                                        <Badge variant="outline" className="font-mono text-[10px]">
-                                                            {claim.receipt_number}
-                                                        </Badge>
+                                                        {claim.transaction_code && (
+                                                            <Badge variant="outline" className="font-mono text-[10px]">
+                                                                {claim.transaction_code}
+                                                            </Badge>
+                                                        )}
                                                     </div>
 
                                                     <div className="text-xs text-zinc-600 dark:text-zinc-300 flex flex-wrap items-center gap-2">
@@ -566,7 +568,7 @@ export default function AdminDashboard({
                                                             className="h-8 text-xs px-2.5 rounded-lg border-zinc-300 dark:border-zinc-700"
                                                         >
                                                             <Eye className="size-3.5 mr-1" />
-                                                            Struk
+                                                            Detail
                                                         </Button>
 
                                                         {claim.status === 'pending' ? (
@@ -616,12 +618,11 @@ export default function AdminDashboard({
                                 <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6 shadow-xs">
                                     <div className="flex items-center justify-between mb-4">
                                         <div>
-                                            <h3 className="text-sm font-bold text-zinc-900 dark:text-white flex items-center gap-2">
-                                                <ShoppingBag className="size-4 text-red-600" />
-                                                Kategori Klaim Transaksi Resmi Terpopuler
+                                            <h3 className="font-bold text-sm text-zinc-900 dark:text-white">
+                                                Kategori Transaksi Resmi Terpopuler
                                             </h3>
                                             <p className="text-xs text-zinc-500">
-                                                Sebaran jenis transaksi struk yang diajukan oleh member loyalitas
+                                                Sebaran kategori layanan & transaksi yang dicatatkan member loyalitas
                                             </p>
                                         </div>
                                     </div>
@@ -959,11 +960,11 @@ export default function AdminDashboard({
                         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-zinc-200 dark:border-zinc-800 pb-5">
                             <div>
                                 <h2 className="text-base font-bold text-zinc-900 dark:text-white flex items-center gap-2">
-                                    <Receipt className="size-5 text-red-600" />
-                                    Pusat Verifikasi Klaim Poin Struk Transaksi
+                                    <History className="size-5 text-red-600" />
+                                    Pusat Verifikasi & Log Transaksi Poin
                                 </h2>
                                 <p className="text-xs text-zinc-500">
-                                    Validasi struk atau nota transaksi pembelian dan servis resmi Honda yang diajukan pelanggan untuk mengkreditkan poin
+                                    Validasi dan tinjau transaksi layanan servis serta pembelian resmi Honda untuk mengkreditkan reward poin kepada member
                                 </p>
                             </div>
 
@@ -1028,9 +1029,11 @@ export default function AdminDashboard({
                                                 <Badge variant="outline" className="font-mono text-xs font-bold">
                                                     {claim.id}
                                                 </Badge>
-                                                <span className="text-[11px] text-zinc-500 font-mono">
-                                                    {claim.receipt_number}
-                                                </span>
+                                                {claim.transaction_code && (
+                                                    <span className="text-[11px] text-zinc-500 font-mono">
+                                                        {claim.transaction_code}
+                                                    </span>
+                                                )}
                                             </div>
 
                                             <Badge
@@ -1122,7 +1125,7 @@ export default function AdminDashboard({
                                             className="text-xs h-9 rounded-xl border-zinc-300 dark:border-zinc-700"
                                         >
                                             <Eye className="size-3.5 mr-1.5" />
-                                            Detail Struk
+                                            Detail Transaksi
                                         </Button>
 
                                         {claim.status === 'pending' ? (
@@ -1270,10 +1273,10 @@ export default function AdminDashboard({
                                             1
                                         </div>
                                         <h4 className="font-bold text-sm text-red-900 dark:text-red-200">
-                                            Struk Servis AHASS
+                                            Servis Berkala AHASS
                                         </h4>
                                         <p className="text-xs text-red-800 dark:text-red-300 leading-relaxed">
-                                            Member mengklaim poin dengan mengunggah nomor struk resmi AHASS. Setiap <strong>Rp 1.000</strong> menghasilkan <strong>1 Poin</strong> reward.
+                                            Member memperoleh poin reward langsung saat melakukan servis di bengkel resmi AHASS melalui scanner QR ID member.
                                         </p>
                                     </div>
 
@@ -1282,10 +1285,10 @@ export default function AdminDashboard({
                                             2
                                         </div>
                                         <h4 className="font-bold text-sm text-amber-900 dark:text-amber-200">
-                                            Struk Part & Oli AHM
+                                            Pembelian Part & Oli AHM
                                         </h4>
                                         <p className="text-xs text-amber-800 dark:text-amber-300 leading-relaxed">
-                                            Pembelian oli MPX/SPX atau suku cadang resmi HGP diklaim manual melalui sistem mandiri dengan rasio <strong>1 Poin per Rp 1.000</strong>.
+                                            Setiap pembelian oli resmi MPX/SPX atau suku cadang resmi Honda Genuine Parts otomatis memperoleh reward poin di kasir.
                                         </p>
                                     </div>
 
@@ -1318,7 +1321,7 @@ export default function AdminDashboard({
                                             <strong>Two-Factor Authentication (2FA):</strong> Sistem mendukung pengiriman kode OTP 6-digit via Email SMTP (Gmail) serta aplikasi authenticator (TOTP).
                                         </li>
                                         <li>
-                                            <strong>Validasi No. Struk:</strong> Setiap klaim poin diverifikasi berdasarkan keaslian nomor struk atau nota pembelian resmi dari jaringan mitra dealer atau AHASS.
+                                            <strong>Validasi Transaksi Poin:</strong> Setiap pemberian poin diverifikasi langsung oleh petugas resmi melalui scanner kamera QR atau input ID Member.
                                         </li>
                                     </ul>
                                 </div>
@@ -1427,34 +1430,33 @@ export default function AdminDashboard({
                 </DialogContent>
             </Dialog>
 
-            {/* Modal Detail Struk Transaksi (Claim Inspection) */}
+            {/* Modal Detail Transaksi (Claim Inspection) */}
             <Dialog open={!!inspectedClaim} onOpenChange={() => setInspectedClaim(null)}>
                 <DialogContent className="sm:max-w-lg rounded-3xl p-6">
                     <DialogHeader>
                         <DialogTitle className="text-base font-bold flex items-center gap-2 text-zinc-900 dark:text-zinc-100">
                             <div className="size-8 rounded-xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 flex items-center justify-center">
-                                <Receipt className="size-4" />
+                                <History className="size-4" />
                             </div>
-                            Pemeriksaan Bukti Struk & Transaksi Resmi
+                            Pemeriksaan Rekaman Transaksi Resmi
                         </DialogTitle>
                         <DialogDescription className="text-xs">
-                            Verifikasi rincian nomor nota dan nominal transaksi untuk pemberian poin reward
+                            Verifikasi rincian transaksi layanan dan alokasi poin reward member
                         </DialogDescription>
                     </DialogHeader>
 
                     {inspectedClaim && (
                         <div className="space-y-4 py-2 text-xs">
-                            {/* Receipt Slip Style */}
                             <div className="p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 space-y-3 font-mono">
                                 <div className="flex items-center justify-between border-b border-zinc-200 dark:border-zinc-800 pb-2">
-                                    <div className="font-bold text-red-600">BUKTI TRANSAKSI RESMI HONDA</div>
+                                    <div className="font-bold text-red-600">LOG TRANSAKSI RESMI HONDA AHASS</div>
                                     <div className="text-[10px] text-zinc-500">{inspectedClaim.date}</div>
                                 </div>
 
                                 <div className="grid grid-cols-2 gap-2 text-[11px]">
                                     <div>
-                                        <span className="text-zinc-400 block text-[9px]">NO. STRUK / NOTA</span>
-                                        <span className="font-bold">{inspectedClaim.receipt_number}</span>
+                                        <span className="text-zinc-400 block text-[9px]">KODE TRANSAKSI</span>
+                                        <span className="font-bold">{inspectedClaim.transaction_code || `#${inspectedClaim.id}`}</span>
                                     </div>
                                     <div>
                                         <span className="text-zinc-400 block text-[9px]">TEMPAT TRANSAKSI</span>

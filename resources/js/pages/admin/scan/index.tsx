@@ -521,12 +521,12 @@ export default function AdminScanIndex({ activities, recentScans, awarded }: Pro
                                     </div>
                                     <div>
                                         <Label htmlFor="scanNotes" className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">
-                                            Catatan / Nomor Struk AHASS (Opsional)
+                                            Catatan Transaksi Poin (Opsional)
                                         </Label>
                                         <Input
                                             id="scanNotes"
                                             type="text"
-                                            placeholder="Contoh: No. Faktur SRV-0182"
+                                            placeholder="Contoh: Servis berkala kelipatan 10.000 KM"
                                             value={notes}
                                             onChange={(e) => setNotes(e.target.value)}
                                             className="mt-1 rounded-xl text-xs h-10"

@@ -117,7 +117,7 @@ test('admin can award points to member and history is created with 10-digit ID',
             'user_id' => $member->id,
             'activity_id' => $activity->id,
             'points' => 50,
-            'notes' => 'Struk AHASS-001',
+            'notes' => 'Transaksi AHASS-001',
         ]);
 
     $response->assertSessionHasNoErrors();

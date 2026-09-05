@@ -54,28 +54,6 @@ class CustomerDashboardController extends Controller
             'lifetimePoints' => (int) $user->lifetime_points,
             'pointsToNextTier' => $tier->pointsToNextTier((int) $user->lifetime_points),
             'tierProgress' => $tier->progress((int) $user->lifetime_points),
-            'claims' => [
-                [
-                    'id' => 'CLM-8921',
-                    'receipt_number' => 'INV/AHASS-001/0142',
-                    'merchant' => 'AHASS Mitra Motor Utama',
-                    'category' => 'Servis & Oli Mesin',
-                    'amount' => 185000,
-                    'points' => 185,
-                    'status' => 'pending',
-                    'date' => '04 Sep 2026',
-                ],
-                [
-                    'id' => 'CLM-8812',
-                    'receipt_number' => 'STR-ANPER-8821',
-                    'merchant' => 'Dealer Honda Anper',
-                    'category' => 'Beli Sparepart & Aksesori',
-                    'amount' => 120000,
-                    'points' => 120,
-                    'status' => 'approved',
-                    'date' => '28 Agu 2026',
-                ],
-            ],
             'vouchers' => [
                 [
                     'id' => 'v1',

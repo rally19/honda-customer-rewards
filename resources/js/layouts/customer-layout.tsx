@@ -9,7 +9,6 @@ import {
     Gift,
     Home,
     QrCode as QrCodeIcon,
-    Receipt,
     Shield,
     Sparkles,
     User as UserIcon,
@@ -203,7 +202,7 @@ export default function CustomerLayout({
                                 : 'text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-200 font-medium'
                         }`}
                     >
-                        <Receipt className="size-5" />
+                        <Clock className="size-5" />
                         <span className="text-[10px]">Riwayat</span>
                     </a>
 

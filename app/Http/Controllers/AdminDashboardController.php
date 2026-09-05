@@ -113,11 +113,11 @@ class AdminDashboardController extends Controller
             ],
         ];
 
-        // Standalone Point Claims submitted by members
+        // Activity Transactions log
         $pointClaims = [
             [
                 'id' => 'CLM-8921',
-                'receipt_number' => 'INV/AHASS-001/0142',
+                'transaction_code' => 'TRX-AHASS-0142',
                 'member_name' => 'Leonel Rally Squall',
                 'member_id' => '8844766994',
                 'phone_number' => '085641667668',
@@ -127,11 +127,11 @@ class AdminDashboardController extends Controller
                 'points_claimed' => 185,
                 'status' => 'pending',
                 'date' => '04 Sep 2026, 14:15',
-                'notes' => 'Struk fisik AHASS no. 0142 telah dilampirkan oleh member.',
+                'notes' => 'Servis berkala dan ganti oli MPX telah diverifikasi petugas AHASS.',
             ],
             [
                 'id' => 'CLM-8920',
-                'receipt_number' => 'INV/AHASS-002/0098',
+                'transaction_code' => 'TRX-AHASS-0098',
                 'member_name' => 'Siti Nurhaliza',
                 'member_id' => '4920194821',
                 'phone_number' => '081298492019',
@@ -141,11 +141,11 @@ class AdminDashboardController extends Controller
                 'points_claimed' => 245,
                 'status' => 'approved',
                 'date' => '04 Sep 2026, 11:30',
-                'notes' => 'Validasi struk selesai, transaksi terkonfirmasi resmi.',
+                'notes' => 'Pembersihan CVT dan servis berkala tuntas terkonfirmasi.',
             ],
             [
                 'id' => 'CLM-8919',
-                'receipt_number' => 'STR/PART/2026/0312',
+                'transaction_code' => 'TRX-PART-0312',
                 'member_name' => 'Ahmad Fauzi',
                 'member_id' => '1029481923',
                 'phone_number' => '085710294819',
@@ -155,11 +155,11 @@ class AdminDashboardController extends Controller
                 'points_claimed' => 320,
                 'status' => 'approved',
                 'date' => '03 Sep 2026, 16:45',
-                'notes' => 'Pembelian sparepart resmi Honda Genuine Parts.',
+                'notes' => 'Pembelian suku cadang resmi Honda Genuine Parts.',
             ],
             [
                 'id' => 'CLM-8918',
-                'receipt_number' => 'INV/AHASS-001/0139',
+                'transaction_code' => 'TRX-AHASS-0139',
                 'member_name' => 'Budi Santoso',
                 'member_id' => '7192840192',
                 'phone_number' => '081371928401',
@@ -169,7 +169,7 @@ class AdminDashboardController extends Controller
                 'points_claimed' => 120,
                 'status' => 'approved',
                 'date' => '03 Sep 2026, 10:10',
-                'notes' => 'Struk terverifikasi oleh kasir AHASS.',
+                'notes' => 'Tune up dan uji emisi tervalidasi oleh kasir AHASS.',
             ],
         ];
 

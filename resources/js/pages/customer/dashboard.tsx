@@ -21,7 +21,6 @@ import {
     MessageSquare,
     Plus,
     QrCode,
-    Receipt,
     Share2,
     Shield,
     ShoppingBag,
@@ -38,17 +37,6 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 
-type ClaimItem = {
-    id: string;
-    receipt_number: string;
-    merchant: string;
-    category: string;
-    amount: number;
-    points: number;
-    status: 'pending' | 'approved' | 'rejected';
-    date: string;
-};
-
 type Props = {
     loyalty: {
         memberId: string;
@@ -59,7 +47,6 @@ type Props = {
         lifetimePoints?: number;
         pointsToNextTier: number;
         tierProgress: number;
-        claims?: ClaimItem[];
         vouchers: Array<{
             id: string;
             title: string;
@@ -88,8 +75,6 @@ export default function CustomerDashboard({ loyalty }: Props) {
     const [showPoints, setShowPoints] = useState(true);
     const [copiedId, setCopiedId] = useState(false);
     const [selectedVoucher, setSelectedVoucher] = useState<(typeof loyalty.vouchers)[0] | null>(null);
-    const [claimModalOpen, setClaimModalOpen] = useState(false);
-    const [claimsList, setClaimsList] = useState<ClaimItem[]>(loyalty.claims || []);
 
     const formattedId = loyalty.memberId
         .padStart(10, '0')
@@ -100,35 +85,6 @@ export default function CustomerDashboard({ loyalty }: Props) {
         setCopiedId(true);
         toast.success('ID Member berhasil disalin ke clipboard');
         setTimeout(() => setCopiedId(false), 2000);
-    };
-
-    const handleClaimSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        const form = e.currentTarget;
-        const receiptNumber = (form.elements.namedItem('receipt_number') as HTMLInputElement).value;
-        const merchant = (form.elements.namedItem('merchant') as HTMLInputElement).value;
-        const category = (form.elements.namedItem('category') as HTMLInputElement).value;
-        const amount = Number((form.elements.namedItem('amount') as HTMLInputElement).value);
-        const notes = (form.elements.namedItem('notes') as HTMLInputElement).value;
-
-        const calculatedPoints = Math.floor(amount / 1000);
-
-        const newClaim: ClaimItem = {
-            id: `CLM-${Math.floor(1000 + Math.random() * 9000)}`,
-            receipt_number: receiptNumber,
-            merchant,
-            category,
-            amount,
-            points: calculatedPoints,
-            status: 'pending',
-            date: 'Hari ini',
-        };
-
-        setClaimsList([newClaim, ...claimsList]);
-        setClaimModalOpen(false);
-        toast.success(
-            `Klaim struk ${receiptNumber} berhasil diajukan! Estimasi +${calculatedPoints} Poin akan diverifikasi oleh Admin.`
-        );
     };
 
     return (
@@ -229,13 +185,15 @@ export default function CustomerDashboard({ loyalty }: Props) {
                         <div className="grid grid-cols-4 gap-2 border-t border-white/10 pt-4 text-center">
                             <button
                                 type="button"
-                                onClick={() => setClaimModalOpen(true)}
+                                onClick={handleCopyId}
                                 className="group flex flex-col items-center gap-1.5 rounded-xl p-2 hover:bg-white/10 transition-colors cursor-pointer"
                             >
                                 <div className="flex size-9 items-center justify-center rounded-xl bg-white/15 text-white group-hover:scale-105 transition-transform">
-                                    <Receipt className="size-4.5" />
+                                    {copiedId ? <Check className="size-4.5 text-emerald-400" /> : <Copy className="size-4.5" />}
                                 </div>
-                                <span className="text-[11px] font-medium text-zinc-200">Klaim Poin</span>
+                                <span className="text-[11px] font-medium text-zinc-200">
+                                    {copiedId ? 'Tersalin' : 'Salin ID'}
+                                </span>
                             </button>
 
                             <a
@@ -271,93 +229,6 @@ export default function CustomerDashboard({ loyalty }: Props) {
                     </div>
                 </section>
 
-                {/* ========================================================================= */}
-                {/* 2. PUSAT KLAIM POIN STRUK RESMI HONDA (STANDALONE CLAIM HUB)              */}
-                {/* ========================================================================= */}
-                <section className="rounded-3xl border border-zinc-200/90 bg-white p-5 sm:p-6 shadow-xs dark:border-zinc-800 dark:bg-zinc-900 space-y-4">
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-zinc-100 dark:border-zinc-800 pb-4">
-                        <div className="flex items-center gap-3">
-                            <div className="flex size-11 items-center justify-center rounded-2xl bg-red-50 text-red-600 dark:bg-red-950/60 dark:text-red-400 shrink-0">
-                                <Receipt className="size-5" />
-                            </div>
-                            <div>
-                                <div className="flex items-center gap-2">
-                                    <h3 className="text-sm sm:text-base font-bold text-zinc-900 dark:text-white">
-                                        Klaim Poin Struk Resmi Honda & AHASS
-                                    </h3>
-                                    <Badge variant="outline" className="text-[10px] py-0 text-red-600 border-red-300">
-                                        Mandiri
-                                    </Badge>
-                                </div>
-                                <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">
-                                    Punya struk pembelian atau servis di jaringan resmi? Masukkan nomor struk Anda untuk mendapatkan poin reward.
-                                </p>
-                            </div>
-                        </div>
-
-                        <Button
-                            onClick={() => setClaimModalOpen(true)}
-                            className="bg-red-600 hover:bg-red-700 text-white text-xs font-bold gap-1.5 h-9.5 px-4 rounded-xl shrink-0 cursor-pointer shadow-sm shadow-red-600/20"
-                        >
-                            <Plus className="size-4" />
-                            Ajukan Klaim Poin
-                        </Button>
-                    </div>
-
-                    {/* Claims List Status Tracker */}
-                    <div className="space-y-2.5">
-                        <div className="flex items-center justify-between text-xs text-zinc-500 font-semibold">
-                            <span>Status Pengajuan Struk Terkini</span>
-                            <span>Rasio: 1 Poin per Rp 1.000</span>
-                        </div>
-
-                        {claimsList.length === 0 ? (
-                            <div className="p-6 text-center text-xs text-zinc-400 bg-zinc-50 dark:bg-zinc-950/50 rounded-2xl border border-dashed border-zinc-200 dark:border-zinc-800">
-                                Belum ada pengajuan klaim struk transaksi. Klik "Ajukan Klaim Poin" untuk memulai!
-                            </div>
-                        ) : (
-                            claimsList.map((claim) => (
-                                <div
-                                    key={claim.id}
-                                    className="p-3.5 rounded-2xl border border-zinc-100 dark:border-zinc-800 bg-zinc-50/60 dark:bg-zinc-950/40 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs"
-                                >
-                                    <div className="space-y-1">
-                                        <div className="flex items-center gap-2">
-                                            <span className="font-mono font-bold text-zinc-700 dark:text-zinc-300">
-                                                {claim.receipt_number}
-                                            </span>
-                                            <Badge
-                                                className={
-                                                    claim.status === 'approved'
-                                                        ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-400 border-none text-[10px] font-bold'
-                                                        : claim.status === 'rejected'
-                                                          ? 'bg-red-100 text-red-800 dark:bg-red-950 dark:text-red-400 border-none text-[10px] font-bold'
-                                                          : 'bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-400 border-none text-[10px] font-bold'
-                                                }
-                                            >
-                                                {claim.status === 'approved'
-                                                    ? 'Disetujui (+Poin Masuk)'
-                                                    : claim.status === 'rejected'
-                                                      ? 'Klaim Ditolak'
-                                                      : 'Menunggu Verifikasi Admin'}
-                                            </Badge>
-                                        </div>
-                                        <div className="text-[11px] text-zinc-500">
-                                            {claim.merchant} &bull; {claim.category} &bull; Rp {claim.amount.toLocaleString('id-ID')}
-                                        </div>
-                                    </div>
-
-                                    <div className="flex items-center sm:flex-col sm:items-end justify-between gap-1 shrink-0">
-                                        <span className="font-black text-xs text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/40 px-2 py-0.5 rounded-md">
-                                            +{claim.points} PTS
-                                        </span>
-                                        <span className="text-[10px] text-zinc-400">{claim.date}</span>
-                                    </div>
-                                </div>
-                            ))
-                        )}
-                    </div>
-                </section>
 
                 {/* ========================================================================= */}
                 {/* 3. MENU CEPAT LAYANAN & KUMPUL POIN (QUICK ACTIONS GRID)                  */}
@@ -371,26 +242,24 @@ export default function CustomerDashboard({ loyalty }: Props) {
                     </div>
 
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
-                        {/* Klaim Struk AHASS */}
+                        {/* Servis AHASS */}
                         <div
-                            onClick={() => setClaimModalOpen(true)}
-                            className="flex flex-col items-center text-center gap-1.5 p-3.5 rounded-2xl border border-zinc-200/80 bg-white dark:border-zinc-800 dark:bg-zinc-900 hover:border-red-400 transition-all cursor-pointer group shadow-xs"
+                            className="flex flex-col items-center text-center gap-1.5 p-3.5 rounded-2xl border border-zinc-200/80 bg-white dark:border-zinc-800 dark:bg-zinc-900 hover:border-red-400 transition-all group shadow-xs"
                         >
                             <div className="flex size-11 items-center justify-center rounded-2xl bg-red-50 text-red-600 dark:bg-red-950/60 dark:text-red-400 group-hover:scale-105 transition-transform">
-                                <Receipt className="size-5" />
+                                <Wrench className="size-5" />
                             </div>
                             <span className="text-[11px] font-semibold text-zinc-800 dark:text-zinc-200 leading-tight">
-                                Klaim Struk AHASS
+                                Servis Motor AHASS
                             </span>
                             <span className="text-[9px] font-bold text-red-600 dark:text-red-400">
-                                +1 Poin / Rp 1.000
+                                Scan QR di Kasir
                             </span>
                         </div>
 
                         {/* Beli Suku Cadang & Oli */}
                         <div
-                            onClick={() => setClaimModalOpen(true)}
-                            className="flex flex-col items-center text-center gap-1.5 p-3.5 rounded-2xl border border-zinc-200/80 bg-white dark:border-zinc-800 dark:bg-zinc-900 hover:border-red-400 transition-all cursor-pointer group shadow-xs"
+                            className="flex flex-col items-center text-center gap-1.5 p-3.5 rounded-2xl border border-zinc-200/80 bg-white dark:border-zinc-800 dark:bg-zinc-900 hover:border-red-400 transition-all group shadow-xs"
                         >
                             <div className="flex size-11 items-center justify-center rounded-2xl bg-amber-50 text-amber-600 dark:bg-amber-950/60 dark:text-amber-400 group-hover:scale-105 transition-transform">
                                 <ShoppingBag className="size-5" />
@@ -399,7 +268,7 @@ export default function CustomerDashboard({ loyalty }: Props) {
                                 Part & Oli AHM
                             </span>
                             <span className="text-[9px] font-bold text-amber-600 dark:text-amber-400">
-                                +1 Poin / Rp 1.000
+                                Poin Otomatis
                             </span>
                         </div>
 
@@ -523,7 +392,7 @@ export default function CustomerDashboard({ loyalty }: Props) {
                 <section id="riwayat" className="rounded-2xl border border-zinc-200/90 bg-white p-5 shadow-xs dark:border-zinc-800 dark:bg-zinc-900">
                     <div className="flex items-center justify-between border-b border-zinc-100 pb-3 dark:border-zinc-800">
                         <div className="flex items-center gap-2">
-                            <Receipt className="size-4 text-red-600" />
+                            <Clock className="size-4 text-red-600" />
                             <h3 className="text-sm font-bold uppercase tracking-wider text-zinc-900 dark:text-zinc-100">
                                 Riwayat Poin Terakhir
                             </h3>
@@ -575,105 +444,6 @@ export default function CustomerDashboard({ loyalty }: Props) {
                 </section>
             </div>
 
-            {/* ========================================================================= */}
-            {/* MODAL PENGAJUAN KLAIM POIN STRUK                                          */}
-            {/* ========================================================================= */}
-            <Dialog open={claimModalOpen} onOpenChange={setClaimModalOpen}>
-                <DialogContent className="sm:max-w-md rounded-3xl border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-6">
-                    <DialogHeader>
-                        <DialogTitle className="text-base font-bold flex items-center gap-2 text-zinc-900 dark:text-white">
-                            <div className="size-8 rounded-xl bg-red-50 dark:bg-red-950/60 text-red-600 flex items-center justify-center">
-                                <Receipt className="size-4" />
-                            </div>
-                            Klaim Poin Struk Transaksi Resmi
-                        </DialogTitle>
-                        <DialogDescription className="text-xs text-zinc-500">
-                            Masukkan data dari nota atau struk pembelian di dealer resmi atau bengkel AHASS
-                        </DialogDescription>
-                    </DialogHeader>
-
-                    <form onSubmit={handleClaimSubmit} className="space-y-3.5 py-2 text-xs">
-                        <div>
-                            <label className="font-bold block mb-1 text-zinc-800 dark:text-zinc-200">
-                                Nomor Struk / Nota Transaksi
-                            </label>
-                            <Input
-                                name="receipt_number"
-                                placeholder="Contoh: INV/AHASS-001/0142"
-                                required
-                                className="text-xs h-9 rounded-xl font-mono"
-                            />
-                        </div>
-
-                        <div>
-                            <label className="font-bold block mb-1 text-zinc-800 dark:text-zinc-200">
-                                Tempat Transaksi / Nama Bengkel AHASS
-                            </label>
-                            <Input
-                                name="merchant"
-                                placeholder="Contoh: AHASS Mitra Motor Utama"
-                                required
-                                className="text-xs h-9 rounded-xl"
-                            />
-                        </div>
-
-                        <div className="grid grid-cols-2 gap-3">
-                            <div>
-                                <label className="font-bold block mb-1 text-zinc-800 dark:text-zinc-200">
-                                    Kategori Transaksi
-                                </label>
-                                <select
-                                    name="category"
-                                    className="w-full h-9 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-3 text-xs focus:ring-2 focus:ring-red-500 outline-none"
-                                >
-                                    <option value="Servis & Oli AHASS">Servis & Oli AHASS</option>
-                                    <option value="Suku Cadang HGP">Suku Cadang HGP</option>
-                                    <option value="Aksesori & Apparel">Aksesori & Apparel</option>
-                                    <option value="Pembelian Unit Motor">Pembelian Unit Motor</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label className="font-bold block mb-1 text-zinc-800 dark:text-zinc-200">
-                                    Total Nilai (Rp)
-                                </label>
-                                <Input
-                                    name="amount"
-                                    type="number"
-                                    min="1000"
-                                    step="1000"
-                                    placeholder="185000"
-                                    required
-                                    className="text-xs h-9 rounded-xl"
-                                />
-                            </div>
-                        </div>
-
-                        <div>
-                            <label className="font-bold block mb-1 text-zinc-800 dark:text-zinc-200">
-                                Catatan / Keterangan Pembelian
-                            </label>
-                            <Input
-                                name="notes"
-                                placeholder="Contoh: Servis berkala 10.000 KM dan ganti oli MPX"
-                                className="text-xs h-9 rounded-xl"
-                            />
-                        </div>
-
-                        <div className="p-3 bg-red-50 dark:bg-red-950/30 rounded-xl border border-red-100 dark:border-red-900/40 text-[11px] text-red-800 dark:text-red-300">
-                            <strong>Ketentuan Poin:</strong> Setiap Rp 1.000 nilai transaksi resmi menghasilkan 1 Poin reward. Poin akan masuk ke saldo setelah diverifikasi oleh Admin.
-                        </div>
-
-                        <DialogFooter className="pt-2">
-                            <Button
-                                type="submit"
-                                className="w-full bg-red-600 hover:bg-red-700 text-white font-bold text-xs h-10 rounded-xl cursor-pointer shadow-md shadow-red-600/20"
-                            >
-                                Kirim Pengajuan Klaim Poin
-                            </Button>
-                        </DialogFooter>
-                    </form>
-                </DialogContent>
-            </Dialog>
 
             {/* ========================================================================= */}
             {/* MODAL DETAIL VOUCHER & KODE KLAIM                                          */}
