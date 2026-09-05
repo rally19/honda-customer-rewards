@@ -17,7 +17,6 @@ import {
     Flame,
     Gift,
     Info,
-    Receipt,
     RotateCcw,
     Search,
     Shield,
@@ -380,7 +379,7 @@ export default function CustomerHistoryPage({
                 <div className="rounded-2xl border border-zinc-200/90 bg-white shadow-xs dark:border-zinc-800 dark:bg-zinc-900 overflow-hidden">
                     <div className="flex items-center justify-between border-b border-zinc-100 px-5 py-3.5 dark:border-zinc-800">
                         <div className="flex items-center gap-2">
-                            <Receipt className="size-4 text-red-600" />
+                            <Clock className="size-4 text-red-600" />
                             <h2 className="text-xs font-bold uppercase tracking-wider text-zinc-900 dark:text-zinc-100">
                                 Catatan Mutasi Transaksi
                             </h2>
@@ -462,7 +461,7 @@ export default function CustomerHistoryPage({
                                         </div>
 
                                         <span className="text-[10px] font-bold text-red-600 dark:text-red-400 inline-flex items-center gap-0.5 mt-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                                            Lihat Struk <ChevronRight className="size-3" />
+                                            Detail Transaksi <ChevronRight className="size-3" />
                                         </span>
                                     </div>
                                 </div>
@@ -596,13 +595,13 @@ export default function CustomerHistoryPage({
             </div>
 
             {/* ========================================================================= */}
-            {/* 5. MODAL STRUK RINCIAN TRANSAKSI DIGITAL RESMI                            */}
+            {/* 5. MODAL RINCIAN TRANSAKSI DIGITAL RESMI                                  */}
             {/* ========================================================================= */}
             <Dialog open={!!selectedHistory} onOpenChange={(open) => !open && setSelectedHistory(null)}>
                 <DialogContent className="sm:max-w-md rounded-3xl border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-0 overflow-hidden">
                     {selectedHistory && (
                         <div>
-                            {/* Struk Header: Red Gradient Banner */}
+                            {/* Header: Red Gradient Banner */}
                             <div className="relative bg-gradient-to-br from-red-600 to-rose-700 p-6 text-white text-center overflow-hidden">
                                 <div className="pointer-events-none absolute -right-8 -bottom-8 opacity-20 select-none">
                                     <img
@@ -617,7 +616,7 @@ export default function CustomerHistoryPage({
                                         <CheckCircle2 className="size-7 text-emerald-300" />
                                     </div>
                                     <span className="text-[10px] font-mono tracking-widest text-red-200 uppercase font-bold">
-                                        HONDA REWARDS DIGITAL RECEIPT
+                                        HONDA REWARDS OFFICIAL TRANSACTION
                                     </span>
                                     <DialogTitle className="text-lg font-black text-white">
                                         Poin Berhasil Ditambahkan
@@ -631,7 +630,7 @@ export default function CustomerHistoryPage({
                                 </div>
                             </div>
 
-                            {/* Struk Body: Details Breakdown */}
+                            {/* Record Body: Details Breakdown */}
                             <div className="p-6 space-y-4">
                                 <div className="rounded-2xl border border-zinc-200/90 bg-zinc-50/80 p-4 dark:border-zinc-800 dark:bg-zinc-950 space-y-2.5 text-xs">
                                     {/* No Referensi */}
@@ -709,7 +708,7 @@ export default function CustomerHistoryPage({
 
                                 <div className="text-center">
                                     <p className="text-[10px] text-zinc-400">
-                                        Struk digital ini adalah bukti sah perolehan poin program Honda Customer Loyalty Rewards.
+                                        Bukti digital ini adalah rekaman resmi perolehan poin program Honda Customer Loyalty Rewards.
                                     </p>
                                 </div>
                             </div>
@@ -738,7 +737,7 @@ export default function CustomerHistoryPage({
                                     onClick={() => setSelectedHistory(null)}
                                     className="flex-1 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-semibold"
                                 >
-                                    Tutup Struk
+                                    Tutup Detail
                                 </Button>
                             </div>
                         </div>

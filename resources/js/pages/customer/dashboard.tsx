@@ -461,7 +461,7 @@ export default function CustomerDashboard({ loyalty }: Props) {
                             prefetch
                             className="flex w-full items-center justify-center gap-2 rounded-xl border border-zinc-200/90 bg-zinc-50/80 py-2.5 text-xs font-semibold text-zinc-700 transition-all hover:bg-red-50 hover:text-red-600 hover:border-red-200 dark:border-zinc-800 dark:bg-zinc-800/40 dark:text-zinc-300 dark:hover:bg-red-950/30 dark:hover:text-red-400 dark:hover:border-red-900/50"
                         >
-                            <span>Buka Halaman Riwayat Lengkap & Rincian Struk</span>
+                            <span>Buka Halaman Riwayat Lengkap & Rincian Transaksi</span>
                             <ChevronRight className="size-3.5" />
                         </Link>
                     </div>
