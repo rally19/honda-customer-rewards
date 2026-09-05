@@ -18,7 +18,6 @@ import {
     X,
 } from 'lucide-react';
 import QrCode, { type QrCodeHandle } from '@/components/qr-code';
-import ThemeToggle from '@/components/theme-toggle';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { home } from '@/routes';
@@ -392,9 +391,6 @@ export default function CustomerLayout({
                                 </div>
                             )}
                         </div>
-
-                        {/* Dark / Light Mode Switcher */}
-                        <ThemeToggle />
                     </div>
                 </div>
             </header>
