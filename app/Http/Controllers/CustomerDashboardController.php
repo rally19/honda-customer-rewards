@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Enums\MemberTier;
 use App\Models\Activity;
+use App\Models\PointExchange;
 use App\Models\Reward;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -78,6 +79,30 @@ class CustomerDashboardController extends Controller
             ])
             ->all();
 
+        $rewardExchanges = $user->pointExchanges()
+            ->with(['reward:id,name,image_url', 'admin:id,name'])
+            ->latest('created_at')
+            ->take(3)
+            ->get()
+            ->map(fn (PointExchange $c) => [
+                'id' => (string) $c->id,
+                'reward_id' => (string) ($c->reward_id ?? ''),
+                'title' => $c->reward_name,
+                'reward_name' => $c->reward_name,
+                'reward_image' => $c->reward_image ?? $c->reward?->image_url ?? '',
+                'points_cost' => (int) $c->points_cost,
+                'status' => $c->status,
+                'status_label' => match ($c->status) {
+                    'claimed' => 'Disetujui',
+                    'hold' => 'Diproses',
+                    'rejected' => 'Ditolak',
+                    'cancelled' => 'Dibatalkan',
+                    default => ucfirst($c->status),
+                },
+                'date' => $c->created_at?->format('d M Y, H:i') ?? '-',
+            ])
+            ->all();
+
         $loyaltyData = [
             'memberId' => (string) $user->id,
             'tier' => $tier->value.' Member',
@@ -91,11 +116,9 @@ class CustomerDashboardController extends Controller
             'tierRoadmap' => MemberTier::roadmap((int) $user->lifetime_points),
             'vouchers' => [],
             'rewards' => $rewards,
+            'rewardExchanges' => $rewardExchanges,
             'transactions' => $transactions,
-            'raffleTickets' => [
-                ['number' => 'UND-84920-A', 'period' => 'Undian Spesial Hari Pelanggan 2026'],
-                ['number' => 'UND-84921-B', 'period' => 'Undian Spesial Hari Pelanggan 2026'],
-            ],
+            'raffleTickets' => [],
             'earningActivities' => $earningActivities,
         ];
 
@@ -103,6 +126,7 @@ class CustomerDashboardController extends Controller
             'loyalty' => $loyaltyData,
             'earningActivities' => $earningActivities,
             'rewards' => $rewards,
+            'rewardExchanges' => $rewardExchanges,
         ]);
     }
 }

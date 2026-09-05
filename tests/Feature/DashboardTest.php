@@ -242,3 +242,31 @@ test('customer dashboard provides rewards catalog from database', function () {
         ->has('loyalty.rewards', 1)
     );
 });
+
+test('customer dashboard provides reward exchanges history from database', function () {
+    $user = User::factory()->create(['role' => 'user']);
+
+    PointExchange::create([
+        'id' => '2039485701',
+        'reward_name' => 'Merchandise resmi Honda',
+        'points_cost' => 350,
+        'user_id' => $user->id,
+        'user_name' => $user->name,
+        'user_email' => $user->email,
+        'status' => 'claimed',
+    ]);
+
+    $response = $this
+        ->actingAs($user)
+        ->get(route('dashboard'));
+
+    $response->assertOk();
+    $response->assertInertia(fn (Assert $page) => $page
+        ->component('customer/dashboard')
+        ->has('rewardExchanges', 1)
+        ->where('rewardExchanges.0.reward_name', 'Merchandise resmi Honda')
+        ->where('rewardExchanges.0.points_cost', 350)
+        ->where('rewardExchanges.0.status', 'claimed')
+        ->has('loyalty.rewardExchanges', 1)
+    );
+});

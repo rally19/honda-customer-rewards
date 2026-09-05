@@ -22,6 +22,7 @@ import {
     MessageSquare,
     Plus,
     QrCode,
+    RotateCcw,
     Share2,
     Shield,
     ShoppingBag,
@@ -77,6 +78,18 @@ type RewardItem = {
     can_afford?: boolean;
 };
 
+export type RewardExchangeItem = {
+    id: string;
+    reward_id?: string;
+    title?: string;
+    reward_name: string;
+    reward_image?: string;
+    points_cost: number;
+    status: 'hold' | 'claimed' | 'rejected' | 'cancelled' | string;
+    status_label?: string;
+    date: string;
+};
+
 type Props = {
     loyalty: {
         memberId: string;
@@ -91,6 +104,7 @@ type Props = {
         tierRoadmap?: TierRoadmapItem[];
         earningActivities?: EarningActivity[];
         rewards?: RewardItem[];
+        rewardExchanges?: RewardExchangeItem[];
         vouchers?: Array<{
             id: string;
             title: string;
@@ -108,16 +122,17 @@ type Props = {
             type: 'credit' | 'debit';
             date: string;
         }>;
-        raffleTickets: Array<{
+        raffleTickets?: Array<{
             number: string;
             period: string;
         }>;
     };
     earningActivities?: EarningActivity[];
     rewards?: RewardItem[];
+    rewardExchanges?: RewardExchangeItem[];
 };
 
-export default function CustomerDashboard({ loyalty, earningActivities, rewards }: Props) {
+export default function CustomerDashboard({ loyalty, earningActivities, rewards, rewardExchanges }: Props) {
     const [showPoints, setShowPoints] = useState(true);
     const [copiedId, setCopiedId] = useState(false);
     const [selectedReward, setSelectedReward] = useState<RewardItem | null>(null);
@@ -227,6 +242,12 @@ export default function CustomerDashboard({ loyalty, earningActivities, rewards 
                 { id: '1029384756', name: 'Mengajak teman atau keluarga membeli motor Honda (program referral)', points: 300, description: 'Program referral ajak teman & keluarga beli motor Honda.' },
                 { id: '1029384757', name: 'Memberikan ulasan atau penilaian layanan dealer saat servis atau pembelian motor', points: 40, description: 'Ulasan layanan dealer saat servis atau pembelian motor.' },
             ];
+
+    const activeRewardExchanges: RewardExchangeItem[] = (rewardExchanges && rewardExchanges.length > 0)
+        ? rewardExchanges
+        : (loyalty.rewardExchanges && loyalty.rewardExchanges.length > 0)
+            ? loyalty.rewardExchanges
+            : [];
 
     const updateScrollButtons = () => {
         if (!sliderRef.current) return;
@@ -801,29 +822,121 @@ export default function CustomerDashboard({ loyalty, earningActivities, rewards 
                 </section>
 
                 {/* ========================================================================= */}
-                {/* 5. TIKET UNDIAN AKTIF (RAFFLE TICKETS)                                     */}
+                {/* 5. RIWAYAT PENUKARAN REWARD TERBARU (BRIEF SUMMARY)                      */}
                 {/* ========================================================================= */}
-                <section id="undian" className="rounded-2xl border border-amber-200/80 bg-gradient-to-r from-amber-50 to-orange-50 p-4 dark:border-amber-900/40 dark:bg-gradient-to-r dark:from-amber-950/30 dark:to-orange-950/20">
-                    <div className="flex items-start justify-between gap-4">
-                        <div className="flex items-center gap-3">
-                            <div className="flex size-10 items-center justify-center rounded-xl bg-amber-500 text-white font-bold shadow-xs">
-                                <Ticket className="size-5" />
-                            </div>
+                <section id="riwayat-reward" className="rounded-2xl border border-zinc-200/90 bg-white p-5 shadow-xs dark:border-zinc-800 dark:bg-zinc-900">
+                    <div className="flex items-center justify-between border-b border-zinc-100 pb-3 dark:border-zinc-800">
+                        <div className="flex items-center gap-2">
+                            <Gift className="size-4 text-red-600" />
                             <div>
-                                <h4 className="text-xs sm:text-sm font-bold text-zinc-900 dark:text-white">
-                                    Anda Memiliki {loyalty.raffleTickets.length} Tiket Undian Aktif
-                                </h4>
-                                <p className="text-[11px] text-zinc-600 dark:text-zinc-400">
-                                    {loyalty.raffleTickets[0]?.period}
-                                </p>
+                                <h3 className="text-sm font-bold uppercase tracking-wider text-zinc-900 dark:text-zinc-100">
+                                    Riwayat Reward Terakhir
+                                </h3>
+                                <p className="text-[11px] text-zinc-500">Ringkasan penukaran voucher & hadiah</p>
                             </div>
                         </div>
+                        <Link
+                            href="/rewards"
+                            prefetch
+                            className="inline-flex items-center gap-1 text-xs font-bold text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 transition-colors group"
+                        >
+                            <span>Lihat Semua</span>
+                            <ChevronRight className="size-3.5 group-hover:translate-x-0.5 transition-transform" />
+                        </Link>
+                    </div>
 
-                        <div className="text-right">
-                            <span className="text-[10px] font-mono font-bold text-amber-700 dark:text-amber-400 bg-white/80 dark:bg-black/30 px-2 py-1 rounded-md border border-amber-300 dark:border-amber-800">
-                                {loyalty.raffleTickets.map((t) => t.number).join(', ')}
-                            </span>
+                    {activeRewardExchanges.length > 0 ? (
+                        <div className="divide-y divide-zinc-100 dark:divide-zinc-800/80">
+                            {activeRewardExchanges.slice(0, 3).map((exchange) => (
+                                <div key={exchange.id} className="flex items-center justify-between py-3.5 gap-3">
+                                    <div className="flex items-center gap-3 min-w-0">
+                                        {/* Reward Thumbnail / Icon */}
+                                        <div className="relative size-10 rounded-xl overflow-hidden bg-zinc-100 dark:bg-zinc-800 border border-zinc-200/80 dark:border-zinc-700/80 shrink-0">
+                                            {exchange.reward_image ? (
+                                                <img
+                                                    src={exchange.reward_image}
+                                                    alt={exchange.reward_name}
+                                                    className="w-full h-full object-cover"
+                                                    loading="lazy"
+                                                />
+                                            ) : (
+                                                <div className="w-full h-full flex items-center justify-center text-red-600 bg-red-50 dark:bg-red-950/50">
+                                                    <Gift className="size-5" />
+                                                </div>
+                                            )}
+                                        </div>
+
+                                        <div className="min-w-0">
+                                            <h4 className="text-xs sm:text-sm font-semibold text-zinc-900 dark:text-white truncate">
+                                                {exchange.reward_name}
+                                            </h4>
+                                            <div className="flex items-center gap-1.5 text-[11px] mt-0.5">
+                                                <span className="text-zinc-400 dark:text-zinc-500">{exchange.date}</span>
+                                                <span className="text-zinc-300 dark:text-zinc-600">&bull;</span>
+                                                {exchange.status === 'claimed' && (
+                                                    <span className="inline-flex items-center gap-0.5 font-bold text-emerald-600 dark:text-emerald-400 text-[10px]">
+                                                        <CheckCircle2 className="size-3" />
+                                                        Disetujui
+                                                    </span>
+                                                )}
+                                                {exchange.status === 'hold' && (
+                                                    <span className="inline-flex items-center gap-0.5 font-bold text-amber-600 dark:text-amber-400 text-[10px]">
+                                                        <Clock className="size-3" />
+                                                        Diproses
+                                                    </span>
+                                                )}
+                                                {exchange.status === 'rejected' && (
+                                                    <span className="inline-flex items-center gap-0.5 font-bold text-rose-600 dark:text-rose-400 text-[10px]">
+                                                        <XCircle className="size-3" />
+                                                        Ditolak
+                                                    </span>
+                                                )}
+                                                {exchange.status === 'cancelled' && (
+                                                    <span className="inline-flex items-center gap-0.5 font-bold text-zinc-500 text-[10px]">
+                                                        <RotateCcw className="size-3" />
+                                                        Dibatalkan
+                                                    </span>
+                                                )}
+                                                {!['claimed', 'hold', 'rejected', 'cancelled'].includes(exchange.status) && (
+                                                    <span className="font-semibold text-zinc-500 text-[10px]">
+                                                        {exchange.status_label || exchange.status}
+                                                    </span>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="text-right shrink-0">
+                                        <span className="text-sm font-bold font-mono text-rose-600 dark:text-rose-400">
+                                            -{exchange.points_cost.toLocaleString('id-ID')} Pts
+                                        </span>
+                                    </div>
+                                </div>
+                            ))}
                         </div>
+                    ) : (
+                        <div className="py-7 text-center flex flex-col items-center justify-center">
+                            <div className="size-10 flex items-center justify-center rounded-xl bg-zinc-100 text-zinc-400 dark:bg-zinc-800 dark:text-zinc-500 mb-2">
+                                <Gift className="size-5" />
+                            </div>
+                            <h4 className="text-xs font-semibold text-zinc-800 dark:text-zinc-200">
+                                Belum Ada Penukaran Reward
+                            </h4>
+                            <p className="text-[11px] text-zinc-500 dark:text-zinc-400 max-w-xs mt-0.5">
+                                Kumpulkan poin Anda dan tukarkan dengan voucher atau merchandise resmi Honda
+                            </p>
+                        </div>
+                    )}
+
+                    <div className="mt-4 pt-3 border-t border-zinc-100 dark:border-zinc-800/60">
+                        <Link
+                            href="/rewards"
+                            prefetch
+                            className="flex w-full items-center justify-center gap-2 rounded-xl border border-zinc-200/90 bg-zinc-50/80 py-2.5 text-xs font-semibold text-zinc-700 transition-all hover:bg-red-50 hover:text-red-600 hover:border-red-200 dark:border-zinc-800 dark:bg-zinc-800/40 dark:text-zinc-300 dark:hover:bg-red-950/30 dark:hover:text-red-400 dark:hover:border-red-900/50"
+                        >
+                            <span>Buka Halaman Riwayat Klaim & Katalog Reward</span>
+                            <ChevronRight className="size-3.5" />
+                        </Link>
                     </div>
                 </section>
 
