@@ -100,7 +100,7 @@ export default function CustomerDashboard({ loyalty }: Props) {
                     <div className="pointer-events-none absolute inset-0 rounded-3xl border border-red-500/40 ring-1 ring-inset ring-white/15 z-20" />
 
                     {/* Watermark Logo Honda Wing */}
-                    <div className="pointer-events-none absolute -right-12 -bottom-16 opacity-15 select-none z-0">
+                    <div className="pointer-events-none absolute right-5 -bottom-10 opacity-15 select-none z-0">
                         <img
                             src="/images/logo/honda_logo_white.png"
                             alt="Honda"
@@ -418,11 +418,10 @@ export default function CustomerDashboard({ loyalty }: Props) {
                             <div key={tx.id} className="flex items-center justify-between py-3.5">
                                 <div className="flex items-center gap-3">
                                     <div
-                                        className={`flex size-9 items-center justify-center rounded-xl ${
-                                            tx.type === 'credit'
-                                                ? 'bg-emerald-50 text-emerald-600 dark:bg-emerald-950/60 dark:text-emerald-400'
-                                                : 'bg-rose-50 text-rose-600 dark:bg-rose-950/60 dark:text-rose-400'
-                                        }`}
+                                        className={`flex size-9 items-center justify-center rounded-xl ${tx.type === 'credit'
+                                            ? 'bg-emerald-50 text-emerald-600 dark:bg-emerald-950/60 dark:text-emerald-400'
+                                            : 'bg-rose-50 text-rose-600 dark:bg-rose-950/60 dark:text-rose-400'
+                                            }`}
                                     >
                                         {tx.type === 'credit' ? (
                                             <ArrowUpRight className="size-4.5" />
@@ -442,11 +441,10 @@ export default function CustomerDashboard({ loyalty }: Props) {
 
                                 <div className="text-right">
                                     <span
-                                        className={`text-sm font-bold font-mono ${
-                                            tx.type === 'credit'
-                                                ? 'text-emerald-600 dark:text-emerald-400'
-                                                : 'text-rose-600 dark:text-rose-400'
-                                        }`}
+                                        className={`text-sm font-bold font-mono ${tx.type === 'credit'
+                                            ? 'text-emerald-600 dark:text-emerald-400'
+                                            : 'text-rose-600 dark:text-rose-400'
+                                            }`}
                                     >
                                         {tx.points > 0 ? `+${tx.points}` : tx.points} Poin
                                     </span>
