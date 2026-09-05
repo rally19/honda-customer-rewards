@@ -19,3 +19,16 @@ export type AuthLayoutProps = {
     title?: string;
     description?: string;
 };
+
+export type NotificationItem = {
+    id: string;
+    type: 'activity' | 'reward' | 'welcome';
+    title: string;
+    description: string;
+    time?: string;
+    timestamp?: number;
+    link?: string | null;
+    points?: number | null;
+    status?: string | null;
+};
+

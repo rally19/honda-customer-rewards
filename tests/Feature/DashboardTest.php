@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\ActivityHistory;
+use App\Models\PointExchange;
 use App\Models\User;
 use Inertia\Testing\AssertableInertia as Assert;
 
@@ -99,4 +101,90 @@ test('non-admin user is redirected away from admin dashboard', function () {
         ->get(route('admin.dashboard'));
 
     $response->assertRedirect(route('dashboard'));
+});
+
+test('new user receives default welcome notification on topbar', function () {
+    $user = User::factory()->create([
+        'role' => 'user',
+    ]);
+
+    $response = $this
+        ->actingAs($user)
+        ->get(route('dashboard'));
+
+    $response->assertOk();
+    $response->assertInertia(fn (Assert $page) => $page
+        ->component('customer/dashboard')
+        ->has('notifications', 1)
+        ->where('notifications.0.type', 'welcome')
+        ->where('notifications.0.title', '🎉 Selamat Datang di Rewards!')
+        ->where('notifications.0.description', 'ID MEMBER Anda telah aktif. Tunjukkan ID saat servis di AHASS atau kepada staff untuk kumpulkan poin.')
+    );
+});
+
+test('user with 1 to 4 activities or rewards retains welcome notification', function () {
+    $user = User::factory()->create([
+        'role' => 'user',
+    ]);
+
+    ActivityHistory::create([
+        'id' => '1000000001',
+        'activity_name' => 'Ganti Oli Mesin',
+        'points' => 100,
+        'user_id' => $user->id,
+        'user_name' => $user->name,
+        'user_email' => $user->email,
+    ]);
+
+    PointExchange::create([
+        'id' => '2000000001',
+        'reward_name' => 'Voucher Diskon Servis',
+        'points_cost' => 50,
+        'user_id' => $user->id,
+        'user_name' => $user->name,
+        'user_email' => $user->email,
+        'status' => 'hold',
+    ]);
+
+    $response = $this
+        ->actingAs($user)
+        ->get(route('dashboard'));
+
+    $response->assertOk();
+    $response->assertInertia(fn (Assert $page) => $page
+        ->component('customer/dashboard')
+        ->has('notifications', 3) // 2 events + 1 welcome
+        ->where('notifications.2.type', 'welcome')
+        ->where('notifications.2.title', '🎉 Selamat Datang di Rewards!')
+    );
+});
+
+test('user with 5 or more events receives only the 5 latest events', function () {
+    $user = User::factory()->create([
+        'role' => 'user',
+    ]);
+
+    for ($i = 1; $i <= 6; $i++) {
+        ActivityHistory::create([
+            'id' => (string) (1000000010 + $i),
+            'activity_name' => "Aktivitas Ke-{$i}",
+            'points' => 50 * $i,
+            'user_id' => $user->id,
+            'user_name' => $user->name,
+            'user_email' => $user->email,
+            'created_at' => now()->addMinutes($i),
+        ]);
+    }
+
+    $response = $this
+        ->actingAs($user)
+        ->get(route('dashboard'));
+
+    $response->assertOk();
+    $response->assertInertia(fn (Assert $page) => $page
+        ->component('customer/dashboard')
+        ->has('notifications', 5)
+        ->where('notifications.0.type', 'activity')
+        ->where('notifications.4.type', 'activity')
+    );
 });
