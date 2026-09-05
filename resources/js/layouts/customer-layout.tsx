@@ -488,100 +488,113 @@ export default function CustomerLayout({
             {/* MODAL QR ID MEMBER DIGITAL (POPUP SAAT SCAN ID DIKLIK)                    */}
             {/* ========================================================================= */}
             <Dialog open={qrModalOpen} onOpenChange={setQrModalOpen}>
-                <DialogContent className="sm:max-w-md rounded-3xl border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-6 overflow-hidden">
-                    <DialogHeader className="text-center space-y-1 pb-2 border-b border-zinc-100 dark:border-zinc-800">
-                        <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-2xl bg-red-100 text-red-600 dark:bg-red-950 dark:text-red-400 mb-1">
-                            <QrCodeIcon className="size-5" />
+                <DialogContent className="w-[92vw] max-w-sm sm:max-w-md max-h-[90vh] overflow-y-auto rounded-3xl border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-4 sm:p-5 gap-3 shadow-2xl">
+                    <DialogHeader className="text-center space-y-1 pb-1">
+                        <div className="inline-flex items-center justify-center gap-1.5 px-2.5 py-0.5 rounded-full bg-red-50 text-red-600 dark:bg-red-950/60 dark:text-red-400 text-[10px] font-bold mx-auto border border-red-200/80 dark:border-red-900/50">
+                            <QrCodeIcon className="size-3" />
+                            <span>KARTU DIGITAL ID</span>
                         </div>
-                        <DialogTitle className="text-lg font-extrabold text-zinc-900 dark:text-white">
-                            Kartu Digital ID MEMBER
+                        <DialogTitle className="text-base sm:text-lg font-black text-zinc-900 dark:text-white tracking-tight">
+                            Digital ID Member
                         </DialogTitle>
-                        <DialogDescription className="text-xs text-zinc-500">
-                            Tunjukkan QR ini ke staf kasir AHASS atau dealer resmi saat transaksi
+                        <DialogDescription className="text-[11px] text-zinc-500 max-w-xs mx-auto">
+                            Tunjukkan QR ini ke staf kasir AHASS atau dealer saat transaksi
                         </DialogDescription>
                     </DialogHeader>
 
-                    <div className="my-4 flex flex-col items-center text-center space-y-4">
-                        {/* Member Identity Preview */}
-                        <div className="w-full rounded-2xl border border-zinc-200 bg-zinc-50/80 p-4 dark:border-zinc-800 dark:bg-zinc-950">
-                            <div className="flex items-center justify-between">
-                                <span className="text-xs font-semibold text-zinc-500">Nama Member</span>
-                                <span className="text-xs font-bold text-zinc-900 dark:text-white">
-                                    {user?.name}
-                                </span>
-                            </div>
-                            <div className="mt-2 flex items-center justify-between border-t border-zinc-200/60 pt-2 dark:border-zinc-800">
-                                <span className="text-xs font-semibold text-zinc-500">Level Member</span>
-                                <span className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-extrabold border ${tierInfo.badgeClass}`}>
+                    <div className="flex flex-col items-center text-center space-y-3">
+                        {/* Member Identity Preview - Compact */}
+                        <div className="w-full rounded-2xl border border-zinc-200 bg-zinc-50/90 dark:border-zinc-800 dark:bg-zinc-950/60 p-2.5 sm:p-3 text-left">
+                            <div className="flex items-center justify-between gap-2">
+                                <div className="min-w-0">
+                                    <span className="text-[9px] uppercase font-bold text-zinc-400 dark:text-zinc-500 block leading-none mb-1">
+                                        Nama Member
+                                    </span>
+                                    <span className="text-xs font-bold text-zinc-900 dark:text-white truncate block">
+                                        {user?.name}
+                                    </span>
+                                </div>
+                                <span className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-extrabold border shrink-0 ${tierInfo.badgeClass}`}>
                                     <Award className="size-2.5 shrink-0" />
                                     {tierInfo.name} Member
                                 </span>
                             </div>
-                            <div className="mt-2 flex items-center justify-between border-t border-zinc-200/60 pt-2 dark:border-zinc-800">
-                                <span className="text-xs font-semibold text-zinc-500">10-Digit ID MEMBER</span>
-                                <div className="flex items-center gap-1.5">
-                                    <span className="font-mono text-sm font-black text-red-600 dark:text-red-500 tracking-wider">
+                            <div className="mt-2 flex items-center justify-between border-t border-zinc-200/70 pt-2 dark:border-zinc-800/80">
+                                <div>
+                                    <span className="text-[9px] uppercase font-bold text-zinc-400 dark:text-zinc-500 block leading-none mb-0.5">
+                                        10-Digit ID Member
+                                    </span>
+                                    <span className="font-mono text-xs sm:text-sm font-black text-red-600 dark:text-red-500 tracking-wider">
                                         {formattedMemberId}
                                     </span>
-                                    <button
-                                        type="button"
-                                        onClick={handleCopyId}
-                                        className="text-zinc-400 hover:text-red-600 transition-colors p-1"
-                                        title="Salin ID"
-                                    >
-                                        {copiedId ? (
-                                            <Check className="size-3.5 text-emerald-500" />
-                                        ) : (
-                                            <Copy className="size-3.5" />
-                                        )}
-                                    </button>
                                 </div>
+                                <button
+                                    type="button"
+                                    onClick={handleCopyId}
+                                    className="inline-flex items-center gap-1 px-2 py-1 rounded-lg text-[10px] font-semibold text-zinc-600 dark:text-zinc-300 bg-zinc-200/60 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors"
+                                    title="Salin ID"
+                                >
+                                    {copiedId ? (
+                                        <>
+                                            <Check className="size-3 text-emerald-500" />
+                                            <span className="text-emerald-600 dark:text-emerald-400 font-bold">Disalin</span>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <Copy className="size-3" />
+                                            <span>Salin</span>
+                                        </>
+                                    )}
+                                </button>
                             </div>
                         </div>
 
                         {/* Interactive QR Code Visual (qr-code-styling) */}
-                        <div className="relative p-4 rounded-3xl bg-white border-2 border-red-500/25 shadow-xl shadow-red-500/10 flex flex-col items-center">
+                        <div className="relative p-2.5 sm:p-3 rounded-2xl bg-white border-2 border-red-500/20 shadow-lg shadow-red-500/5 flex flex-col items-center">
                             <QrCode
                                 ref={qrCodeRef}
                                 data={`HND-MEMBER-${rawId}`}
-                                width={210}
-                                height={210}
+                                width={165}
+                                height={165}
                                 image="/images/logo/honda_logo_red.png"
                                 dotsColor="#DC2626"
                                 dotsType="rounded"
                                 cornersSquareType="extra-rounded"
                                 cornersDotType="dot"
                             />
-                            <div className="mt-2 text-[10px] font-mono text-zinc-600 font-bold tracking-wider">
+                            <div className="mt-1.5 text-[10px] font-mono text-zinc-500 font-bold tracking-wider">
                                 SCAN ID: HND-{rawId}
                             </div>
                         </div>
                     </div>
 
-                    <div className="pt-2 flex flex-col sm:flex-row gap-2">
+                    {/* Action Buttons: 2 cols on mobile, 1 flex row on sm+ */}
+                    <div className="grid grid-cols-2 sm:flex sm:items-center gap-2 pt-1">
                         <Button
                             type="button"
                             onClick={() => qrCodeRef.current?.download(`honda-member-${rawId}`, 'png')}
                             variant="outline"
-                            className="flex-1 rounded-xl text-xs font-semibold border-zinc-300 dark:border-zinc-700 hover:border-red-500 hover:text-red-600 dark:hover:border-red-500 dark:hover:text-red-400"
+                            size="sm"
+                            className="h-9 rounded-xl text-xs font-semibold border-zinc-300 dark:border-zinc-700 hover:border-red-500 hover:text-red-600 dark:hover:border-red-500 dark:hover:text-red-400"
                         >
-                            <Download className="size-3.5 mr-1.5" />
-                            Unduh QR (.PNG)
+                            <Download className="size-3.5 mr-1" />
+                            Unduh QR
                         </Button>
                         <Button
                             type="button"
                             onClick={handleCopyId}
                             variant="outline"
-                            className="flex-1 rounded-xl text-xs font-semibold border-zinc-300 dark:border-zinc-700"
+                            size="sm"
+                            className="h-9 rounded-xl text-xs font-semibold border-zinc-300 dark:border-zinc-700"
                         >
                             {copiedId ? (
                                 <>
-                                    <Check className="size-3.5 text-emerald-500 mr-1.5" />
-                                    ID Disalin!
+                                    <Check className="size-3.5 text-emerald-500 mr-1" />
+                                    Tersalin!
                                 </>
                             ) : (
                                 <>
-                                    <Copy className="size-3.5 mr-1.5" />
+                                    <Copy className="size-3.5 mr-1" />
                                     Salin ID
                                 </>
                             )}
@@ -589,7 +602,8 @@ export default function CustomerLayout({
                         <Button
                             type="button"
                             onClick={() => setQrModalOpen(false)}
-                            className="rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-semibold px-4"
+                            size="sm"
+                            className="col-span-2 sm:col-span-1 h-9 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-bold px-4 shadow-sm shadow-red-600/20"
                         >
                             Tutup
                         </Button>
