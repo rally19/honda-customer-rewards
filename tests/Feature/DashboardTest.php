@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Activity;
 use App\Models\ActivityHistory;
 use App\Models\PointExchange;
 use App\Models\User;
@@ -186,5 +187,30 @@ test('user with 5 or more events receives only the 5 latest events', function ()
         ->has('notifications', 5)
         ->where('notifications.0.type', 'activity')
         ->where('notifications.4.type', 'activity')
+    );
+});
+
+test('customer dashboard provides earning activities from database', function () {
+    $user = User::factory()->create(['role' => 'user']);
+
+    Activity::create([
+        'id' => '1029384751',
+        'name' => 'Servis berkala di AHASS',
+        'points' => 150,
+        'description' => 'Servis berkala rutin motor Honda',
+        'is_active' => true,
+    ]);
+
+    $response = $this
+        ->actingAs($user)
+        ->get(route('dashboard'));
+
+    $response->assertOk();
+    $response->assertInertia(fn (Assert $page) => $page
+        ->component('customer/dashboard')
+        ->has('earningActivities', 1)
+        ->where('earningActivities.0.name', 'Servis berkala di AHASS')
+        ->where('earningActivities.0.points', 150)
+        ->has('loyalty.earningActivities', 1)
     );
 });

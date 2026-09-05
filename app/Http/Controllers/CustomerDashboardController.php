@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Enums\MemberTier;
+use App\Models\Activity;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -14,6 +15,17 @@ class CustomerDashboardController extends Controller
         $user = $request->user();
 
         $tier = MemberTier::calculate((int) $user->lifetime_points);
+
+        $earningActivities = Activity::where('is_active', true)
+            ->orderBy('id')
+            ->get(['id', 'name', 'points', 'description'])
+            ->map(fn (Activity $a) => [
+                'id' => (string) $a->id,
+                'name' => $a->name,
+                'points' => (int) $a->points,
+                'description' => $a->description ?? '',
+            ])
+            ->all();
 
         $realHistories = $user->activityHistories()
             ->with(['admin:id,name'])
@@ -56,7 +68,7 @@ class CustomerDashboardController extends Controller
             'vouchers' => [
                 [
                     'id' => 'v1',
-                    'title' => 'Gratis 1 Botol Oli Mesin AHM MPX',
+                    'title' => 'Oli Honda gratis',
                     'code' => 'HND-MPX-8491',
                     'category' => 'Oli & Servis',
                     'expiresAt' => '31 Des 2026',
@@ -65,7 +77,7 @@ class CustomerDashboardController extends Controller
                 ],
                 [
                     'id' => 'v2',
-                    'title' => 'Diskon Biaya Jasa Servis 25%',
+                    'title' => 'Voucher servis',
                     'code' => 'HND-SRV-2049',
                     'category' => 'Servis AHASS',
                     'expiresAt' => '15 Nov 2026',
@@ -74,7 +86,7 @@ class CustomerDashboardController extends Controller
                 ],
                 [
                     'id' => 'v3',
-                    'title' => 'Potongan Aksesori Resmi Rp 50.000',
+                    'title' => 'Potongan pembelian aksesori',
                     'code' => 'HND-ACC-5920',
                     'category' => 'Aksesori',
                     'expiresAt' => '20 Okt 2026',
@@ -87,10 +99,12 @@ class CustomerDashboardController extends Controller
                 ['number' => 'UND-84920-A', 'period' => 'Undian Spesial Hari Pelanggan 2026'],
                 ['number' => 'UND-84921-B', 'period' => 'Undian Spesial Hari Pelanggan 2026'],
             ],
+            'earningActivities' => $earningActivities,
         ];
 
         return Inertia::render('customer/dashboard', [
             'loyalty' => $loyaltyData,
+            'earningActivities' => $earningActivities,
         ]);
     }
 }

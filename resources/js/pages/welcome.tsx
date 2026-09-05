@@ -122,27 +122,27 @@ const POINT_ACTIVITIES = [
     },
 ];
 
-// Katalog Hadiah
+// Katalog Hadiah Resmi Honda
 const REWARD_CATALOG = [
     {
         id: 1,
-        title: 'Voucher Servis AHASS',
+        title: 'Voucher Servis',
         category: 'servis',
         categoryLabel: 'Layanan Servis',
         points: 150,
         image: '/images/pictures/voucher_service_img.jpg',
-        description: 'Potongan biaya jasa servis berkala di seluruh jaringan AHASS resmi untuk performa motor tetap prima.',
+        description: 'Voucher gratis atau potongan biaya jasa servis berkala paket lengkap di seluruh bengkel resmi AHASS.',
         badge: 'Terpopuler',
         popular: true,
     },
     {
         id: 2,
-        title: 'Oli Honda Asli Gratis',
+        title: 'Oli Honda Gratis',
         category: 'servis',
         categoryLabel: 'Layanan Servis',
         points: 200,
         image: '/images/pictures/oli_honda_img.jpg',
-        description: '1 botol AHM Oil MPX/SPX original berstandar pabrikan untuk efisiensi bahan bakar dan perlindungan mesin.',
+        description: 'Gratis 1 botol pelumas resmi mesin motor Honda AHM Oil MPX / SPX berstandar pabrikan.',
         badge: 'Favorit Member',
         popular: true,
     },
@@ -151,9 +151,9 @@ const REWARD_CATALOG = [
         title: 'Potongan Pembelian Aksesori',
         category: 'aksesori',
         categoryLabel: 'Produk & Aksesori',
-        points: 250,
+        points: 100,
         image: '/images/pictures/potongan_pembelian_aksesori_img.jpg',
-        description: 'Diskon langsung untuk pembelian helm Honda, windshield, garnish, apparel, dan aksesori resmi lainnya.',
+        description: 'Diskon langsung untuk pembelian Honda Genuine Accessories (HGA) resmi di seluruh jaringan dealer.',
         badge: 'Diskon Spesial',
     },
     {
@@ -173,29 +173,30 @@ const REWARD_CATALOG = [
         categoryLabel: 'Hadiah Spesial',
         points: 800,
         image: '/images/pictures/voucher_pembelian_motor_img.jpg',
-        description: 'Voucher potongan harga tunai saat Anda atau keluarga melakukan pembelian unit motor Honda baru di dealer.',
+        description: 'Voucher potongan tambahan uang muka (DP) atau cashback pembelian unit baru sepeda motor Honda di dealer resmi.',
         badge: 'Nilai Tertinggi',
     },
     {
         id: 6,
-        title: 'Tiket Undian Hadiah Khusus',
+        title: 'Kesempatan Mengikuti Undian Hadiah Khusus',
         category: 'spesial',
         categoryLabel: 'Hadiah Spesial',
-        points: 100,
+        points: 50,
         image: '/images/pictures/kesempatan_mengikuti_undian_hadiah_khusus_img.jpg',
-        description: 'Tiket undian resmi berkesempatan memenangkan grand prize gadget, paket tour, dan hadiah spektakuler.',
+        description: 'Kupon partisipasi undian reward tahunan dengan kesempatan memenangkan hadiah grand prize khusus Honda.',
         badge: 'Kesempatan Emas',
     },
 ];
 
-// Simulasi Poin Interaktif
+// Simulasi Poin Interaktif (Aktivitas Resmi)
 const SIMULATION_ITEMS = [
-    { id: 'servis_rutin', name: 'Servis Berkala & Tune Up (2x)', points: 150 },
-    { id: 'oli_transaksi', name: 'Beli Oli & Sparepart (Rp 250.000)', points: 50 },
-    { id: 'aksesori', name: 'Beli Aksesori Resmi Honda (Rp 300.000)', points: 60 },
-    { id: 'test_ride', name: 'Ikuti Test Ride & Event Dealer', points: 30 },
-    { id: 'referral', name: 'Ajak 1 Teman Membeli Motor', points: 200 },
-    { id: 'review', name: 'Beri Penilaian Layanan AHASS', points: 20 },
+    { id: 'servis_ahass', name: 'Servis berkala di AHASS', points: 150 },
+    { id: 'sparepart_aksesori', name: 'Pembelian suku cadang atau aksesori Honda', points: 100 },
+    { id: 'beli_motor', name: 'Pembelian motor Honda', points: 500 },
+    { id: 'event_dealer', name: 'Mengikuti event dealer', points: 75 },
+    { id: 'test_ride', name: 'Mengikuti test ride', points: 50 },
+    { id: 'referral_motor', name: 'Mengajak teman atau keluarga membeli motor Honda (program referral)', points: 300 },
+    { id: 'ulasan_dealer', name: 'Memberikan ulasan atau penilaian layanan dealer saat servis atau pembelian motor', points: 40 },
 ];
 
 export default function Welcome() {

@@ -63,7 +63,7 @@ class AdminDashboardController extends Controller
         $vouchers = [
             [
                 'id' => 'VCH-01',
-                'title' => 'Gratis 1 Botol Oli Mesin AHM MPX',
+                'title' => 'Oli Honda gratis',
                 'category' => 'Oli & Pelumas',
                 'points_required' => 200,
                 'stock' => 142,
@@ -73,7 +73,7 @@ class AdminDashboardController extends Controller
             ],
             [
                 'id' => 'VCH-02',
-                'title' => 'Diskon Biaya Jasa Servis AHASS 25%',
+                'title' => 'Voucher servis',
                 'category' => 'Servis Berkala',
                 'points_required' => 150,
                 'stock' => 89,
@@ -83,7 +83,7 @@ class AdminDashboardController extends Controller
             ],
             [
                 'id' => 'VCH-03',
-                'title' => 'Potongan Aksesori Resmi Honda Rp 50.000',
+                'title' => 'Potongan pembelian aksesori',
                 'category' => 'Aksesori & Sparepart',
                 'points_required' => 100,
                 'stock' => 210,
@@ -93,9 +93,9 @@ class AdminDashboardController extends Controller
             ],
             [
                 'id' => 'VCH-04',
-                'title' => 'Voucher Diskon Pembelian Unit Motor Rp 500.000',
+                'title' => 'Voucher pembelian motor',
                 'category' => 'Unit Motor Baru',
-                'points_required' => 1000,
+                'points_required' => 800,
                 'stock' => 25,
                 'claimed' => 15,
                 'status' => 'active',
@@ -103,13 +103,23 @@ class AdminDashboardController extends Controller
             ],
             [
                 'id' => 'VCH-05',
-                'title' => 'Merchandise Eksklusif Jaket Touring Honda',
+                'title' => 'Merchandise resmi Honda',
                 'category' => 'Merchandise',
-                'points_required' => 450,
+                'points_required' => 350,
                 'stock' => 34,
                 'claimed' => 66,
                 'status' => 'active',
                 'image' => '/images/pictures/merchandise_resmi_honda_img.jpg',
+            ],
+            [
+                'id' => 'VCH-06',
+                'title' => 'Kesempatan mengikuti undian hadiah khusus',
+                'category' => 'Undian Spesial',
+                'points_required' => 50,
+                'stock' => 100,
+                'claimed' => 88,
+                'status' => 'active',
+                'image' => '/images/pictures/kesempatan_mengikuti_undian_hadiah_khusus_img.jpg',
             ],
         ];
 

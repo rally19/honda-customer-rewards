@@ -1,71 +1,67 @@
 <?php
 
-namespace Database\Seeders;
+namespace Database\Factories;
 
 use App\Models\Activity;
-use Illuminate\Database\Seeder;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
-class ActivitySeeder extends Seeder
+/**
+ * @extends Factory<Activity>
+ */
+class ActivityFactory extends Factory
 {
     /**
-     * Run the database seeds.
+     * Define the model's default state.
+     *
+     * @return array<string, mixed>
      */
-    public function run(): void
+    public function definition(): array
     {
         $activities = [
             [
-                'id' => '1029384751',
                 'name' => 'Servis berkala di AHASS',
                 'points' => 150,
                 'description' => 'Servis berkala rutin motor Honda sesuai standar AHASS dengan teknisi bersertifikasi.',
-                'is_active' => true,
             ],
             [
-                'id' => '1029384752',
                 'name' => 'Pembelian suku cadang atau aksesori Honda',
                 'points' => 100,
                 'description' => 'Pembelian suku cadang asli Honda Genuine Parts (HGP) atau Honda Genuine Accessories (HGA).',
-                'is_active' => true,
             ],
             [
-                'id' => '1029384753',
                 'name' => 'Pembelian motor Honda',
                 'points' => 500,
                 'description' => 'Pembelian unit baru sepeda motor Honda di dealer resmi berhak mendapatkan poin loyalty.',
-                'is_active' => true,
             ],
             [
-                'id' => '1029384754',
                 'name' => 'Mengikuti event dealer',
                 'points' => 75,
                 'description' => 'Kehadiran dan partisipasi aktif dalam kegiatan gathering, pameran, atau showroom event dealer Honda.',
-                'is_active' => true,
             ],
             [
-                'id' => '1029384755',
                 'name' => 'Mengikuti test ride',
                 'points' => 50,
                 'description' => 'Mencoba sensasi berkendara lini motor terbaru Honda dalam program test ride resmi dealer.',
-                'is_active' => true,
             ],
             [
-                'id' => '1029384756',
                 'name' => 'Mengajak teman atau keluarga membeli motor Honda (program referral)',
                 'points' => 300,
                 'description' => 'Mengajak teman atau kerabat melakukan pembelian sepeda motor Honda melalui program referral.',
-                'is_active' => true,
             ],
             [
-                'id' => '1029384757',
                 'name' => 'Memberikan ulasan atau penilaian layanan dealer saat servis atau pembelian motor',
                 'points' => 40,
                 'description' => 'Memberikan ulasan atau penilaian kepuasan layanan dealer/AHASS saat servis atau pembelian motor.',
-                'is_active' => true,
             ],
         ];
 
-        foreach ($activities as $data) {
-            Activity::updateOrCreate(['id' => $data['id']], $data);
-        }
+        $chosen = fake()->randomElement($activities);
+
+        return [
+            'name' => $chosen['name'],
+            'points' => $chosen['points'],
+            'description' => $chosen['description'],
+            'is_active' => true,
+        ];
     }
 }

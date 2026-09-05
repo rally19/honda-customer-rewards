@@ -1,5 +1,5 @@
 import { Head, Link } from '@inertiajs/react';
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import {
     ArrowDownRight,
     ArrowUpRight,
@@ -7,6 +7,7 @@ import {
     Calendar,
     Check,
     CheckCircle2,
+    ChevronLeft,
     ChevronRight,
     Clock,
     Coins,
@@ -27,8 +28,11 @@ import {
     Sparkles,
     Tag,
     Ticket,
+    User,
+    Users,
     Wrench,
     XCircle,
+    Zap,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import CustomerLayout from '@/layouts/customer-layout';
@@ -54,6 +58,13 @@ type TierRoadmapItem = {
     isCurrent: boolean;
 };
 
+type EarningActivity = {
+    id: string;
+    name: string;
+    points: number;
+    description?: string;
+};
+
 type Props = {
     loyalty: {
         memberId: string;
@@ -66,6 +77,7 @@ type Props = {
         pointsToNextTier: number;
         tierProgress: number;
         tierRoadmap?: TierRoadmapItem[];
+        earningActivities?: EarningActivity[];
         vouchers: Array<{
             id: string;
             title: string;
@@ -88,13 +100,122 @@ type Props = {
             period: string;
         }>;
     };
+    earningActivities?: EarningActivity[];
 };
 
-export default function CustomerDashboard({ loyalty }: Props) {
+export default function CustomerDashboard({ loyalty, earningActivities }: Props) {
     const [showPoints, setShowPoints] = useState(true);
     const [copiedId, setCopiedId] = useState(false);
     const [selectedVoucher, setSelectedVoucher] = useState<(typeof loyalty.vouchers)[0] | null>(null);
     const [showTierModal, setShowTierModal] = useState(false);
+
+    const sliderRef = useRef<HTMLDivElement>(null);
+    const [canScrollLeft, setCanScrollLeft] = useState(false);
+    const [canScrollRight, setCanScrollRight] = useState(true);
+
+    const activeActivities: EarningActivity[] = (earningActivities && earningActivities.length > 0)
+        ? earningActivities
+        : (loyalty.earningActivities && loyalty.earningActivities.length > 0)
+            ? loyalty.earningActivities
+            : [
+                { id: '1029384751', name: 'Servis berkala di AHASS', points: 150, description: 'Servis rutin berkala motor Honda sesuai standar AHASS.' },
+                { id: '1029384752', name: 'Pembelian suku cadang atau aksesori Honda', points: 100, description: 'Pembelian suku cadang asli HGP atau aksesoris HGA.' },
+                { id: '1029384753', name: 'Pembelian motor Honda', points: 500, description: 'Pembelian unit motor baru Honda di dealer resmi.' },
+                { id: '1029384754', name: 'Mengikuti event dealer', points: 75, description: 'Partisipasi gathering, pameran, atau showroom event.' },
+                { id: '1029384755', name: 'Mengikuti test ride', points: 50, description: 'Mencoba sensasi berkendara lini motor terbaru Honda.' },
+                { id: '1029384756', name: 'Mengajak teman atau keluarga membeli motor Honda (program referral)', points: 300, description: 'Program referral ajak teman & keluarga beli motor Honda.' },
+                { id: '1029384757', name: 'Memberikan ulasan atau penilaian layanan dealer saat servis atau pembelian motor', points: 40, description: 'Ulasan layanan dealer saat servis atau pembelian motor.' },
+            ];
+
+    const updateScrollButtons = () => {
+        if (!sliderRef.current) return;
+        const { scrollLeft, scrollWidth, clientWidth } = sliderRef.current;
+        setCanScrollLeft(scrollLeft > 10);
+        setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 10);
+    };
+
+    useEffect(() => {
+        updateScrollButtons();
+        const slider = sliderRef.current;
+        if (!slider) return;
+        slider.addEventListener('scroll', updateScrollButtons, { passive: true });
+        window.addEventListener('resize', updateScrollButtons);
+        return () => {
+            slider.removeEventListener('scroll', updateScrollButtons);
+            window.removeEventListener('resize', updateScrollButtons);
+        };
+    }, [activeActivities.length]);
+
+    const scrollSlider = (direction: 'left' | 'right') => {
+        if (sliderRef.current) {
+            const amount = direction === 'left' ? -220 : 220;
+            sliderRef.current.scrollBy({ left: amount, behavior: 'smooth' });
+        }
+    };
+
+    const getActivityIcon = (title: string) => {
+        const lower = title.toLowerCase();
+        if (lower.includes('servis') || lower.includes('tune') || lower.includes('ahass')) {
+            return <Wrench className="size-4.5 text-red-600 dark:text-red-400" />;
+        }
+        if (lower.includes('suku cadang') || lower.includes('aksesori') || lower.includes('part')) {
+            return <ShoppingBag className="size-4.5 text-amber-600 dark:text-amber-400" />;
+        }
+        if (lower.includes('beli motor') || lower.includes('pembelian motor')) {
+            return <Sparkles className="size-4.5 text-rose-600 dark:text-rose-400" />;
+        }
+        if (lower.includes('event')) {
+            return <Calendar className="size-4.5 text-blue-600 dark:text-blue-400" />;
+        }
+        if (lower.includes('test ride')) {
+            return <Zap className="size-4.5 text-orange-600 dark:text-orange-400" />;
+        }
+        if (lower.includes('referral') || lower.includes('teman') || lower.includes('keluarga')) {
+            return <Users className="size-4.5 text-purple-600 dark:text-purple-400" />;
+        }
+        if (lower.includes('ulasan') || lower.includes('penilaian') || lower.includes('rating')) {
+            return <MessageSquare className="size-4.5 text-emerald-600 dark:text-emerald-400" />;
+        }
+        return <Award className="size-4.5 text-red-600 dark:text-red-400" />;
+    };
+
+    const getActivityBg = (title: string) => {
+        const lower = title.toLowerCase();
+        if (lower.includes('servis') || lower.includes('tune') || lower.includes('ahass')) {
+            return 'bg-red-50 dark:bg-red-950/60 border-red-200/60 dark:border-red-900/40';
+        }
+        if (lower.includes('suku cadang') || lower.includes('aksesori') || lower.includes('part')) {
+            return 'bg-amber-50 dark:bg-amber-950/60 border-amber-200/60 dark:border-amber-900/40';
+        }
+        if (lower.includes('beli motor') || lower.includes('pembelian motor')) {
+            return 'bg-rose-50 dark:bg-rose-950/60 border-rose-200/60 dark:border-rose-900/40';
+        }
+        if (lower.includes('event')) {
+            return 'bg-blue-50 dark:bg-blue-950/60 border-blue-200/60 dark:border-blue-900/40';
+        }
+        if (lower.includes('test ride')) {
+            return 'bg-orange-50 dark:bg-orange-950/60 border-orange-200/60 dark:border-orange-900/40';
+        }
+        if (lower.includes('referral') || lower.includes('teman') || lower.includes('keluarga')) {
+            return 'bg-purple-50 dark:bg-purple-950/60 border-purple-200/60 dark:border-purple-900/40';
+        }
+        if (lower.includes('ulasan') || lower.includes('penilaian') || lower.includes('rating')) {
+            return 'bg-emerald-50 dark:bg-emerald-950/60 border-emerald-200/60 dark:border-emerald-900/40';
+        }
+        return 'bg-red-50 dark:bg-red-950/60 border-red-200/60 dark:border-red-900/40';
+    };
+
+    const handleActivityClick = (act: EarningActivity) => {
+        const lower = act.name.toLowerCase();
+        if (lower.includes('referral') || lower.includes('teman') || lower.includes('keluarga')) {
+            handleCopyId();
+            toast.success('ID Member disalin! Bagikan ke teman & keluarga untuk raih +300 Poin saat pembelian unit motor.');
+            return;
+        }
+
+        window.dispatchEvent(new CustomEvent('open-customer-qr-modal'));
+        toast.info(`Tunjukkan ID Member saat "${act.name}" untuk klaim +${act.points} Poin!`);
+    };
 
     const formattedId = loyalty.memberId
         .padStart(10, '0')
@@ -252,130 +373,159 @@ export default function CustomerDashboard({ loyalty }: Props) {
 
                         {/* Card Bottom: 4 Quick Actions */}
                         <div className="grid grid-cols-4 gap-2 border-t border-white/10 pt-4 text-center">
+                            {/* 1. ID Member: Buka Modal Digital ID Member */}
                             <button
                                 type="button"
-                                onClick={handleCopyId}
+                                onClick={() => window.dispatchEvent(new CustomEvent('open-customer-qr-modal'))}
                                 className="group flex flex-col items-center gap-1.5 rounded-xl p-2 hover:bg-white/10 transition-colors cursor-pointer"
+                                title="Buka Kartu Digital ID Member"
                             >
-                                <div className="flex size-9 items-center justify-center rounded-xl bg-white/15 text-white group-hover:scale-105 transition-transform">
-                                    {copiedId ? <Check className="size-4.5 text-emerald-400" /> : <Copy className="size-4.5" />}
+                                <div className="flex size-9 items-center justify-center rounded-xl bg-white/15 text-white group-hover:scale-105 transition-transform shadow-xs">
+                                    <QrCode className="size-4.5" />
                                 </div>
                                 <span className="text-[11px] font-medium text-zinc-200">
-                                    {copiedId ? 'Tersalin' : 'Salin ID'}
+                                    ID Member
                                 </span>
                             </button>
 
-                            <a
-                                href="#riwayat"
+                            {/* 2. Aktivitas: Navigasi ke Halaman Aktivitas */}
+                            <Link
+                                href="/activities"
+                                prefetch
                                 className="group flex flex-col items-center gap-1.5 rounded-xl p-2 hover:bg-white/10 transition-colors"
+                                title="Lihat Aktivitas & Riwayat Poin"
                             >
-                                <div className="flex size-9 items-center justify-center rounded-xl bg-white/15 text-white group-hover:scale-105 transition-transform">
+                                <div className="flex size-9 items-center justify-center rounded-xl bg-white/15 text-white group-hover:scale-105 transition-transform shadow-xs">
                                     <Clock className="size-4.5" />
                                 </div>
-                                <span className="text-[11px] font-medium text-zinc-200">Riwayat</span>
-                            </a>
+                                <span className="text-[11px] font-medium text-zinc-200">Aktivitas</span>
+                            </Link>
 
-                            <a
-                                href="#voucher"
+                            {/* 3. Reward: Navigasi ke Katalog Reward */}
+                            <Link
+                                href="/rewards"
+                                prefetch
                                 className="group flex flex-col items-center gap-1.5 rounded-xl p-2 hover:bg-white/10 transition-colors"
+                                title="Lihat Katalog Reward & Voucher"
                             >
-                                <div className="flex size-9 items-center justify-center rounded-xl bg-white/15 text-white group-hover:scale-105 transition-transform">
-                                    <Tag className="size-4.5" />
+                                <div className="flex size-9 items-center justify-center rounded-xl bg-white/15 text-white group-hover:scale-105 transition-transform shadow-xs">
+                                    <Gift className="size-4.5" />
                                 </div>
-                                <span className="text-[11px] font-medium text-zinc-200">Voucher</span>
-                            </a>
+                                <span className="text-[11px] font-medium text-zinc-200">Reward</span>
+                            </Link>
 
-                            <a
-                                href="#undian"
+                            {/* 4. Akun: Navigasi ke Profil / Pengaturan Akun */}
+                            <Link
+                                href="/settings/profile"
                                 className="group flex flex-col items-center gap-1.5 rounded-xl p-2 hover:bg-white/10 transition-colors"
+                                title="Profil & Pengaturan Akun"
                             >
-                                <div className="flex size-9 items-center justify-center rounded-xl bg-white/15 text-white group-hover:scale-105 transition-transform">
-                                    <Ticket className="size-4.5" />
+                                <div className="flex size-9 items-center justify-center rounded-xl bg-white/15 text-white group-hover:scale-105 transition-transform shadow-xs">
+                                    <User className="size-4.5" />
                                 </div>
-                                <span className="text-[11px] font-medium text-zinc-200">Undian</span>
-                            </a>
+                                <span className="text-[11px] font-medium text-zinc-200">Akun</span>
+                            </Link>
                         </div>
                     </div>
                 </section>
 
 
                 {/* ========================================================================= */}
-                {/* 3. MENU CEPAT LAYANAN & KUMPUL POIN (QUICK ACTIONS GRID)                  */}
+                {/* 3. AKTIVITAS & PEROLEHAN POIN (SLIDEABLE CAROUSEL)                        */}
                 {/* ========================================================================= */}
                 <section className="space-y-3">
                     <div className="flex items-center justify-between">
-                        <h3 className="text-sm font-bold uppercase tracking-wider text-zinc-900 dark:text-zinc-100">
-                            Aktivitas & Perolehan Poin
-                        </h3>
-                        <span className="text-xs text-zinc-500">Pilihan Reward</span>
+                        <div className="flex items-center gap-2">
+                            <h3 className="text-sm font-bold uppercase tracking-wider text-zinc-900 dark:text-zinc-100">
+                                Aktivitas & Perolehan Poin
+                            </h3>
+                            <span className="hidden sm:inline-flex items-center rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 px-2 py-0.5 text-[10px] font-semibold">
+                                {activeActivities.length} Aktivitas
+                            </span>
+                        </div>
+
+                        <div className="flex items-center gap-2">
+                            {/* Slide Navigation Buttons */}
+                            <div className="flex items-center gap-1">
+                                <button
+                                    type="button"
+                                    onClick={() => scrollSlider('left')}
+                                    disabled={!canScrollLeft}
+                                    className="size-7 rounded-full border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 flex items-center justify-center text-zinc-600 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 disabled:opacity-30 disabled:pointer-events-none transition-all cursor-pointer shadow-2xs"
+                                    title="Geser ke kiri"
+                                    aria-label="Geser ke kiri"
+                                >
+                                    <ChevronLeft className="size-3.5" />
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => scrollSlider('right')}
+                                    disabled={!canScrollRight}
+                                    className="size-7 rounded-full border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 flex items-center justify-center text-zinc-600 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 disabled:opacity-30 disabled:pointer-events-none transition-all cursor-pointer shadow-2xs"
+                                    title="Geser ke kanan"
+                                    aria-label="Geser ke kanan"
+                                >
+                                    <ChevronRight className="size-3.5" />
+                                </button>
+                            </div>
+
+                            <Link
+                                href="/activities?tab=earning"
+                                prefetch
+                                className="text-xs font-semibold text-red-600 dark:text-red-400 hover:underline flex items-center gap-0.5 ml-1"
+                                title="Lihat detail aktivitas & perolehan poin"
+                            >
+                                <span>Lihat Semua</span>
+                                <ChevronRight className="size-3" />
+                            </Link>
+                        </div>
                     </div>
 
-                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
-                        {/* Servis AHASS */}
-                        <div
-                            className="flex flex-col items-center text-center gap-1.5 p-3.5 rounded-2xl border border-zinc-200/80 bg-white dark:border-zinc-800 dark:bg-zinc-900 hover:border-red-400 transition-all group shadow-xs"
-                        >
-                            <div className="flex size-11 items-center justify-center rounded-2xl bg-red-50 text-red-600 dark:bg-red-950/60 dark:text-red-400 group-hover:scale-105 transition-transform">
-                                <Wrench className="size-5" />
-                            </div>
-                            <span className="text-[11px] font-semibold text-zinc-800 dark:text-zinc-200 leading-tight">
-                                Servis Motor AHASS
-                            </span>
-                            <span className="text-[9px] font-bold text-red-600 dark:text-red-400">
-                                Scan QR di Kasir
-                            </span>
-                        </div>
+                    {/* Slide Container */}
+                    <div
+                        ref={sliderRef}
+                        className="flex gap-2.5 sm:gap-3 overflow-x-auto pb-2 scrollbar-none snap-x snap-mandatory scroll-smooth -mx-4 px-4 sm:mx-0 sm:px-0"
+                    >
+                        {activeActivities.map((act) => (
+                            <div
+                                key={act.id}
+                                onClick={() => handleActivityClick(act)}
+                                className="w-[155px] sm:w-[175px] shrink-0 snap-start flex flex-col justify-between p-3 sm:p-3.5 rounded-2xl border border-zinc-200/90 bg-white dark:border-zinc-800 dark:bg-zinc-900 hover:border-red-400 dark:hover:border-red-500/60 transition-all cursor-pointer group shadow-2xs select-none"
+                                title={`${act.name} (+${act.points} Poin)`}
+                            >
+                                <div className="space-y-2.5">
+                                    {/* Icon & Points Badge */}
+                                    <div className="flex items-center justify-between gap-1.5">
+                                        <div
+                                            className={`flex size-9 items-center justify-center rounded-xl border shadow-2xs group-hover:scale-105 transition-transform ${getActivityBg(
+                                                act.name,
+                                            )}`}
+                                        >
+                                            {getActivityIcon(act.name)}
+                                        </div>
+                                        <span className="inline-flex items-center gap-0.5 rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-black text-emerald-700 border border-emerald-200/70 dark:bg-emerald-950/70 dark:text-emerald-300 dark:border-emerald-800/60 shadow-2xs">
+                                            +{act.points} Pts
+                                        </span>
+                                    </div>
 
-                        {/* Beli Suku Cadang & Oli */}
-                        <div
-                            className="flex flex-col items-center text-center gap-1.5 p-3.5 rounded-2xl border border-zinc-200/80 bg-white dark:border-zinc-800 dark:bg-zinc-900 hover:border-red-400 transition-all group shadow-xs"
-                        >
-                            <div className="flex size-11 items-center justify-center rounded-2xl bg-amber-50 text-amber-600 dark:bg-amber-950/60 dark:text-amber-400 group-hover:scale-105 transition-transform">
-                                <ShoppingBag className="size-5" />
-                            </div>
-                            <span className="text-[11px] font-semibold text-zinc-800 dark:text-zinc-200 leading-tight">
-                                Part & Oli AHM
-                            </span>
-                            <span className="text-[9px] font-bold text-amber-600 dark:text-amber-400">
-                                Poin Otomatis
-                            </span>
-                        </div>
+                                    {/* Title */}
+                                    <div>
+                                        <h4 className="text-xs font-bold text-zinc-900 dark:text-zinc-100 group-hover:text-red-600 dark:group-hover:text-red-400 transition-colors line-clamp-2 leading-tight">
+                                            {act.name}
+                                        </h4>
+                                    </div>
+                                </div>
 
-                        {/* Tukar Voucher & Hadiah */}
-                        <Link
-                            href="/rewards"
-                            prefetch
-                            className="flex flex-col items-center text-center gap-1.5 p-3.5 rounded-2xl border border-zinc-200/80 bg-white dark:border-zinc-800 dark:bg-zinc-900 hover:border-red-400 transition-all cursor-pointer group shadow-xs"
-                        >
-                            <div className="flex size-11 items-center justify-center rounded-2xl bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 group-hover:scale-105 transition-transform">
-                                <Gift className="size-5" />
+                                {/* Bottom Action */}
+                                <div className="mt-3 pt-2 border-t border-zinc-100 dark:border-zinc-800/80 flex items-center justify-between text-[10px]">
+                                    <span className="font-semibold text-red-600 dark:text-red-400 flex items-center gap-1 group-hover:translate-x-0.5 transition-transform">
+                                        <QrCode className="size-3" />
+                                        Tunjukkan ID
+                                    </span>
+                                    <ChevronRight className="size-3 text-zinc-400 group-hover:text-red-500 group-hover:translate-x-0.5 transition-all" />
+                                </div>
                             </div>
-                            <span className="text-[11px] font-semibold text-zinc-800 dark:text-zinc-200 leading-tight">
-                                Tukar Reward
-                            </span>
-                            <span className="text-[9px] font-bold text-blue-600 dark:text-blue-400">
-                                Katalog Poin
-                            </span>
-                        </Link>
-
-                        {/* Referral Teman */}
-                        <div
-                            onClick={() => {
-                                handleCopyId();
-                                toast.success('Bagikan ID Member Anda untuk mendapatkan bonus referral!');
-                            }}
-                            className="flex flex-col items-center text-center gap-1.5 p-3.5 rounded-2xl border border-zinc-200/80 bg-white dark:border-zinc-800 dark:bg-zinc-900 hover:border-red-400 transition-all cursor-pointer group shadow-xs"
-                        >
-                            <div className="flex size-11 items-center justify-center rounded-2xl bg-purple-50 text-purple-600 dark:bg-purple-950/60 dark:text-purple-400 group-hover:scale-105 transition-transform">
-                                <Share2 className="size-5" />
-                            </div>
-                            <span className="text-[11px] font-semibold text-zinc-800 dark:text-zinc-200 leading-tight">
-                                Ajak Teman
-                            </span>
-                            <span className="text-[9px] font-bold text-purple-600 dark:text-purple-400">
-                                +200 Poin
-                            </span>
-                        </div>
+                        ))}
                     </div>
                 </section>
 

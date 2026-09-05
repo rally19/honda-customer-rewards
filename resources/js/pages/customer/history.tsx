@@ -17,15 +17,18 @@ import {
     Filter,
     Flame,
     Gift,
-    Info,
+    MessageSquare,
     QrCode,
     RotateCcw,
     Search,
     Shield,
     ShoppingBag,
     Sparkles,
+    Star,
+    Users,
     Wrench,
     X,
+    Zap,
 } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
@@ -168,13 +171,28 @@ export default function CustomerHistoryPage({
         if (lower.includes('servis') || lower.includes('tune') || lower.includes('ahass')) {
             return <Wrench className="size-4.5 text-red-600 dark:text-red-400" />;
         }
-        if (lower.includes('oli') || lower.includes('part') || lower.includes('beli')) {
+        if (lower.includes('suku cadang') || lower.includes('aksesori') || lower.includes('part')) {
             return <ShoppingBag className="size-4.5 text-amber-600 dark:text-amber-400" />;
+        }
+        if (lower.includes('beli motor') || lower.includes('pembelian motor')) {
+            return <Sparkles className="size-4.5 text-rose-600 dark:text-rose-400" />;
+        }
+        if (lower.includes('event')) {
+            return <Calendar className="size-4.5 text-blue-600 dark:text-blue-400" />;
+        }
+        if (lower.includes('test ride')) {
+            return <Zap className="size-4.5 text-orange-600 dark:text-orange-400" />;
+        }
+        if (lower.includes('referral') || lower.includes('teman') || lower.includes('keluarga')) {
+            return <Users className="size-4.5 text-purple-600 dark:text-purple-400" />;
+        }
+        if (lower.includes('ulasan') || lower.includes('penilaian') || lower.includes('rating')) {
+            return <MessageSquare className="size-4.5 text-emerald-600 dark:text-emerald-400" />;
         }
         if (lower.includes('bonus') || lower.includes('hadiah') || lower.includes('selamat')) {
             return <Gift className="size-4.5 text-emerald-600 dark:text-emerald-400" />;
         }
-        return <Award className="size-4.5 text-blue-600 dark:text-blue-400" />;
+        return <Award className="size-4.5 text-red-600 dark:text-red-400" />;
     };
 
     const getActivityBg = (title: string) => {
@@ -182,13 +200,28 @@ export default function CustomerHistoryPage({
         if (lower.includes('servis') || lower.includes('tune') || lower.includes('ahass')) {
             return 'bg-red-50 dark:bg-red-950/60 border-red-200/60 dark:border-red-900/40';
         }
-        if (lower.includes('oli') || lower.includes('part') || lower.includes('beli')) {
+        if (lower.includes('suku cadang') || lower.includes('aksesori') || lower.includes('part')) {
             return 'bg-amber-50 dark:bg-amber-950/60 border-amber-200/60 dark:border-amber-900/40';
+        }
+        if (lower.includes('beli motor') || lower.includes('pembelian motor')) {
+            return 'bg-rose-50 dark:bg-rose-950/60 border-rose-200/60 dark:border-rose-900/40';
+        }
+        if (lower.includes('event')) {
+            return 'bg-blue-50 dark:bg-blue-950/60 border-blue-200/60 dark:border-blue-900/40';
+        }
+        if (lower.includes('test ride')) {
+            return 'bg-orange-50 dark:bg-orange-950/60 border-orange-200/60 dark:border-orange-900/40';
+        }
+        if (lower.includes('referral') || lower.includes('teman') || lower.includes('keluarga')) {
+            return 'bg-purple-50 dark:bg-purple-950/60 border-purple-200/60 dark:border-purple-900/40';
+        }
+        if (lower.includes('ulasan') || lower.includes('penilaian') || lower.includes('rating')) {
+            return 'bg-emerald-50 dark:bg-emerald-950/60 border-emerald-200/60 dark:border-emerald-900/40';
         }
         if (lower.includes('bonus') || lower.includes('hadiah') || lower.includes('selamat')) {
             return 'bg-emerald-50 dark:bg-emerald-950/60 border-emerald-200/60 dark:border-emerald-900/40';
         }
-        return 'bg-blue-50 dark:bg-blue-950/60 border-blue-200/60 dark:border-blue-900/40';
+        return 'bg-red-50 dark:bg-red-950/60 border-red-200/60 dark:border-red-900/40';
     };
 
     const isFiltered = !!filters.search || filters.period !== 'all';
