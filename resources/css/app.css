@@ -141,3 +141,11 @@
         @apply bg-background text-foreground;
     }
 }
+
+/* Global Mobile Scale 0.8x */
+@media (max-width: 767.98px) {
+    html {
+        zoom: 0.8;
+    }
+}
+

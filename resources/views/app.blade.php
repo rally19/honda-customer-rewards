@@ -29,6 +29,12 @@
             html.dark {
                 background-color: oklch(0.145 0 0);
             }
+
+            @media (max-width: 767.98px) {
+                html {
+                    zoom: 0.8;
+                }
+            }
         </style>
 
         <link rel="icon" href="/favicon.ico" sizes="any">
