@@ -12,10 +12,7 @@ class CustomerHistoryController extends Controller
     public function __invoke(Request $request): Response
     {
         $user = $request->user();
-
-        $tier = $user->tier instanceof MemberTier
-            ? $user->tier
-            : MemberTier::calculate((int) $user->lifetime_points);
+        $tier = MemberTier::calculate((int) $user->lifetime_points);
 
         $search = $request->input('search');
         $period = $request->input('period', 'all');

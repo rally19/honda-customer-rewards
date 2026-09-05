@@ -13,9 +13,7 @@ class CustomerDashboardController extends Controller
     {
         $user = $request->user();
 
-        $tier = $user->tier instanceof MemberTier
-            ? $user->tier
-            : MemberTier::calculate((int) $user->lifetime_points);
+        $tier = MemberTier::calculate((int) $user->lifetime_points);
 
         $realHistories = $user->activityHistories()
             ->with(['admin:id,name'])
@@ -54,6 +52,7 @@ class CustomerDashboardController extends Controller
             'lifetimePoints' => (int) $user->lifetime_points,
             'pointsToNextTier' => $tier->pointsToNextTier((int) $user->lifetime_points),
             'tierProgress' => $tier->progress((int) $user->lifetime_points),
+            'tierRoadmap' => MemberTier::roadmap((int) $user->lifetime_points),
             'vouchers' => [
                 [
                     'id' => 'v1',

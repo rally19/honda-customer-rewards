@@ -83,7 +83,13 @@ class User extends Authenticatable implements MustVerifyEmail, PasskeyUser
             }
 
             if (empty($user->tier)) {
-                $user->tier = MemberTier::Bronze;
+                $user->tier = MemberTier::calculate((int) ($user->lifetime_points ?? 0));
+            }
+        });
+
+        static::saving(function (User $user) {
+            if ($user->isDirty('lifetime_points') && ! $user->isDirty('tier')) {
+                $user->tier = MemberTier::calculate((int) ($user->lifetime_points ?? 0));
             }
         });
     }

@@ -20,7 +20,7 @@ test('authenticated customer can visit history page with their activity historie
     $user = User::factory()->create([
         'role' => UserRole::User->value,
         'points' => 350,
-        'lifetime_points' => 350,
+        'lifetime_points' => 550,
         'tier' => MemberTier::Silver,
     ]);
 

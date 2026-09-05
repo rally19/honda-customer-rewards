@@ -136,4 +136,55 @@ enum MemberTier: string
             ],
         };
     }
+
+    /**
+     * Maximum points for this tier, or null if highest tier (Diamond).
+     */
+    public function maxPoints(): ?int
+    {
+        return match ($this) {
+            self::Bronze => 499,
+            self::Silver => 1499,
+            self::Gold => 3499,
+            self::Platinum => 6999,
+            self::Diamond => null,
+        };
+    }
+
+    /**
+     * Key privileges and benefits for this tier.
+     */
+    public function benefits(): string
+    {
+        return match ($this) {
+            self::Bronze => 'Akses perolehan poin rewards di seluruh AHASS dan dealer resmi Honda.',
+            self::Silver => 'Akses katalog voucher oli MPX, diskon servis berkala, dan penukaran merchandise reguler.',
+            self::Gold => 'Prioritas booking servis AHASS, diskon suku cadang & aksesori resmi, serta voucher berkala.',
+            self::Platinum => 'Prioritas antrean servis AHASS, tiket undian ganda Hari Pelanggan, dan voucher spesial.',
+            self::Diamond => 'Layanan VIP AHASS, merchandise premium eksklusif Honda, dan undangan event tahunan.',
+        };
+    }
+
+    /**
+     * Generate full progression roadmap with status for all tiers.
+     *
+     * @return array<int, array{tier: string, name: string, minPoints: int, maxPoints: int|null, benefit: string, visualStyles: array{badge: string, color: string, bg: string, border: string, text: string}, isReached: bool, isCurrent: bool}>
+     */
+    public static function roadmap(?int $currentLifetimePoints = null): array
+    {
+        $currentTier = $currentLifetimePoints !== null ? self::calculate($currentLifetimePoints) : null;
+
+        return array_map(function (self $tier) use ($currentLifetimePoints, $currentTier) {
+            return [
+                'tier' => $tier->value,
+                'name' => $tier->value.' Member',
+                'minPoints' => $tier->minPoints(),
+                'maxPoints' => $tier->maxPoints(),
+                'benefit' => $tier->benefits(),
+                'visualStyles' => $tier->visualStyles(),
+                'isReached' => $currentLifetimePoints !== null && $currentLifetimePoints >= $tier->minPoints(),
+                'isCurrent' => $currentTier === $tier,
+            ];
+        }, self::cases());
+    }
 }

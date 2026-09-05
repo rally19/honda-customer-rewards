@@ -37,16 +37,35 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 
+type TierRoadmapItem = {
+    tier: string;
+    name: string;
+    minPoints: number;
+    maxPoints: number | null;
+    benefit: string;
+    visualStyles: {
+        badge: string;
+        color: string;
+        bg: string;
+        border: string;
+        text: string;
+    };
+    isReached: boolean;
+    isCurrent: boolean;
+};
+
 type Props = {
     loyalty: {
         memberId: string;
         tier: string;
         tierBadge: string;
+        tierLevel?: string;
         nextTier: string;
         points: number;
         lifetimePoints?: number;
         pointsToNextTier: number;
         tierProgress: number;
+        tierRoadmap?: TierRoadmapItem[];
         vouchers: Array<{
             id: string;
             title: string;
@@ -75,6 +94,7 @@ export default function CustomerDashboard({ loyalty }: Props) {
     const [showPoints, setShowPoints] = useState(true);
     const [copiedId, setCopiedId] = useState(false);
     const [selectedVoucher, setSelectedVoucher] = useState<(typeof loyalty.vouchers)[0] | null>(null);
+    const [showTierModal, setShowTierModal] = useState(false);
 
     const formattedId = loyalty.memberId
         .padStart(10, '0')
@@ -136,11 +156,17 @@ export default function CustomerDashboard({ loyalty }: Props) {
                                 </div>
                             </div>
 
-                            {/* Tier Badge */}
-                            <div className="flex items-center gap-1.5 rounded-full bg-black/40 backdrop-blur-md px-3.5 py-1 border border-white/15 text-xs font-bold text-red-200">
-                                <Award className="size-3.5 text-amber-400" />
+                            {/* Tier Badge (Clickable to open roadmap modal) */}
+                            <button
+                                type="button"
+                                onClick={() => setShowTierModal(true)}
+                                className="flex items-center gap-1.5 rounded-full bg-black/40 backdrop-blur-md px-3.5 py-1.5 border border-white/15 text-xs font-bold text-red-200 hover:bg-black/60 hover:border-white/30 transition-all cursor-pointer group shadow-sm active:scale-95"
+                                title="Klik untuk melihat Roadmap & Benefit Level Member"
+                            >
+                                <Award className="size-3.5 text-amber-400 group-hover:scale-110 transition-transform" />
                                 <span>{loyalty.tier}</span>
-                            </div>
+                                <Info className="size-3 text-zinc-400 group-hover:text-white transition-colors ml-0.5" />
+                            </button>
                         </div>
 
                         {/* Card Center: Saldo Poin (Digital Balance) */}
@@ -163,23 +189,63 @@ export default function CustomerDashboard({ loyalty }: Props) {
                                 </div>
                                 <span className="text-sm font-bold text-red-400 uppercase">POIN</span>
                                 {loyalty.lifetimePoints !== undefined && (
-                                    <span className="text-[11px] font-mono px-2 py-0.5 rounded-full bg-white/10 text-zinc-300 border border-white/10 ml-auto">
-                                        Akumulasi: {loyalty.lifetimePoints.toLocaleString('id-ID')} Pts
-                                    </span>
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowTierModal(true)}
+                                        className="text-[11px] font-mono px-2.5 py-0.5 rounded-full bg-white/10 hover:bg-white/20 text-zinc-300 hover:text-white border border-white/10 transition-colors ml-auto cursor-pointer flex items-center gap-1"
+                                        title="Poin akumulasi seumur hidup menentukan level Anda"
+                                    >
+                                        <span>Akumulasi: {loyalty.lifetimePoints.toLocaleString('id-ID')} Pts</span>
+                                        <Info className="size-2.5 opacity-70" />
+                                    </button>
                                 )}
                             </div>
 
-                            {/* Tier Progress Bar */}
-                            <div className="pt-2 max-w-sm">
-                                <div className="flex justify-between text-[11px] text-zinc-300 mb-1">
-                                    <span>Menuju {loyalty.nextTier}</span>
-                                    <span>{loyalty.pointsToNextTier} Poin lagi</span>
+                            {/* Tier Progress Bar (Clickable to open roadmap modal) */}
+                            <div
+                                role="button"
+                                tabIndex={0}
+                                onClick={() => setShowTierModal(true)}
+                                onKeyDown={(e) => {
+                                    if (e.key === 'Enter' || e.key === ' ') {
+                                        e.preventDefault();
+                                        setShowTierModal(true);
+                                    }
+                                }}
+                                className="pt-2 max-w-sm cursor-pointer group transition-transform focus:outline-none"
+                                title="Klik untuk melihat detail tingkatan level & akumulasi poin"
+                            >
+                                <div className="flex justify-between text-[11px] text-zinc-300 mb-1 items-center">
+                                    {loyalty.pointsToNextTier === 0 || loyalty.nextTier === 'Maksimal' ? (
+                                        <>
+                                            <span className="flex items-center gap-1 font-semibold text-amber-300">
+                                                <Sparkles className="size-3 text-amber-400 animate-pulse" />
+                                                Tingkat Tertinggi (Diamond Member)
+                                            </span>
+                                            <span className="font-mono text-emerald-300 font-bold">100% Maksimal</span>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <span className="group-hover:text-white transition-colors">
+                                                Menuju {loyalty.nextTier}
+                                            </span>
+                                            <span className="font-mono font-medium">
+                                                {loyalty.pointsToNextTier.toLocaleString('id-ID')} Poin lagi
+                                            </span>
+                                        </>
+                                    )}
                                 </div>
-                                <div className="h-1.5 w-full rounded-full bg-black/40 overflow-hidden">
+                                <div className="h-2 w-full rounded-full bg-black/50 overflow-hidden ring-1 ring-white/10">
                                     <div
-                                        className="h-full rounded-full bg-gradient-to-r from-red-500 to-amber-400 transition-all duration-500"
-                                        style={{ width: `${loyalty.tierProgress}%` }}
+                                        className="h-full rounded-full bg-gradient-to-r from-red-500 via-amber-400 to-yellow-300 transition-all duration-500"
+                                        style={{ width: `${Math.min(100, Math.max(0, loyalty.tierProgress))}%` }}
                                     />
+                                </div>
+                                <div className="flex items-center justify-between text-[10px] text-zinc-400 mt-1">
+                                    <span>Level dihitung dari total akumulasi</span>
+                                    <span className="underline decoration-dotted text-zinc-300 group-hover:text-white flex items-center gap-1">
+                                        Roadmap Level & Benefit →
+                                    </span>
                                 </div>
                             </div>
                         </div>
@@ -517,6 +583,222 @@ export default function CustomerDashboard({ loyalty }: Props) {
                             </Button>
                         </>
                     )}
+                </DialogContent>
+            </Dialog>
+
+            {/* ========================================================================= */}
+            {/* MODAL ROADMAP & KETENTUAN LEVEL MEMBER                                     */}
+            {/* ========================================================================= */}
+            <Dialog open={showTierModal} onOpenChange={setShowTierModal}>
+                <DialogContent className="sm:max-w-xl max-h-[90vh] overflow-y-auto rounded-3xl border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-6">
+                    <DialogHeader className="space-y-1 pb-3 border-b border-zinc-100 dark:border-zinc-800">
+                        <div className="flex items-center gap-2">
+                            <div className="flex size-9 items-center justify-center rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400">
+                                <Award className="size-5" />
+                            </div>
+                            <div>
+                                <DialogTitle className="text-lg font-black text-zinc-900 dark:text-white">
+                                    Roadmap & Benefit Level Member
+                                </DialogTitle>
+                                <DialogDescription className="text-xs text-zinc-500">
+                                    Ketentuan tingkatan keanggotaan berbasis akumulasi poin seumur hidup
+                                </DialogDescription>
+                            </div>
+                        </div>
+                    </DialogHeader>
+
+                    {/* Member Status Summary Card */}
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 p-3.5 rounded-2xl bg-zinc-50 dark:bg-zinc-950/60 border border-zinc-200/80 dark:border-zinc-800 my-2">
+                        <div>
+                            <span className="text-[10px] text-zinc-500 font-medium block">Level Anda Saat Ini</span>
+                            <span className="font-extrabold text-sm text-red-600 dark:text-red-400">
+                                {loyalty.tier}
+                            </span>
+                        </div>
+                        <div>
+                            <span className="text-[10px] text-zinc-500 font-medium block">Saldo Poin Aktif</span>
+                            <span className="font-mono font-bold text-sm text-zinc-900 dark:text-zinc-100">
+                                {loyalty.points.toLocaleString('id-ID')} Poin
+                            </span>
+                        </div>
+                        <div className="col-span-2 sm:col-span-1">
+                            <span className="text-[10px] text-zinc-500 font-medium block">Total Poin Akumulasi</span>
+                            <span className="font-mono font-bold text-sm text-amber-600 dark:text-amber-400">
+                                {(loyalty.lifetimePoints ?? loyalty.points).toLocaleString('id-ID')} Pts
+                            </span>
+                        </div>
+                    </div>
+
+                    {/* Protection Guarantee Notice */}
+                    <div className="p-3.5 rounded-2xl bg-red-50/80 dark:bg-red-950/30 border border-red-200/80 dark:border-red-900/40 text-xs text-red-900 dark:text-red-200 flex items-start gap-2.5">
+                        <Shield className="size-4.5 text-red-600 dark:text-red-400 shrink-0 mt-0.5" />
+                        <div className="space-y-1">
+                            <p className="font-bold text-[11px] text-red-700 dark:text-red-300 uppercase tracking-wide">
+                                Proteksi Level & Poin Akumulasi
+                            </p>
+                            <p className="text-[11px] leading-relaxed text-zinc-700 dark:text-zinc-300">
+                                Level member Anda dihitung secara permanen dari <strong>total akumulasi poin seumur hidup (Lifetime Points)</strong>.
+                                Menukarkan saldo poin untuk voucher atau reward <strong>TIDAK AKAN MENGURANGI</strong> akumulasi poin ataupun menurunkan level keanggotaan Anda.
+                            </p>
+                        </div>
+                    </div>
+
+                    {/* Tier Ladder List */}
+                    <div className="space-y-2.5 my-3">
+                        <h4 className="text-xs font-bold uppercase tracking-wider text-zinc-600 dark:text-zinc-400">
+                            Jenjang 5 Tingkat Keanggotaan
+                        </h4>
+
+                        {(loyalty.tierRoadmap || [
+                            {
+                                tier: 'Bronze',
+                                name: 'Bronze Member',
+                                minPoints: 0,
+                                maxPoints: 499,
+                                benefit: 'Akses perolehan poin rewards di seluruh AHASS dan dealer resmi Honda.',
+                                visualStyles: {
+                                    badge: 'BRONZE',
+                                    color: '#B45309',
+                                    bg: 'bg-amber-100 dark:bg-amber-950/40',
+                                    border: 'border-amber-300 dark:border-amber-800',
+                                    text: 'text-amber-800 dark:text-amber-300',
+                                },
+                                isReached: true,
+                                isCurrent: loyalty.tier.toLowerCase().includes('bronze'),
+                            },
+                            {
+                                tier: 'Silver',
+                                name: 'Silver Member',
+                                minPoints: 500,
+                                maxPoints: 1499,
+                                benefit: 'Akses katalog voucher oli MPX, diskon servis berkala, dan penukaran merchandise reguler.',
+                                visualStyles: {
+                                    badge: 'SILVER',
+                                    color: '#64748B',
+                                    bg: 'bg-slate-100 dark:bg-slate-900/40',
+                                    border: 'border-slate-300 dark:border-slate-700',
+                                    text: 'text-slate-700 dark:text-slate-300',
+                                },
+                                isReached: (loyalty.lifetimePoints ?? loyalty.points) >= 500,
+                                isCurrent: loyalty.tier.toLowerCase().includes('silver'),
+                            },
+                            {
+                                tier: 'Gold',
+                                name: 'Gold Member',
+                                minPoints: 1500,
+                                maxPoints: 3499,
+                                benefit: 'Prioritas booking servis AHASS, diskon suku cadang & aksesori resmi, serta voucher berkala.',
+                                visualStyles: {
+                                    badge: 'GOLD',
+                                    color: '#D97706',
+                                    bg: 'bg-yellow-100 dark:bg-yellow-950/40',
+                                    border: 'border-yellow-400 dark:border-yellow-700',
+                                    text: 'text-yellow-800 dark:text-yellow-300',
+                                },
+                                isReached: (loyalty.lifetimePoints ?? loyalty.points) >= 1500,
+                                isCurrent: loyalty.tier.toLowerCase().includes('gold'),
+                            },
+                            {
+                                tier: 'Platinum',
+                                name: 'Platinum Member',
+                                minPoints: 3500,
+                                maxPoints: 6999,
+                                benefit: 'Prioritas antrean servis AHASS, tiket undian ganda Hari Pelanggan, dan voucher spesial.',
+                                visualStyles: {
+                                    badge: 'PLATINUM',
+                                    color: '#0891B2',
+                                    bg: 'bg-cyan-100 dark:bg-cyan-950/40',
+                                    border: 'border-cyan-300 dark:border-cyan-700',
+                                    text: 'text-cyan-800 dark:text-cyan-300',
+                                },
+                                isReached: (loyalty.lifetimePoints ?? loyalty.points) >= 3500,
+                                isCurrent: loyalty.tier.toLowerCase().includes('platinum'),
+                            },
+                            {
+                                tier: 'Diamond',
+                                name: 'Diamond Member',
+                                minPoints: 7000,
+                                maxPoints: null,
+                                benefit: 'Layanan VIP AHASS, merchandise premium eksklusif Honda, dan undangan event tahunan.',
+                                visualStyles: {
+                                    badge: 'DIAMOND',
+                                    color: '#7C3AED',
+                                    bg: 'bg-purple-100 dark:bg-purple-950/40',
+                                    border: 'border-purple-300 dark:border-purple-700',
+                                    text: 'text-purple-800 dark:text-purple-300',
+                                },
+                                isReached: (loyalty.lifetimePoints ?? loyalty.points) >= 7000,
+                                isCurrent: loyalty.tier.toLowerCase().includes('diamond'),
+                            },
+                        ]).map((tierItem) => {
+                            const isCurrent = tierItem.isCurrent || loyalty.tier.toLowerCase().includes(tierItem.tier.toLowerCase());
+                            const isReached = tierItem.isReached;
+
+                            return (
+                                <div
+                                    key={tierItem.tier}
+                                    className={`p-3.5 rounded-2xl border transition-all ${
+                                        isCurrent
+                                            ? 'border-red-500 bg-red-500/5 dark:bg-red-950/30 ring-1 ring-red-500/30'
+                                            : isReached
+                                              ? 'border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/60'
+                                              : 'border-dashed border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-950/30 opacity-75'
+                                    }`}
+                                >
+                                    <div className="flex items-center justify-between gap-2">
+                                        <div className="flex items-center gap-2">
+                                            <Badge
+                                                className={`text-[10px] font-extrabold px-2.5 py-0.5 border ${tierItem.visualStyles.bg} ${tierItem.visualStyles.text} ${tierItem.visualStyles.border}`}
+                                            >
+                                                {tierItem.visualStyles.badge}
+                                            </Badge>
+                                            <span className="text-xs font-bold text-zinc-900 dark:text-zinc-100">
+                                                {tierItem.name}
+                                            </span>
+                                        </div>
+
+                                        <div className="flex items-center gap-1.5">
+                                            {isCurrent ? (
+                                                <Badge className="bg-red-600 text-white text-[9px] font-bold">
+                                                    Level Anda
+                                                </Badge>
+                                            ) : isReached ? (
+                                                <span className="text-[10px] font-semibold text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
+                                                    <Check className="size-3" />
+                                                    Tercapai
+                                                </span>
+                                            ) : (
+                                                <span className="text-[10px] font-mono text-zinc-500">
+                                                    Min. {tierItem.minPoints.toLocaleString('id-ID')} Pts
+                                                </span>
+                                            )}
+                                        </div>
+                                    </div>
+
+                                    <div className="mt-2 flex items-baseline justify-between text-[11px] text-zinc-500">
+                                        <span>
+                                            Syarat Akumulasi: <strong>{tierItem.minPoints.toLocaleString('id-ID')}</strong>
+                                            {tierItem.maxPoints !== null ? ` - ${tierItem.maxPoints.toLocaleString('id-ID')} Pts` : '+ Pts'}
+                                        </span>
+                                    </div>
+
+                                    <p className="mt-1.5 text-[11px] text-zinc-600 dark:text-zinc-400 leading-snug">
+                                        {tierItem.benefit}
+                                    </p>
+                                </div>
+                            );
+                        })}
+                    </div>
+
+                    <DialogFooter className="pt-2">
+                        <Button
+                            type="button"
+                            onClick={() => setShowTierModal(false)}
+                            className="w-full rounded-xl bg-zinc-900 hover:bg-zinc-800 dark:bg-zinc-100 dark:hover:bg-zinc-200 dark:text-zinc-900 text-white font-semibold text-xs h-10"
+                        >
+                            Tutup Informasi
+                        </Button>
+                    </DialogFooter>
                 </DialogContent>
             </Dialog>
         </CustomerLayout>

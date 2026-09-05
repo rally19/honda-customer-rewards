@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\MemberTier;
 use App\Enums\UserRole;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
@@ -58,6 +59,9 @@ class AdminUserController extends Controller
                 'address' => $user->address ?? '-',
                 'role' => $user->role instanceof UserRole ? $user->role->value : (string) $user->role,
                 'is_verified' => ! is_null($user->email_verified_at),
+                'points' => (int) $user->points,
+                'lifetime_points' => (int) $user->lifetime_points,
+                'tier' => $user->tier instanceof MemberTier ? $user->tier->value : (string) ($user->tier ?? 'Bronze'),
                 'created_at' => $user->created_at?->format('d M Y, H:i') ?? '-',
             ]);
 

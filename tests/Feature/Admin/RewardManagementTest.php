@@ -99,7 +99,7 @@ test('customer can view active rewards catalog', function () {
     $user = User::factory()->create([
         'role' => UserRole::User->value,
         'points' => 300,
-        'lifetime_points' => 300,
+        'lifetime_points' => 600,
         'tier' => MemberTier::Silver,
     ]);
 
@@ -118,7 +118,7 @@ test('customer can view active rewards catalog', function () {
         ->component('customer/rewards')
         ->has('rewards', 1)
         ->where('stats.currentPoints', 300)
-        ->where('stats.lifetimePoints', 300)
+        ->where('stats.lifetimePoints', 600)
         ->where('stats.tierBadge', 'SILVER')
     );
 });

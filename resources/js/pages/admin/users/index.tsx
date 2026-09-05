@@ -51,6 +51,9 @@ type UserItem = {
     address: string;
     role: 'user' | 'admin' | string;
     is_verified: boolean;
+    points?: number;
+    lifetime_points?: number;
+    tier?: string;
     created_at: string;
 };
 
@@ -391,9 +394,9 @@ export default function AdminUsersIndex({ users, filters, stats }: Props) {
                                 variant="outline"
                                 onClick={() => {
                                     const csv = users.data
-                                        .map((u) => `"${u.id}","${u.name}","${u.email}","${u.phone_number}","${u.address}","${u.role}","${u.is_verified ? 'Verified' : 'Pending'}"`)
+                                        .map((u) => `"${u.id}","${u.name}","${u.email}","${u.phone_number}","${u.address}","${u.role}","${u.tier || 'Bronze'}","${u.points ?? 0}","${u.lifetime_points ?? 0}","${u.is_verified ? 'Verified' : 'Pending'}"`)
                                         .join('\n');
-                                    const header = '"ID Member","Nama Lengkap","Email","No. Telepon","Alamat","Role","Status Email"\n';
+                                    const header = '"ID Member","Nama Lengkap","Email","No. Telepon","Alamat","Role","Level Member","Saldo Poin","Poin Akumulasi","Status Email"\n';
                                     handleCopy(header + csv, 'Data Pengguna (CSV)');
                                 }}
                                 className="text-xs h-9.5 gap-1.5 rounded-xl cursor-pointer"
@@ -467,6 +470,7 @@ export default function AdminUsersIndex({ users, filters, stats }: Props) {
                                     <th className="py-3.5 px-4">Kontak & WhatsApp</th>
                                     <th className="py-3.5 px-4">Alamat Domisili</th>
                                     <th className="py-3.5 px-4">Role Akun</th>
+                                    <th className="py-3.5 px-4">Level & Poin</th>
                                     <th className="py-3.5 px-4">Verifikasi Email</th>
                                     <th className="py-3.5 px-4">Terdaftar</th>
                                     <th className="py-3.5 px-4 text-right">Aksi</th>
@@ -475,7 +479,7 @@ export default function AdminUsersIndex({ users, filters, stats }: Props) {
                             <tbody className="divide-y divide-zinc-100 dark:divide-zinc-800/60">
                                 {users.data.length === 0 ? (
                                     <tr>
-                                        <td colSpan={8} className="py-12 text-center text-zinc-400">
+                                        <td colSpan={9} className="py-12 text-center text-zinc-400">
                                             Tidak ada data pengguna yang sesuai dengan filter pencarian.
                                         </td>
                                     </tr>
@@ -533,6 +537,30 @@ export default function AdminUsersIndex({ users, filters, stats }: Props) {
                                                     >
                                                         {user.role === 'admin' ? 'Administrator' : 'Member'}
                                                     </Badge>
+                                                </td>
+                                                <td className="py-3.5 px-4">
+                                                    <div className="space-y-1">
+                                                        <Badge
+                                                            className={`text-[9px] font-extrabold px-2 py-0.5 border ${
+                                                                user.tier === 'Diamond'
+                                                                    ? 'bg-purple-100 text-purple-700 border-purple-300 dark:bg-purple-950/60 dark:text-purple-300 dark:border-purple-700'
+                                                                    : user.tier === 'Platinum'
+                                                                      ? 'bg-cyan-100 text-cyan-700 border-cyan-300 dark:bg-cyan-950/60 dark:text-cyan-300 dark:border-cyan-700'
+                                                                      : user.tier === 'Gold'
+                                                                        ? 'bg-yellow-100 text-yellow-800 border-yellow-400 dark:bg-yellow-950/60 dark:text-yellow-300 dark:border-yellow-700'
+                                                                        : user.tier === 'Silver'
+                                                                          ? 'bg-slate-100 text-slate-700 border-slate-300 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-600'
+                                                                          : 'bg-amber-100 text-amber-800 border-amber-300 dark:bg-amber-950/60 dark:text-amber-300 dark:border-amber-700'
+                                                            }`}
+                                                        >
+                                                            {user.tier || 'Bronze'} Member
+                                                        </Badge>
+                                                        <div className="text-[10px] text-zinc-500 font-mono whitespace-nowrap">
+                                                            <span>Saldo: <strong className="text-zinc-800 dark:text-zinc-200">{(user.points ?? 0).toLocaleString('id-ID')}</strong></span>
+                                                            <span className="mx-1">•</span>
+                                                            <span>Akumulasi: <strong className="text-amber-600 dark:text-amber-400">{(user.lifetime_points ?? 0).toLocaleString('id-ID')}</strong></span>
+                                                        </div>
+                                                    </div>
                                                 </td>
                                                 <td className="py-3.5 px-4">
                                                     {user.is_verified ? (

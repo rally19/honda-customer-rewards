@@ -21,10 +21,7 @@ class CustomerRewardController extends Controller
     public function index(Request $request): Response
     {
         $user = $request->user();
-
-        $tier = $user->tier instanceof MemberTier
-            ? $user->tier
-            : MemberTier::calculate((int) $user->lifetime_points);
+        $tier = MemberTier::calculate((int) $user->lifetime_points);
 
         $today = now()->startOfDay();
 
