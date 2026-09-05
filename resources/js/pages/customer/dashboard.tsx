@@ -65,6 +65,18 @@ type EarningActivity = {
     description?: string;
 };
 
+type RewardItem = {
+    id: string;
+    name: string;
+    description?: string;
+    image_url?: string;
+    image?: string;
+    points_cost?: number;
+    pointsCost?: number;
+    stock: number;
+    can_afford?: boolean;
+};
+
 type Props = {
     loyalty: {
         memberId: string;
@@ -78,7 +90,8 @@ type Props = {
         tierProgress: number;
         tierRoadmap?: TierRoadmapItem[];
         earningActivities?: EarningActivity[];
-        vouchers: Array<{
+        rewards?: RewardItem[];
+        vouchers?: Array<{
             id: string;
             title: string;
             code: string;
@@ -101,17 +114,105 @@ type Props = {
         }>;
     };
     earningActivities?: EarningActivity[];
+    rewards?: RewardItem[];
 };
 
-export default function CustomerDashboard({ loyalty, earningActivities }: Props) {
+export default function CustomerDashboard({ loyalty, earningActivities, rewards }: Props) {
     const [showPoints, setShowPoints] = useState(true);
     const [copiedId, setCopiedId] = useState(false);
-    const [selectedVoucher, setSelectedVoucher] = useState<(typeof loyalty.vouchers)[0] | null>(null);
+    const [selectedReward, setSelectedReward] = useState<RewardItem | null>(null);
     const [showTierModal, setShowTierModal] = useState(false);
 
     const sliderRef = useRef<HTMLDivElement>(null);
     const [canScrollLeft, setCanScrollLeft] = useState(false);
     const [canScrollRight, setCanScrollRight] = useState(true);
+
+    const rewardSliderRef = useRef<HTMLDivElement>(null);
+    const [canScrollRewardLeft, setCanScrollRewardLeft] = useState(false);
+    const [canScrollRewardRight, setCanScrollRewardRight] = useState(true);
+
+    const activeRewards: RewardItem[] = (rewards && rewards.length > 0)
+        ? rewards
+        : (loyalty.rewards && loyalty.rewards.length > 0)
+            ? loyalty.rewards
+            : [
+                {
+                    id: '2039485704',
+                    name: 'Voucher servis',
+                    description: 'Voucher gratis atau potongan biaya jasa servis berkala di bengkel resmi AHASS.',
+                    image_url: '/images/pictures/voucher_service_img.jpg',
+                    points_cost: 150,
+                    stock: 30,
+                },
+                {
+                    id: '2039485702',
+                    name: 'Oli Honda gratis',
+                    description: 'Gratis 1 botol oli pelumas resmi mesin motor Honda AHM Oil MPX / SPX.',
+                    image_url: '/images/pictures/oli_honda_img.jpg',
+                    points_cost: 200,
+                    stock: 50,
+                },
+                {
+                    id: '2039485703',
+                    name: 'Potongan pembelian aksesori',
+                    description: 'Potongan harga langsung pembelian Honda Genuine Accessories (HGA) resmi.',
+                    image_url: '/images/pictures/potongan_pembelian_aksesori_img.jpg',
+                    points_cost: 100,
+                    stock: 40,
+                },
+                {
+                    id: '2039485701',
+                    name: 'Merchandise resmi Honda',
+                    description: 'Apparel eksklusif resmi Honda seperti jaket riding touring dan t-shirt.',
+                    image_url: '/images/pictures/merchandise_resmi_honda_img.jpg',
+                    points_cost: 350,
+                    stock: 25,
+                },
+                {
+                    id: '2039485705',
+                    name: 'Voucher pembelian motor',
+                    description: 'Voucher potongan DP atau cashback pembelian unit motor baru Honda.',
+                    image_url: '/images/pictures/voucher_pembelian_motor_img.jpg',
+                    points_cost: 800,
+                    stock: 10,
+                },
+                {
+                    id: '2039485706',
+                    name: 'Kesempatan mengikuti undian hadiah khusus',
+                    description: 'Kupon partisipasi undian reward dengan kesempatan hadiah grand prize khusus.',
+                    image_url: '/images/pictures/kesempatan_mengikuti_undian_hadiah_khusus_img.jpg',
+                    points_cost: 50,
+                    stock: 100,
+                },
+            ];
+
+    const updateRewardScrollButtons = () => {
+        if (!rewardSliderRef.current) return;
+        const { scrollLeft, scrollWidth, clientWidth } = rewardSliderRef.current;
+        setCanScrollRewardLeft(scrollLeft > 4);
+        setCanScrollRewardRight(scrollLeft < scrollWidth - clientWidth - 4);
+    };
+
+    useEffect(() => {
+        updateRewardScrollButtons();
+        const timer = setTimeout(updateRewardScrollButtons, 100);
+        const slider = rewardSliderRef.current;
+        if (!slider) return;
+        slider.addEventListener('scroll', updateRewardScrollButtons, { passive: true });
+        window.addEventListener('resize', updateRewardScrollButtons);
+        return () => {
+            clearTimeout(timer);
+            slider.removeEventListener('scroll', updateRewardScrollButtons);
+            window.removeEventListener('resize', updateRewardScrollButtons);
+        };
+    }, [activeRewards.length]);
+
+    const scrollRewardSlider = (direction: 'left' | 'right') => {
+        if (rewardSliderRef.current) {
+            const amount = direction === 'left' ? -220 : 220;
+            rewardSliderRef.current.scrollBy({ left: amount, behavior: 'smooth' });
+        }
+    };
 
     const activeActivities: EarningActivity[] = (earningActivities && earningActivities.length > 0)
         ? earningActivities
@@ -130,17 +231,19 @@ export default function CustomerDashboard({ loyalty, earningActivities }: Props)
     const updateScrollButtons = () => {
         if (!sliderRef.current) return;
         const { scrollLeft, scrollWidth, clientWidth } = sliderRef.current;
-        setCanScrollLeft(scrollLeft > 10);
-        setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 10);
+        setCanScrollLeft(scrollLeft > 4);
+        setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 4);
     };
 
     useEffect(() => {
         updateScrollButtons();
+        const timer = setTimeout(updateScrollButtons, 100);
         const slider = sliderRef.current;
         if (!slider) return;
         slider.addEventListener('scroll', updateScrollButtons, { passive: true });
         window.addEventListener('resize', updateScrollButtons);
         return () => {
+            clearTimeout(timer);
             slider.removeEventListener('scroll', updateScrollButtons);
             window.removeEventListener('resize', updateScrollButtons);
         };
@@ -436,6 +539,7 @@ export default function CustomerDashboard({ loyalty, earningActivities }: Props)
                 <section className="space-y-3">
                     <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
+                            <Zap className="size-4 text-red-600" />
                             <h3 className="text-sm font-bold uppercase tracking-wider text-zinc-900 dark:text-zinc-100">
                                 Aktivitas & Perolehan Poin
                             </h3>
@@ -481,101 +585,218 @@ export default function CustomerDashboard({ loyalty, earningActivities }: Props)
                         </div>
                     </div>
 
-                    {/* Slide Container */}
-                    <div
-                        ref={sliderRef}
-                        className="flex gap-2.5 sm:gap-3 overflow-x-auto pb-2 scrollbar-none snap-x snap-mandatory scroll-smooth -mx-4 px-4 sm:mx-0 sm:px-0"
-                    >
-                        {activeActivities.map((act) => (
-                            <div
-                                key={act.id}
-                                onClick={() => handleActivityClick(act)}
-                                className="w-[155px] sm:w-[175px] shrink-0 snap-start flex flex-col justify-between p-3 sm:p-3.5 rounded-2xl border border-zinc-200/90 bg-white dark:border-zinc-800 dark:bg-zinc-900 hover:border-red-400 dark:hover:border-red-500/60 transition-all cursor-pointer group shadow-2xs select-none"
-                                title={`${act.name} (+${act.points} Poin)`}
-                            >
-                                <div className="space-y-2.5">
-                                    {/* Icon & Points Badge */}
-                                    <div className="flex items-center justify-between gap-1.5">
-                                        <div
-                                            className={`flex size-9 items-center justify-center rounded-xl border shadow-2xs group-hover:scale-105 transition-transform ${getActivityBg(
-                                                act.name,
-                                            )}`}
-                                        >
-                                            {getActivityIcon(act.name)}
+                    {/* Slide Container with Edge Gradient Fades */}
+                    <div className="relative">
+                        {/* Left Fade Overlay (appears when content is scrolled to the right) */}
+                        <div
+                            className={`pointer-events-none absolute -left-1.5 sm:-left-2 top-0 bottom-0 w-5 sm:w-6 md:w-8 bg-gradient-to-r from-zinc-50 via-zinc-50/80 to-transparent dark:from-zinc-950 dark:via-zinc-950/80 dark:to-transparent z-10 transition-opacity duration-300 ${
+                                canScrollLeft ? 'opacity-100' : 'opacity-0'
+                            }`}
+                            aria-hidden="true"
+                        />
+
+                        {/* Slide Container */}
+                        <div
+                            ref={sliderRef}
+                            className="flex gap-3 overflow-x-auto py-1 scrollbar-none snap-x snap-mandatory scroll-smooth"
+                        >
+                            {activeActivities.map((act) => (
+                                <div
+                                    key={act.id}
+                                    onClick={() => handleActivityClick(act)}
+                                    className="w-[155px] sm:w-[175px] shrink-0 snap-start flex flex-col justify-between p-3 sm:p-3.5 rounded-2xl border border-zinc-200/90 bg-white dark:border-zinc-800 dark:bg-zinc-900 hover:border-red-400 dark:hover:border-red-500/60 transition-all cursor-pointer group shadow-2xs select-none"
+                                    title={`${act.name} (+${act.points} Poin)`}
+                                >
+                                    <div className="space-y-2.5">
+                                        {/* Icon & Points Badge */}
+                                        <div className="flex items-center justify-between gap-1.5">
+                                            <div
+                                                className={`flex size-9 items-center justify-center rounded-xl border shadow-2xs group-hover:scale-105 transition-transform ${getActivityBg(
+                                                    act.name,
+                                                )}`}
+                                            >
+                                                {getActivityIcon(act.name)}
+                                            </div>
+                                            <span className="inline-flex items-center gap-0.5 rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-black text-emerald-700 border border-emerald-200/70 dark:bg-emerald-950/70 dark:text-emerald-300 dark:border-emerald-800/60 shadow-2xs">
+                                                +{act.points} Pts
+                                            </span>
                                         </div>
-                                        <span className="inline-flex items-center gap-0.5 rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-black text-emerald-700 border border-emerald-200/70 dark:bg-emerald-950/70 dark:text-emerald-300 dark:border-emerald-800/60 shadow-2xs">
-                                            +{act.points} Pts
+
+                                        {/* Title */}
+                                        <div>
+                                            <h4 className="text-xs font-bold text-zinc-900 dark:text-zinc-100 group-hover:text-red-600 dark:group-hover:text-red-400 transition-colors line-clamp-2 leading-tight">
+                                                {act.name}
+                                            </h4>
+                                        </div>
+                                    </div>
+
+                                    {/* Bottom Action */}
+                                    <div className="mt-3 pt-2 border-t border-zinc-100 dark:border-zinc-800/80 flex items-center justify-between text-[10px]">
+                                        <span className="font-semibold text-red-600 dark:text-red-400 flex items-center gap-1 group-hover:translate-x-0.5 transition-transform">
+                                            <QrCode className="size-3" />
+                                            Tunjukkan ID
                                         </span>
-                                    </div>
-
-                                    {/* Title */}
-                                    <div>
-                                        <h4 className="text-xs font-bold text-zinc-900 dark:text-zinc-100 group-hover:text-red-600 dark:group-hover:text-red-400 transition-colors line-clamp-2 leading-tight">
-                                            {act.name}
-                                        </h4>
+                                        <ChevronRight className="size-3 text-zinc-400 group-hover:text-red-500 group-hover:translate-x-0.5 transition-all" />
                                     </div>
                                 </div>
+                            ))}
+                        </div>
 
-                                {/* Bottom Action */}
-                                <div className="mt-3 pt-2 border-t border-zinc-100 dark:border-zinc-800/80 flex items-center justify-between text-[10px]">
-                                    <span className="font-semibold text-red-600 dark:text-red-400 flex items-center gap-1 group-hover:translate-x-0.5 transition-transform">
-                                        <QrCode className="size-3" />
-                                        Tunjukkan ID
-                                    </span>
-                                    <ChevronRight className="size-3 text-zinc-400 group-hover:text-red-500 group-hover:translate-x-0.5 transition-all" />
-                                </div>
-                            </div>
-                        ))}
+                        {/* Right Fade Overlay (appears when there is more content to scroll) */}
+                        <div
+                            className={`pointer-events-none absolute -right-1.5 sm:-right-2 top-0 bottom-0 w-5 sm:w-6 md:w-8 bg-gradient-to-l from-zinc-50 via-zinc-50/80 to-transparent dark:from-zinc-950 dark:via-zinc-950/80 dark:to-transparent z-10 transition-opacity duration-300 ${
+                                canScrollRight ? 'opacity-100' : 'opacity-0'
+                            }`}
+                            aria-hidden="true"
+                        />
                     </div>
                 </section>
 
                 {/* ========================================================================= */}
-                {/* 4. DOMPET VOUCHER SAYA (SAVED REWARDS READY TO USE)                       */}
+                {/* 4. KATALOG REWARD RESMI (SLIDEABLE CAROUSEL)                              */}
                 {/* ========================================================================= */}
-                <section id="voucher" className="space-y-3">
+                <section id="rewards-catalog" className="space-y-3">
                     <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
-                            <Tag className="size-4 text-red-600" />
+                            <Gift className="size-4 text-red-600" />
                             <h3 className="text-sm font-bold uppercase tracking-wider text-zinc-900 dark:text-zinc-100">
-                                Voucher Saya
+                                Katalog Reward
                             </h3>
-                            <span className="rounded-full bg-red-100 text-red-700 dark:bg-red-950 dark:text-red-300 px-2 py-0.5 text-[10px] font-bold">
-                                {loyalty.vouchers.length} Siap Pakai
+                            <span className="hidden sm:inline-flex items-center rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 px-2 py-0.5 text-[10px] font-semibold">
+                                {activeRewards.length} Pilihan Hadiah
                             </span>
+                        </div>
+
+                        <div className="flex items-center gap-2">
+                            {/* Slide Navigation Buttons */}
+                            <div className="flex items-center gap-1">
+                                <button
+                                    type="button"
+                                    onClick={() => scrollRewardSlider('left')}
+                                    disabled={!canScrollRewardLeft}
+                                    className="size-7 rounded-full border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 flex items-center justify-center text-zinc-600 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 disabled:opacity-30 disabled:pointer-events-none transition-all cursor-pointer shadow-2xs"
+                                    title="Geser reward ke kiri"
+                                    aria-label="Geser ke kiri"
+                                >
+                                    <ChevronLeft className="size-3.5" />
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => scrollRewardSlider('right')}
+                                    disabled={!canScrollRewardRight}
+                                    className="size-7 rounded-full border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 flex items-center justify-center text-zinc-600 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 disabled:opacity-30 disabled:pointer-events-none transition-all cursor-pointer shadow-2xs"
+                                    title="Geser reward ke kanan"
+                                    aria-label="Geser ke kanan"
+                                >
+                                    <ChevronRight className="size-3.5" />
+                                </button>
+                            </div>
+
+                            <Link
+                                href="/rewards"
+                                prefetch
+                                className="text-xs font-semibold text-red-600 dark:text-red-400 hover:underline flex items-center gap-0.5 ml-1"
+                                title="Lihat semua katalog reward & penukaran"
+                            >
+                                <span>Lihat Semua</span>
+                                <ChevronRight className="size-3" />
+                            </Link>
                         </div>
                     </div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                        {loyalty.vouchers.map((v) => (
-                            <div
-                                key={v.id}
-                                onClick={() => setSelectedVoucher(v)}
-                                className="group flex flex-col justify-between rounded-2xl border border-zinc-200/90 bg-white p-4 shadow-xs dark:border-zinc-800 dark:bg-zinc-900 hover:border-red-400 transition-all cursor-pointer relative overflow-hidden"
-                            >
-                                <div className="space-y-2">
-                                    <div className="flex items-start justify-between">
-                                        <span className="text-[10px] font-bold uppercase tracking-wider text-red-600 dark:text-red-400">
-                                            {v.category}
-                                        </span>
-                                        <span className="rounded-md bg-emerald-100 dark:bg-emerald-950/60 px-2 py-0.5 text-[9px] font-bold text-emerald-700 dark:text-emerald-300">
-                                            {v.status}
-                                        </span>
-                                    </div>
-                                    <h4 className="text-xs font-bold text-zinc-900 dark:text-white line-clamp-2">
-                                        {v.title}
-                                    </h4>
-                                </div>
+                    {/* Slide Container with Edge Gradient Fades */}
+                    <div className="relative">
+                        {/* Left Fade Overlay (appears when content is scrolled to the right) */}
+                        <div
+                            className={`pointer-events-none absolute -left-1.5 sm:-left-2 top-0 bottom-0 w-5 sm:w-6 md:w-8 bg-gradient-to-r from-zinc-50 via-zinc-50/80 to-transparent dark:from-zinc-950 dark:via-zinc-950/80 dark:to-transparent z-10 transition-opacity duration-300 ${
+                                canScrollRewardLeft ? 'opacity-100' : 'opacity-0'
+                            }`}
+                            aria-hidden="true"
+                        />
 
-                                <div className="mt-4 pt-3 border-t border-dashed border-zinc-200 dark:border-zinc-800 flex items-center justify-between text-[11px]">
-                                    <span className="font-mono text-zinc-500 font-medium">
-                                        {v.code}
-                                    </span>
-                                    <span className="text-red-600 dark:text-red-400 font-bold group-hover:translate-x-1 transition-transform inline-flex items-center">
-                                        Gunakan <ChevronRight className="size-3" />
-                                    </span>
-                                </div>
-                            </div>
-                        ))}
+                        {/* Slide Container */}
+                        <div
+                            ref={rewardSliderRef}
+                            className="flex gap-3 overflow-x-auto py-1 scrollbar-none snap-x snap-mandatory scroll-smooth"
+                        >
+                            {activeRewards.map((reward) => {
+                                const cost = reward.points_cost ?? reward.pointsCost ?? 0;
+                                const imageSrc = reward.image_url || reward.image || '/images/pictures/merchandise_resmi_honda_img.jpg';
+                                const canAfford = loyalty.points >= cost;
+
+                                return (
+                                    <div
+                                        key={reward.id}
+                                        onClick={() => setSelectedReward(reward)}
+                                        className="w-[160px] sm:w-[185px] shrink-0 snap-start flex flex-col justify-between rounded-2xl border border-zinc-200/90 bg-white dark:border-zinc-800 dark:bg-zinc-900 overflow-hidden hover:border-red-400 dark:hover:border-red-500/60 transition-all cursor-pointer group shadow-2xs select-none"
+                                        title={`${reward.name} (${cost} Poin)`}
+                                    >
+                                        {/* Image Thumbnail */}
+                                        <div className="relative h-24 sm:h-28 w-full overflow-hidden bg-zinc-100 dark:bg-zinc-800">
+                                            <img
+                                                src={imageSrc}
+                                                alt={reward.name}
+                                                className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-300"
+                                                loading="lazy"
+                                            />
+                                            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-60" />
+
+                                            {/* Points Badge */}
+                                            <span className="absolute top-2 left-2 rounded-full bg-black/70 backdrop-blur-md px-2 py-0.5 text-[10px] font-black text-amber-300 border border-white/20 shadow-xs flex items-center gap-0.5">
+                                                <Coins className="size-3 text-amber-400" />
+                                                {cost} Pts
+                                            </span>
+
+                                            {/* Stock Badge */}
+                                            {reward.stock > 0 ? (
+                                                <span className="absolute top-2 right-2 rounded-full bg-emerald-600/90 backdrop-blur-md px-1.5 py-0.5 text-[9px] font-bold text-white shadow-xs">
+                                                    Tersedia
+                                                </span>
+                                            ) : (
+                                                <span className="absolute top-2 right-2 rounded-full bg-zinc-700/90 backdrop-blur-md px-1.5 py-0.5 text-[9px] font-bold text-white shadow-xs">
+                                                    Habis
+                                                </span>
+                                            )}
+                                        </div>
+
+                                        {/* Content & Action */}
+                                        <div className="p-3 flex flex-col justify-between flex-1 space-y-2">
+                                            <div>
+                                                <h4 className="text-xs font-bold text-zinc-900 dark:text-zinc-100 group-hover:text-red-600 dark:group-hover:text-red-400 transition-colors line-clamp-2 leading-tight">
+                                                    {reward.name}
+                                                </h4>
+                                                <div className="mt-1 flex items-center justify-between text-[10px]">
+                                                    {canAfford ? (
+                                                        <span className="font-semibold text-emerald-600 dark:text-emerald-400">
+                                                            Poin Cukup
+                                                        </span>
+                                                    ) : (
+                                                        <span className="text-zinc-400 dark:text-zinc-500">
+                                                            Kurang {(cost - loyalty.points).toLocaleString('id-ID')} Pts
+                                                        </span>
+                                                    )}
+                                                </div>
+                                            </div>
+
+                                            <div className="pt-2 border-t border-zinc-100 dark:border-zinc-800/80 flex items-center justify-between text-[10px]">
+                                                <span className="font-bold text-red-600 dark:text-red-400 group-hover:translate-x-0.5 transition-transform inline-flex items-center gap-0.5">
+                                                    Tukar Hadiah
+                                                </span>
+                                                <ChevronRight className="size-3 text-zinc-400 group-hover:text-red-500 group-hover:translate-x-0.5 transition-all" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+
+                        {/* Right Fade Overlay (appears when there is more content to scroll) */}
+                        <div
+                            className={`pointer-events-none absolute -right-1.5 sm:-right-2 top-0 bottom-0 w-5 sm:w-6 md:w-8 bg-gradient-to-l from-zinc-50 via-zinc-50/80 to-transparent dark:from-zinc-950 dark:via-zinc-950/80 dark:to-transparent z-10 transition-opacity duration-300 ${
+                                canScrollRewardRight ? 'opacity-100' : 'opacity-0'
+                            }`}
+                            aria-hidden="true"
+                        />
                     </div>
                 </section>
 
@@ -685,52 +906,74 @@ export default function CustomerDashboard({ loyalty, earningActivities }: Props)
 
 
             {/* ========================================================================= */}
-            {/* MODAL DETAIL VOUCHER & KODE KLAIM                                          */}
+            {/* MODAL PREVIEW DETAIL REWARD                                               */}
             {/* ========================================================================= */}
-            <Dialog open={!!selectedVoucher} onOpenChange={(open) => !open && setSelectedVoucher(null)}>
+            <Dialog open={!!selectedReward} onOpenChange={(open) => !open && setSelectedReward(null)}>
                 <DialogContent className="sm:max-w-md rounded-3xl border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-6">
-                    {selectedVoucher && (
+                    {selectedReward && (
                         <>
                             <DialogHeader className="text-center space-y-1 pb-2 border-b border-zinc-100 dark:border-zinc-800">
                                 <span className="text-[11px] font-extrabold uppercase tracking-wider text-red-600">
-                                    {selectedVoucher.category}
+                                    Katalog Reward Honda
                                 </span>
                                 <DialogTitle className="text-lg font-bold text-zinc-900 dark:text-white">
-                                    {selectedVoucher.title}
+                                    {selectedReward.name}
                                 </DialogTitle>
                                 <DialogDescription className="text-xs text-zinc-500">
-                                    Berlaku hingga {selectedVoucher.expiresAt} di seluruh jaringan AHASS resmi
+                                    Penukaran reward resmi di bengkel AHASS dan dealer resmi Honda
                                 </DialogDescription>
                             </DialogHeader>
 
-                            <div className="my-4 flex flex-col items-center text-center space-y-4">
-                                <div className="relative aspect-[16/9] w-full overflow-hidden rounded-2xl bg-zinc-100 dark:bg-zinc-800">
+                            <div className="my-4 flex flex-col items-center text-center space-y-3">
+                                <div className="relative aspect-[16/10] w-full overflow-hidden rounded-2xl bg-zinc-100 dark:bg-zinc-800">
                                     <img
-                                        src={selectedVoucher.image}
-                                        alt={selectedVoucher.title}
+                                        src={selectedReward.image_url || selectedReward.image || '/images/pictures/merchandise_resmi_honda_img.jpg'}
+                                        alt={selectedReward.name}
                                         className="h-full w-full object-cover object-center"
                                     />
-                                </div>
-
-                                <div className="w-full rounded-2xl border-2 border-dashed border-red-300 dark:border-red-900/60 bg-red-50/50 dark:bg-red-950/20 p-4">
-                                    <span className="text-xs text-zinc-500 block mb-1">Kode Voucher Anda</span>
-                                    <span className="font-mono text-xl font-extrabold text-red-600 tracking-wider">
-                                        {selectedVoucher.code}
+                                    <span className="absolute top-2 left-2 rounded-full bg-black/70 backdrop-blur-md px-2.5 py-1 text-xs font-black text-amber-300 border border-white/20 shadow-xs flex items-center gap-1">
+                                        <Coins className="size-3.5 text-amber-400" />
+                                        {(selectedReward.points_cost ?? selectedReward.pointsCost ?? 0).toLocaleString('id-ID')} Poin
                                     </span>
                                 </div>
 
-                                <p className="text-xs text-zinc-500">
-                                    Tunjukkan kode voucher ini bersama ID MEMBER Anda kepada kasir dealer saat melakukan pembayaran.
+                                <div className="w-full rounded-2xl bg-zinc-50 dark:bg-zinc-950/50 p-3 text-left border border-zinc-100 dark:border-zinc-800">
+                                    <div className="flex items-center justify-between text-xs mb-1">
+                                        <span className="text-zinc-500">Ketersediaan Stok:</span>
+                                        <span className="font-bold text-zinc-800 dark:text-zinc-200">
+                                            {selectedReward.stock > 0 ? `${selectedReward.stock} unit tersedia` : 'Stok Habis'}
+                                        </span>
+                                    </div>
+                                    <div className="flex items-center justify-between text-xs">
+                                        <span className="text-zinc-500">Saldo Poin Anda:</span>
+                                        <span className="font-bold font-mono text-red-600 dark:text-red-400">
+                                            {loyalty.points.toLocaleString('id-ID')} Poin
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <p className="text-xs text-zinc-600 dark:text-zinc-400 text-left leading-relaxed">
+                                    {selectedReward.description || 'Tukarkan poin loyalty Anda untuk mendapatkan reward resmi Honda ini.'}
                                 </p>
                             </div>
 
-                            <Button
-                                type="button"
-                                onClick={() => setSelectedVoucher(null)}
-                                className="w-full rounded-xl bg-red-600 hover:bg-red-700 text-white font-semibold text-xs"
-                            >
-                                Tutup & Simpan
-                            </Button>
+                            <DialogFooter className="flex flex-col sm:flex-row gap-2 pt-2">
+                                <Button
+                                    type="button"
+                                    variant="outline"
+                                    onClick={() => setSelectedReward(null)}
+                                    className="w-full sm:w-auto rounded-xl text-xs"
+                                >
+                                    Tutup
+                                </Button>
+                                <Link
+                                    href="/rewards"
+                                    className="w-full sm:flex-1 inline-flex items-center justify-center rounded-xl bg-red-600 hover:bg-red-700 text-white font-semibold text-xs h-10 px-4 transition-colors"
+                                >
+                                    <Gift className="size-3.5 mr-1.5" />
+                                    Tukar di Halaman Rewards
+                                </Link>
+                            </DialogFooter>
                         </>
                     )}
                 </DialogContent>

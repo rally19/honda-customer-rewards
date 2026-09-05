@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Enums\MemberTier;
 use App\Models\Activity;
+use App\Models\Reward;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -54,6 +55,29 @@ class CustomerDashboardController extends Controller
 
         $transactions = ! empty($realHistories) ? $realHistories : $dummyFallbackTransactions;
 
+        $today = now()->startOfDay();
+        $rewards = Reward::where('is_active', true)
+            ->where(function ($q) use ($today) {
+                $q->whereNull('start_period')->orWhere('start_period', '<=', $today);
+            })
+            ->where(function ($q) use ($today) {
+                $q->whereNull('end_period')->orWhere('end_period', '>=', $today);
+            })
+            ->orderBy('points_cost')
+            ->get(['id', 'name', 'description', 'image_url', 'points_cost', 'stock'])
+            ->map(fn (Reward $r) => [
+                'id' => (string) $r->id,
+                'name' => $r->name,
+                'description' => $r->description ?? '',
+                'image_url' => $r->image_url ?? '',
+                'image' => $r->image_url ?? '',
+                'points_cost' => (int) $r->points_cost,
+                'pointsCost' => (int) $r->points_cost,
+                'stock' => (int) $r->stock,
+                'can_afford' => (int) $user->points >= (int) $r->points_cost,
+            ])
+            ->all();
+
         $loyaltyData = [
             'memberId' => (string) $user->id,
             'tier' => $tier->value.' Member',
@@ -65,35 +89,8 @@ class CustomerDashboardController extends Controller
             'pointsToNextTier' => $tier->pointsToNextTier((int) $user->lifetime_points),
             'tierProgress' => $tier->progress((int) $user->lifetime_points),
             'tierRoadmap' => MemberTier::roadmap((int) $user->lifetime_points),
-            'vouchers' => [
-                [
-                    'id' => 'v1',
-                    'title' => 'Oli Honda gratis',
-                    'code' => 'HND-MPX-8491',
-                    'category' => 'Oli & Servis',
-                    'expiresAt' => '31 Des 2026',
-                    'image' => '/images/pictures/oli_honda_img.jpg',
-                    'status' => 'Tersedia',
-                ],
-                [
-                    'id' => 'v2',
-                    'title' => 'Voucher servis',
-                    'code' => 'HND-SRV-2049',
-                    'category' => 'Servis AHASS',
-                    'expiresAt' => '15 Nov 2026',
-                    'image' => '/images/pictures/voucher_service_img.jpg',
-                    'status' => 'Tersedia',
-                ],
-                [
-                    'id' => 'v3',
-                    'title' => 'Potongan pembelian aksesori',
-                    'code' => 'HND-ACC-5920',
-                    'category' => 'Aksesori',
-                    'expiresAt' => '20 Okt 2026',
-                    'image' => '/images/pictures/potongan_pembelian_aksesori_img.jpg',
-                    'status' => 'Tersedia',
-                ],
-            ],
+            'vouchers' => [],
+            'rewards' => $rewards,
             'transactions' => $transactions,
             'raffleTickets' => [
                 ['number' => 'UND-84920-A', 'period' => 'Undian Spesial Hari Pelanggan 2026'],
@@ -105,6 +102,7 @@ class CustomerDashboardController extends Controller
         return Inertia::render('customer/dashboard', [
             'loyalty' => $loyaltyData,
             'earningActivities' => $earningActivities,
+            'rewards' => $rewards,
         ]);
     }
 }

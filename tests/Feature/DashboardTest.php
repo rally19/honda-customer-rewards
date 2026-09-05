@@ -3,6 +3,7 @@
 use App\Models\Activity;
 use App\Models\ActivityHistory;
 use App\Models\PointExchange;
+use App\Models\Reward;
 use App\Models\User;
 use Inertia\Testing\AssertableInertia as Assert;
 
@@ -212,5 +213,32 @@ test('customer dashboard provides earning activities from database', function ()
         ->where('earningActivities.0.name', 'Servis berkala di AHASS')
         ->where('earningActivities.0.points', 150)
         ->has('loyalty.earningActivities', 1)
+    );
+});
+
+test('customer dashboard provides rewards catalog from database', function () {
+    $user = User::factory()->create(['role' => 'user']);
+
+    Reward::create([
+        'id' => '2039485704',
+        'name' => 'Voucher servis',
+        'description' => 'Voucher gratis servis berkala',
+        'image_url' => '/images/pictures/voucher_service_img.jpg',
+        'points_cost' => 150,
+        'stock' => 10,
+        'is_active' => true,
+    ]);
+
+    $response = $this
+        ->actingAs($user)
+        ->get(route('dashboard'));
+
+    $response->assertOk();
+    $response->assertInertia(fn (Assert $page) => $page
+        ->component('customer/dashboard')
+        ->has('rewards', 1)
+        ->where('rewards.0.name', 'Voucher servis')
+        ->where('rewards.0.points_cost', 150)
+        ->has('loyalty.rewards', 1)
     );
 });
