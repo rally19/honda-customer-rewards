@@ -402,7 +402,7 @@ export default function Welcome({
                             href="#kontak"
                             className="whitespace-nowrap transition-colors hover:text-red-600 dark:hover:text-red-400"
                         >
-                            Kontak AHASS
+                            Kontak
                         </a>
                     </nav>
 
@@ -430,7 +430,7 @@ export default function Welcome({
                                     href={register()}
                                     className="inline-flex items-center gap-1.5 rounded-xl bg-red-600 px-4 py-2 text-xs xl:text-sm font-semibold text-white shadow-md shadow-red-600/20 transition-all hover:bg-red-700 active:scale-95 whitespace-nowrap"
                                 >
-                                    <span>Daftar ID Member</span>
+                                    <span>Daftar</span>
                                     <ArrowRight className="size-3.5" />
                                 </Link>
                             </div>
@@ -583,7 +583,7 @@ export default function Welcome({
                                         className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 rounded-xl bg-red-600 px-7 py-3.5 text-base font-bold text-white shadow-xl shadow-red-600/30 transition-all hover:bg-red-700 hover:shadow-red-600/40 hover:-translate-y-0.5 active:translate-y-0 active:scale-95"
                                     >
                                         <Sparkles className="size-5" />
-                                        <span>Daftar Sekarang & Dapatkan ID MEMBER</span>
+                                        <span>Dapatkan ID Member</span>
                                     </Link>
                                 )}
 
@@ -644,9 +644,8 @@ export default function Welcome({
                                     {HERO_SLIDES.map((slide, idx) => (
                                         <div
                                             key={idx}
-                                            className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
-                                                idx === currentSlide ? 'opacity-100 z-10' : 'opacity-0 z-0'
-                                            }`}
+                                            className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${idx === currentSlide ? 'opacity-100 z-10' : 'opacity-0 z-0'
+                                                }`}
                                         >
                                             <img
                                                 src={slide.image}
@@ -656,7 +655,7 @@ export default function Welcome({
                                             {/* Gradient Overlay for Text Readability */}
                                             <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/35 to-transparent" />
 
-                                             {/* Slide Caption */}
+                                            {/* Slide Caption */}
                                             <div className="absolute bottom-0 inset-x-0 p-6 sm:p-8 text-white space-y-2">
                                                 <span className="inline-block rounded-md bg-red-600 px-2.5 py-1 text-xs font-bold uppercase tracking-wider text-white">
                                                     {slide.badge}
@@ -697,11 +696,10 @@ export default function Welcome({
                                             key={idx}
                                             type="button"
                                             onClick={() => setCurrentSlide(idx)}
-                                            className={`h-2 rounded-full transition-all ${
-                                                idx === currentSlide
-                                                    ? 'w-7 bg-red-500'
-                                                    : 'w-2 bg-white/50 hover:bg-white'
-                                            }`}
+                                            className={`h-2 rounded-full transition-all ${idx === currentSlide
+                                                ? 'w-7 bg-red-500'
+                                                : 'w-2 bg-white/50 hover:bg-white'
+                                                }`}
                                             aria-label={`Pindah ke slide ${idx + 1}`}
                                         />
                                     ))}
@@ -922,11 +920,10 @@ export default function Welcome({
                                     key={tab.key}
                                     type="button"
                                     onClick={() => setCatalogFilter(tab.key)}
-                                    className={`rounded-full px-5 py-2 text-xs font-bold transition-all cursor-pointer ${
-                                        catalogFilter === tab.key
-                                            ? 'bg-red-600 text-white shadow-md shadow-red-600/25'
-                                            : 'bg-white text-zinc-700 hover:bg-zinc-100 border border-zinc-200 dark:bg-zinc-800 dark:text-zinc-300 dark:border-zinc-700 dark:hover:bg-zinc-700'
-                                    }`}
+                                    className={`rounded-full px-5 py-2 text-xs font-bold transition-all cursor-pointer ${catalogFilter === tab.key
+                                        ? 'bg-red-600 text-white shadow-md shadow-red-600/25'
+                                        : 'bg-white text-zinc-700 hover:bg-zinc-100 border border-zinc-200 dark:bg-zinc-800 dark:text-zinc-300 dark:border-zinc-700 dark:hover:bg-zinc-700'
+                                        }`}
                                 >
                                     {tab.label}
                                 </button>
@@ -969,11 +966,10 @@ export default function Welcome({
                                             <div className="flex items-center justify-between">
                                                 <Badge
                                                     variant="outline"
-                                                    className={`text-[10px] font-bold px-2 py-0.5 ${
-                                                        reward.stock > 0
-                                                            ? 'border-emerald-300 bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300'
-                                                            : 'border-zinc-300 bg-zinc-100 text-zinc-600'
-                                                    }`}
+                                                    className={`text-[10px] font-bold px-2 py-0.5 ${reward.stock > 0
+                                                        ? 'border-emerald-300 bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300'
+                                                        : 'border-zinc-300 bg-zinc-100 text-zinc-600'
+                                                        }`}
                                                 >
                                                     {reward.stock > 0 ? `Tersedia (${reward.stock} Unit)` : 'Stok Habis'}
                                                 </Badge>
@@ -1320,19 +1316,17 @@ export default function Welcome({
                                             <div
                                                 key={item.id}
                                                 onClick={() => toggleSimItem(item.id)}
-                                                className={`flex items-center justify-between p-3.5 rounded-xl border transition-all cursor-pointer select-none ${
-                                                    isChecked
-                                                        ? 'border-red-500/80 bg-red-50/50 dark:bg-red-950/30 text-zinc-900 dark:text-white shadow-xs'
-                                                        : 'border-zinc-200 dark:border-zinc-800 hover:border-zinc-300 dark:hover:border-zinc-700 text-zinc-600 dark:text-zinc-400'
-                                                }`}
+                                                className={`flex items-center justify-between p-3.5 rounded-xl border transition-all cursor-pointer select-none ${isChecked
+                                                    ? 'border-red-500/80 bg-red-50/50 dark:bg-red-950/30 text-zinc-900 dark:text-white shadow-xs'
+                                                    : 'border-zinc-200 dark:border-zinc-800 hover:border-zinc-300 dark:hover:border-zinc-700 text-zinc-600 dark:text-zinc-400'
+                                                    }`}
                                             >
                                                 <div className="flex items-center gap-3">
                                                     <div
-                                                        className={`size-5 rounded flex items-center justify-center border transition-colors ${
-                                                            isChecked
-                                                                ? 'bg-red-600 border-red-600 text-white'
-                                                                : 'border-zinc-300 dark:border-zinc-600'
-                                                        }`}
+                                                        className={`size-5 rounded flex items-center justify-center border transition-colors ${isChecked
+                                                            ? 'bg-red-600 border-red-600 text-white'
+                                                            : 'border-zinc-300 dark:border-zinc-600'
+                                                            }`}
                                                     >
                                                         {isChecked && <CheckCircle2 className="size-3.5" />}
                                                     </div>
@@ -1417,7 +1411,7 @@ export default function Welcome({
                             </p>
 
                             <div className="pt-2 text-xs text-zinc-500">
-                                Dikelola secara profesional berstandar PT Astra Honda Motor.
+                                Dikelola secara profesional berstandar CV Anugerah Perdana.
                             </div>
                         </div>
 
