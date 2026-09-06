@@ -29,6 +29,7 @@ import {
     ShieldCheck,
     Sparkles,
     Star,
+    SwitchCamera,
     Tag,
     User,
     UserCheck,
@@ -128,6 +129,11 @@ export default function AdminScanUserIndex({
     const [inputMode, setInputMode] = useState<'scanner' | 'manual'>('scanner');
     const [scannerError, setScannerError] = useState<string | null>(null);
     const [isCameraActive, setIsCameraActive] = useState(true);
+    const [facingMode, setFacingMode] = useState<'environment' | 'user'>('environment');
+
+    const toggleFacingMode = () => {
+        setFacingMode((prev) => (prev === 'environment' ? 'user' : 'environment'));
+    };
 
     // 2. Manual Input Query
     const [manualIdInput, setManualIdInput] = useState('');
@@ -548,7 +554,9 @@ export default function AdminScanUserIndex({
                                             {isCameraActive && isMounted ? (
                                                 <div className="w-full h-full relative">
                                                     <Scanner
+                                                        key={facingMode}
                                                         onScan={handleQrScan}
+                                                        constraints={{ facingMode }}
                                                         onError={(error) => {
                                                             setScannerError(
                                                                 error instanceof Error
@@ -563,6 +571,19 @@ export default function AdminScanUserIndex({
                                                         }}
                                                     />
 
+                                                    {/* Switch Camera Floating Button (Top-Right) */}
+                                                    <div className="absolute top-3 right-3 z-20">
+                                                        <button
+                                                            type="button"
+                                                            onClick={toggleFacingMode}
+                                                            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full bg-black/65 hover:bg-black/85 text-white backdrop-blur-md border border-white/20 text-[11px] font-semibold shadow-lg transition-all active:scale-95 cursor-pointer"
+                                                            title={`Beralih ke Kamera ${facingMode === 'environment' ? 'Depan' : 'Belakang'}`}
+                                                        >
+                                                            <SwitchCamera className="size-3.5 text-amber-400" />
+                                                            <span>{facingMode === 'environment' ? 'Kamera Belakang' : 'Kamera Depan'}</span>
+                                                        </button>
+                                                    </div>
+
                                                     {/* Scanner Target Guide Overlay */}
                                                     <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
                                                         <div className="relative size-48 sm:size-52 rounded-2xl border-2 border-red-500/70 shadow-2xl">
@@ -574,19 +595,32 @@ export default function AdminScanUserIndex({
                                                         </div>
                                                     </div>
 
-                                                    {/* Scanning status banner */}
-                                                    <div className="absolute bottom-3 inset-x-4 flex items-center justify-between rounded-xl bg-black/70 px-3 py-1.5 text-xs text-white backdrop-blur-md">
+                                                    {/* Scanning status banner with Switch & Pause actions */}
+                                                    <div className="absolute bottom-3 inset-x-4 flex items-center justify-between rounded-xl bg-black/75 px-3 py-1.5 text-xs text-white backdrop-blur-md border border-white/10 shadow-lg z-20">
                                                         <div className="flex items-center gap-2">
                                                             <span className="size-2 rounded-full bg-emerald-400 animate-ping" />
-                                                            <span>Mencari QR ID Member...</span>
+                                                            <span className="text-[11px] font-medium">Mencari QR ID Member...</span>
                                                         </div>
-                                                        <button
-                                                            type="button"
-                                                            onClick={() => setIsCameraActive(false)}
-                                                            className="text-zinc-400 hover:text-white text-[11px] underline cursor-pointer"
-                                                        >
-                                                            Pause
-                                                        </button>
+                                                        <div className="flex items-center gap-2.5">
+                                                            <button
+                                                                type="button"
+                                                                onClick={toggleFacingMode}
+                                                                className="text-zinc-300 hover:text-white text-[11px] flex items-center gap-1 cursor-pointer"
+                                                                title={`Beralih ke Kamera ${facingMode === 'environment' ? 'Depan' : 'Belakang'}`}
+                                                            >
+                                                                <SwitchCamera className="size-3 text-amber-400" />
+                                                                <span className="hidden sm:inline">Kamera:</span>
+                                                                <span>{facingMode === 'environment' ? 'Belakang' : 'Depan'}</span>
+                                                            </button>
+                                                            <span className="text-zinc-600">|</span>
+                                                            <button
+                                                                type="button"
+                                                                onClick={() => setIsCameraActive(false)}
+                                                                className="text-zinc-300 hover:text-white text-[11px] underline cursor-pointer"
+                                                            >
+                                                                Pause
+                                                            </button>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             ) : (
