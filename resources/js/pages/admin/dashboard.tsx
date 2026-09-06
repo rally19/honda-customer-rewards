@@ -10,12 +10,17 @@ import {
     Clock,
     Coins,
     Copy,
+    Crown,
+    Database,
     Download,
     Eye,
+    FileText,
     Gift,
     History,
     Info,
+    Layers,
     LayoutDashboard,
+    Lock,
     Mail,
     MapPin,
     MessageCircle,
@@ -23,6 +28,7 @@ import {
     Plus,
     QrCode,
     RefreshCw,
+    RotateCcw,
     Search,
     Shield,
     ShieldAlert,
@@ -33,6 +39,7 @@ import {
     Users,
     X,
     XCircle,
+    Zap,
 } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { toast } from 'sonner';
@@ -248,10 +255,16 @@ export default function AdminDashboard({
     // Tier badge renderer
     const renderTierBadge = (tier: string) => {
         switch (tier.toLowerCase()) {
-            case 'platinum':
+            case 'diamond':
                 return (
                     <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-black bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-300 dark:border-purple-800">
-                        <Sparkles className="size-3 text-purple-500" /> Platinum
+                        <Crown className="size-3 text-purple-500" /> Diamond
+                    </span>
+                );
+            case 'platinum':
+                return (
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-black bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border border-cyan-300 dark:border-cyan-800">
+                        <Sparkles className="size-3 text-cyan-500" /> Platinum
                     </span>
                 );
             case 'gold':
@@ -262,8 +275,8 @@ export default function AdminDashboard({
                 );
             case 'silver':
                 return (
-                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-black bg-zinc-200 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 border border-zinc-300 dark:border-zinc-700">
-                        <Shield className="size-3 text-zinc-500" /> Silver
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-black bg-slate-200 text-slate-700 dark:bg-slate-800 dark:text-slate-300 border border-slate-300 dark:border-slate-700">
+                        <Shield className="size-3 text-slate-500" /> Silver
                     </span>
                 );
             case 'bronze':
@@ -1467,77 +1480,484 @@ export default function AdminDashboard({
 
                 {/* TAB 6: POLICY & POINTS CALCULATION */}
                 {activeTab === 'policy' && (
-                    <div className="space-y-6">
-                        <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6 md:p-8 shadow-xs">
-                            <div className="max-w-3xl space-y-6">
+                    <div className="space-y-8">
+                        {/* HERO HEADER CARD */}
+                        <div className="relative overflow-hidden bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6 md:p-8 shadow-xs">
+                            <div className="absolute -right-16 -top-16 size-64 bg-red-600/5 dark:bg-red-600/10 rounded-full blur-3xl pointer-events-none" />
+                            <div className="relative z-10 max-w-4xl space-y-4">
+                                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold bg-red-500/10 text-red-600 dark:text-red-400 border border-red-200 dark:border-red-900/50">
+                                    <Calculator className="size-3.5" />
+                                    Pedoman Resmi Sistem Loyalitas Honda AHASS
+                                </div>
                                 <div>
-                                    <h2 className="text-lg font-bold text-zinc-900 dark:text-white flex items-center gap-2">
-                                        <Calculator className="size-5 text-red-600" />
-                                        Aturan Akumulasi, Tingkatan Member & Keamanan Poin
+                                    <h2 className="text-xl md:text-2xl font-black text-zinc-900 dark:text-white tracking-tight">
+                                        Kebijakan Poin, Tingkatan Member & Standar Operasional AHASS
                                     </h2>
-                                    <p className="text-xs text-zinc-500 mt-1">
-                                        Panduan operasional sistem reward loyalitas Honda yang mandiri dan terintegrasi langsung dengan database
+                                    <p className="text-xs md:text-sm text-zinc-600 dark:text-zinc-400 mt-1 leading-relaxed">
+                                        Panduan operasional resmi untuk kasir, service advisor, dan manajemen bengkel AHASS. Menjelaskan logika penentuan 5 tingkatan member, arsitektur poin ganda (Saldo Likuid vs Akumulasi Seumur Hidup), standar operasional scanner kasir, serta mekanisme proteksi transaksi reward.
                                     </p>
                                 </div>
 
-                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                    <div className="p-4 rounded-2xl bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900/50 space-y-2">
-                                        <div className="size-8 rounded-lg bg-red-600 text-white flex items-center justify-center font-bold text-xs">
+                                <div className="flex flex-wrap gap-2 pt-2">
+                                    <Badge variant="outline" className="text-xs font-semibold px-3 py-1 bg-zinc-50 dark:bg-zinc-800/60 border-zinc-200 dark:border-zinc-700">
+                                        <Layers className="size-3 mr-1.5 text-red-600" />
+                                        5 Tingkatan Member (Bronze – Diamond)
+                                    </Badge>
+                                    <Badge variant="outline" className="text-xs font-semibold px-3 py-1 bg-zinc-50 dark:bg-zinc-800/60 border-zinc-200 dark:border-zinc-700">
+                                        <Coins className="size-3 mr-1.5 text-emerald-600" />
+                                        Dual-Point (Saldo Aktif vs Lifetime)
+                                    </Badge>
+                                    <Badge variant="outline" className="text-xs font-semibold px-3 py-1 bg-zinc-50 dark:bg-zinc-800/60 border-zinc-200 dark:border-zinc-700">
+                                        <Database className="size-3 mr-1.5 text-blue-600" />
+                                        Proteksi Transaksional ACID (Auto-Refund)
+                                    </Badge>
+                                    <Badge variant="outline" className="text-xs font-semibold px-3 py-1 bg-zinc-50 dark:bg-zinc-800/60 border-zinc-200 dark:border-zinc-700">
+                                        <ShieldCheck className="size-3 mr-1.5 text-purple-600" />
+                                        Verifikasi Email & 2FA Terproteksi
+                                    </Badge>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* SECTION 1: 5 MEMBER TIERS ROADMAP */}
+                        <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6 md:p-8 shadow-xs space-y-6">
+                            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-zinc-100 dark:border-zinc-800/60 pb-4">
+                                <div>
+                                    <h3 className="text-base md:text-lg font-bold text-zinc-900 dark:text-white flex items-center gap-2">
+                                        <Layers className="size-5 text-red-600" />
+                                        1. Roadmap & Spesifikasi 5 Tingkatan Member (Member Tier)
+                                    </h3>
+                                    <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">
+                                        Tingkatan loyalitas dihitung otomatis dari akumulasi total poin seumur hidup (<code className="font-mono text-zinc-700 dark:text-zinc-300">lifetime_points</code>).
+                                    </p>
+                                </div>
+                                <span className="inline-flex items-center text-[11px] font-bold px-2.5 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 self-start sm:self-auto">
+                                    <Sparkles className="size-3 mr-1 text-emerald-500" /> Tier Tidak Pernah Turun
+                                </span>
+                            </div>
+
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+                                {/* Bronze Tier */}
+                                <div className="p-4 rounded-2xl border border-amber-200 dark:border-amber-900/40 bg-amber-50/40 dark:bg-amber-950/20 flex flex-col justify-between space-y-3">
+                                    <div className="space-y-2">
+                                        <div className="flex items-center justify-between">
+                                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-black bg-amber-100 dark:bg-amber-950/50 text-amber-800 dark:text-amber-300 border border-amber-300 dark:border-amber-800">
+                                                <Shield className="size-3 text-amber-700" /> BRONZE
+                                            </span>
+                                            <span className="text-[10px] font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-wider">Level 1</span>
+                                        </div>
+                                        <div>
+                                            <div className="text-lg font-black text-zinc-900 dark:text-zinc-100">0 – 499 <span className="text-xs font-semibold text-zinc-500">Pts</span></div>
+                                            <div className="text-[11px] font-bold text-amber-800 dark:text-amber-300">Member Baru (Default)</div>
+                                        </div>
+                                        <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">
+                                            Akses perolehan poin rewards di seluruh AHASS dan dealer resmi Honda melalui scan QR ID member saat servis berkala.
+                                        </p>
+                                    </div>
+                                    <div className="pt-2 border-t border-amber-200/60 dark:border-amber-900/40 text-[10px] font-medium text-zinc-500">
+                                        Status awal pendaftaran akun
+                                    </div>
+                                </div>
+
+                                {/* Silver Tier */}
+                                <div className="p-4 rounded-2xl border border-slate-300 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/20 flex flex-col justify-between space-y-3">
+                                    <div className="space-y-2">
+                                        <div className="flex items-center justify-between">
+                                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-black bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-300 border border-slate-300 dark:border-slate-700">
+                                                <Shield className="size-3 text-slate-500" /> SILVER
+                                            </span>
+                                            <span className="text-[10px] font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-wider">Level 2</span>
+                                        </div>
+                                        <div>
+                                            <div className="text-lg font-black text-zinc-900 dark:text-zinc-100">500 – 1.499 <span className="text-xs font-semibold text-zinc-500">Pts</span></div>
+                                            <div className="text-[11px] font-bold text-slate-700 dark:text-slate-300">Member Aktif</div>
+                                        </div>
+                                        <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">
+                                            Akses katalog voucher oli MPX, diskon servis berkala reguler, dan penukaran merchandise standar Honda.
+                                        </p>
+                                    </div>
+                                    <div className="pt-2 border-t border-slate-200 dark:border-slate-800 text-[10px] font-medium text-zinc-500">
+                                        Butuh min. 500 Pts kumulatif
+                                    </div>
+                                </div>
+
+                                {/* Gold Tier */}
+                                <div className="p-4 rounded-2xl border border-amber-300 dark:border-amber-700/50 bg-yellow-50/40 dark:bg-yellow-950/20 flex flex-col justify-between space-y-3">
+                                    <div className="space-y-2">
+                                        <div className="flex items-center justify-between">
+                                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-black bg-yellow-100 dark:bg-yellow-950/50 text-yellow-800 dark:text-yellow-300 border border-yellow-400 dark:border-yellow-700">
+                                                <Award className="size-3 text-amber-500" /> GOLD
+                                            </span>
+                                            <span className="text-[10px] font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-wider">Level 3</span>
+                                        </div>
+                                        <div>
+                                            <div className="text-lg font-black text-zinc-900 dark:text-zinc-100">1.500 – 3.499 <span className="text-xs font-semibold text-zinc-500">Pts</span></div>
+                                            <div className="text-[11px] font-bold text-amber-700 dark:text-amber-300">Member Loyal</div>
+                                        </div>
+                                        <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">
+                                            Prioritas booking servis AHASS, diskon suku cadang & aksesori resmi Honda, serta voucher servis berkala spesial.
+                                        </p>
+                                    </div>
+                                    <div className="pt-2 border-t border-yellow-200/60 dark:border-yellow-800/40 text-[10px] font-medium text-zinc-500">
+                                        Butuh min. 1.500 Pts kumulatif
+                                    </div>
+                                </div>
+
+                                {/* Platinum Tier */}
+                                <div className="p-4 rounded-2xl border border-cyan-300 dark:border-cyan-800 bg-cyan-50/40 dark:bg-cyan-950/20 flex flex-col justify-between space-y-3">
+                                    <div className="space-y-2">
+                                        <div className="flex items-center justify-between">
+                                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-black bg-cyan-100 dark:bg-cyan-950/50 text-cyan-800 dark:text-cyan-300 border border-cyan-300 dark:border-cyan-700">
+                                                <Sparkles className="size-3 text-cyan-500" /> PLATINUM
+                                            </span>
+                                            <span className="text-[10px] font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-wider">Level 4</span>
+                                        </div>
+                                        <div>
+                                            <div className="text-lg font-black text-zinc-900 dark:text-zinc-100">3.500 – 6.999 <span className="text-xs font-semibold text-zinc-500">Pts</span></div>
+                                            <div className="text-[11px] font-bold text-cyan-700 dark:text-cyan-300">Member Prioritas</div>
+                                        </div>
+                                        <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">
+                                            Prioritas antrean servis AHASS (Fast Lane), tiket undian ganda Hari Pelanggan Nasional, dan voucher event eksklusif.
+                                        </p>
+                                    </div>
+                                    <div className="pt-2 border-t border-cyan-200/60 dark:border-cyan-800/40 text-[10px] font-medium text-zinc-500">
+                                        Butuh min. 3.500 Pts kumulatif
+                                    </div>
+                                </div>
+
+                                {/* Diamond Tier */}
+                                <div className="p-4 rounded-2xl border border-purple-300 dark:border-purple-800 bg-purple-50/40 dark:bg-purple-950/20 flex flex-col justify-between space-y-3">
+                                    <div className="space-y-2">
+                                        <div className="flex items-center justify-between">
+                                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-black bg-purple-100 dark:bg-purple-950/50 text-purple-800 dark:text-purple-300 border border-purple-300 dark:border-purple-700">
+                                                <Crown className="size-3 text-purple-500" /> DIAMOND
+                                            </span>
+                                            <span className="text-[10px] font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-wider">Level 5 (VIP)</span>
+                                        </div>
+                                        <div>
+                                            <div className="text-lg font-black text-zinc-900 dark:text-zinc-100">≥ 7.000 <span className="text-xs font-semibold text-zinc-500">Pts</span></div>
+                                            <div className="text-[11px] font-bold text-purple-700 dark:text-purple-300">Tingkat Tertinggi (VIP)</div>
+                                        </div>
+                                        <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">
+                                            Layanan VIP AHASS, merchandise premium eksklusif Honda, dan undangan kehormatan event tahunan eksklusif Honda.
+                                        </p>
+                                    </div>
+                                    <div className="pt-2 border-t border-purple-200/60 dark:border-purple-800/40 text-[10px] font-medium text-zinc-500">
+                                        Tingkat loyalitas tertinggi
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Note on tier retention */}
+                            <div className="p-4 rounded-2xl bg-amber-50/60 dark:bg-amber-950/30 border border-amber-200/70 dark:border-amber-900/50 flex items-start gap-3">
+                                <Info className="size-4 text-amber-600 shrink-0 mt-0.5" />
+                                <div className="text-xs text-amber-900 dark:text-amber-200 leading-relaxed">
+                                    <strong>Prinsip Retensi Level Member:</strong> Penentuan tingkatan loyalitas member bersifat <em>monotonik meningkat (tidak pernah turun)</em>. Saat member menukarkan saldo reward untuk hadiah atau voucher, yang berkurang hanyalah <strong>Saldo Poin Aktif</strong> (<code className="font-mono font-bold">points</code>). Poin kumulatif seumur hidup (<code className="font-mono font-bold">lifetime_points</code>) tetap utuh, sehingga status Tier member tidak akan terdegradasi.
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* SECTION 2: DUAL-POINT ARCHITECTURE */}
+                        <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6 md:p-8 shadow-xs space-y-6">
+                            <div className="border-b border-zinc-100 dark:border-zinc-800/60 pb-4">
+                                <h3 className="text-base md:text-lg font-bold text-zinc-900 dark:text-white flex items-center gap-2">
+                                    <Coins className="size-5 text-red-600" />
+                                    2. Arsitektur Poin Ganda: Saldo Poin Aktif vs Poin Seumur Hidup
+                                </h3>
+                                <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">
+                                    Sistem loyalitas memisahkan fungsi mata uang penukaran reward dari indikator peringkat reputasi servis member.
+                                </p>
+                            </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                {/* Card A: Saldo Poin Aktif */}
+                                <div className="p-5 rounded-2xl bg-emerald-50/40 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-900/50 space-y-4">
+                                    <div className="flex items-center justify-between">
+                                        <div className="flex items-center gap-2">
+                                            <div className="p-2 rounded-xl bg-emerald-600 text-white">
+                                                <Coins className="size-4" />
+                                            </div>
+                                            <div>
+                                                <h4 className="font-bold text-sm text-zinc-900 dark:text-zinc-100">Saldo Poin Aktif</h4>
+                                                <span className="font-mono text-[11px] text-emerald-700 dark:text-emerald-400 font-semibold">Column: users.points</span>
+                                            </div>
+                                        </div>
+                                        <Badge className="bg-emerald-100 dark:bg-emerald-950/50 text-emerald-800 dark:text-emerald-300 border-emerald-300 dark:border-emerald-700 text-[10px] font-bold">
+                                            DAPAT DIBELANJAKAN
+                                        </Badge>
+                                    </div>
+
+                                    <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">
+                                        Merupakan saldo likuid poin digital milik member yang dapat ditukarkan dengan hadiah merchandise fisik, voucher oli MPX, dan kupon diskon servis di katalog.
+                                    </p>
+
+                                    <div className="space-y-2 pt-2 border-t border-emerald-200/60 dark:border-emerald-900/40 text-xs">
+                                        <div className="flex items-start gap-2 text-zinc-700 dark:text-zinc-300">
+                                            <span className="font-bold text-emerald-600 dark:text-emerald-400 shrink-0">(+) Masuk:</span>
+                                            <span>Bertambah saat kasir AHASS memindai QR kartu member di menu Scan Poin (<code className="font-mono text-[11px]">/admin/scan</code>).</span>
+                                        </div>
+                                        <div className="flex items-start gap-2 text-zinc-700 dark:text-zinc-300">
+                                            <span className="font-bold text-red-600 dark:text-red-400 shrink-0">(-) Debet:</span>
+                                            <span>Terpotong otomatis saat member menukar hadiah di katalog online (status awal: <em>Hold</em>).</span>
+                                        </div>
+                                        <div className="flex items-start gap-2 text-zinc-700 dark:text-zinc-300">
+                                            <span className="font-bold text-blue-600 dark:text-blue-400 shrink-0">(+) Refund:</span>
+                                            <span>Dikembalikan utuh seketika ke member bila klaim ditolak atau dibatalkan oleh kasir/admin.</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Card B: Poin Akumulasi Seumur Hidup */}
+                                <div className="p-5 rounded-2xl bg-purple-50/40 dark:bg-purple-950/20 border border-purple-200 dark:border-purple-900/50 space-y-4">
+                                    <div className="flex items-center justify-between">
+                                        <div className="flex items-center gap-2">
+                                            <div className="p-2 rounded-xl bg-purple-600 text-white">
+                                                <TrendingUp className="size-4" />
+                                            </div>
+                                            <div>
+                                                <h4 className="font-bold text-sm text-zinc-900 dark:text-zinc-100">Total Poin Seumur Hidup</h4>
+                                                <span className="font-mono text-[11px] text-purple-700 dark:text-purple-400 font-semibold">Column: users.lifetime_points</span>
+                                            </div>
+                                        </div>
+                                        <Badge className="bg-purple-100 dark:bg-purple-950/50 text-purple-800 dark:text-purple-300 border-purple-300 dark:border-purple-700 text-[10px] font-bold">
+                                            PERMANEN & AUDIT
+                                        </Badge>
+                                    </div>
+
+                                    <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">
+                                        Merupakan angka total seluruh poin yang pernah diperoleh member dari setiap kali transaksi servis atau pembelian suku cadang resmi di bengkel AHASS sejak mendaftar.
+                                    </p>
+
+                                    <div className="space-y-2 pt-2 border-t border-purple-200/60 dark:border-purple-900/40 text-xs">
+                                        <div className="flex items-start gap-2 text-zinc-700 dark:text-zinc-300">
+                                            <span className="font-bold text-purple-600 dark:text-purple-400 shrink-0">(+) Masuk:</span>
+                                            <span>Bertambah bersamaan dengan saldo poin setiap kali servis AHASS berhasil diinput kasir.</span>
+                                        </div>
+                                        <div className="flex items-start gap-2 text-zinc-700 dark:text-zinc-300">
+                                            <span className="font-bold text-amber-600 dark:text-amber-400 shrink-0">(=) Permanen:</span>
+                                            <span><strong>TIDAK PERNAH DIKURANGI</strong> saat penukaran hadiah, belanja merchandise, atau penggunaan kupon.</span>
+                                        </div>
+                                        <div className="flex items-start gap-2 text-zinc-700 dark:text-zinc-300">
+                                            <span className="font-bold text-emerald-600 dark:text-emerald-400 shrink-0">(*) Acuan Tier:</span>
+                                            <span>Satu-satunya metrik acuan sistem untuk menghitung level dan progres tier member Honda.</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* SECTION 3: 3 ALUR TRANSAKSI UTAMA KASIR AHASS */}
+                        <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6 md:p-8 shadow-xs space-y-6">
+                            <div className="border-b border-zinc-100 dark:border-zinc-800/60 pb-4">
+                                <h3 className="text-base md:text-lg font-bold text-zinc-900 dark:text-white flex items-center gap-2">
+                                    <ActivityIcon className="size-5 text-red-600" />
+                                    3. Standar Operasional Prosedur: 3 Alur Transaksi Utama Kasir AHASS
+                                </h3>
+                                <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">
+                                    Prosedur baku penanganan sistem reward loyalitas pada konter kasir dan meja service advisor AHASS.
+                                </p>
+                            </div>
+
+                            <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+                                {/* Alur 1 */}
+                                <div className="p-5 rounded-2xl bg-red-50/40 dark:bg-red-950/20 border border-red-200 dark:border-red-900/50 space-y-3">
+                                    <div className="flex items-center justify-between">
+                                        <div className="size-7 rounded-lg bg-red-600 text-white flex items-center justify-center font-black text-xs">
                                             1
                                         </div>
-                                        <h4 className="font-bold text-sm text-red-900 dark:text-red-200">
-                                            Servis Berkala & Ganti Oli
-                                        </h4>
-                                        <p className="text-xs text-red-800 dark:text-red-300 leading-relaxed">
-                                            Member memperoleh poin reward langsung saat melakukan servis di bengkel resmi AHASS melalui scanner QR ID member.
-                                        </p>
+                                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-red-100 dark:bg-red-950 text-red-700 dark:text-red-300 border border-red-200 dark:border-red-800">
+                                            /admin/scan
+                                        </span>
                                     </div>
+                                    <h4 className="font-bold text-sm text-red-900 dark:text-red-200">
+                                        Pemberian Poin Servis Kasir AHASS
+                                    </h4>
+                                    <ol className="text-xs text-zinc-600 dark:text-zinc-400 space-y-2 list-decimal pl-4 leading-relaxed">
+                                        <li>
+                                            <strong>Scan Kartu Member:</strong> Kasir memindai QR Member pada aplikasi pelanggan atau mencari lewat Nomor Polisi / ID Member di halaman Scan Poin.
+                                        </li>
+                                        <li>
+                                            <strong>Pilih Aktivitas:</strong> Kasir memilih pekerjaan servis yang telah selesai (Servis Lengkap, Ganti Oli MPX/SPX, dll.) yang nominal poinnya telah terstandarisasi.
+                                        </li>
+                                        <li>
+                                            <strong>Kredit Instan:</strong> Poin otomatis ditambahkan ke Saldo Poin Aktif (<code className="font-mono text-[11px]">points</code>) dan Akumulasi Lifetime (<code className="font-mono text-[11px]">lifetime_points</code>).
+                                        </li>
+                                    </ol>
+                                </div>
 
-                                    <div className="p-4 rounded-2xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-900/50 space-y-2">
-                                        <div className="size-8 rounded-lg bg-amber-600 text-white flex items-center justify-center font-bold text-xs">
+                                {/* Alur 2 */}
+                                <div className="p-5 rounded-2xl bg-amber-50/40 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-900/50 space-y-3">
+                                    <div className="flex items-center justify-between">
+                                        <div className="size-7 rounded-lg bg-amber-600 text-white flex items-center justify-center font-black text-xs">
                                             2
                                         </div>
-                                        <h4 className="font-bold text-sm text-amber-900 dark:text-amber-200">
-                                            Tingkatan Member (Tier)
-                                        </h4>
-                                        <p className="text-xs text-amber-800 dark:text-amber-300 leading-relaxed">
-                                            Dihitung otomatis dari akumulasi lifetime poin: <strong>Bronze (&lt;500)</strong>, <strong>Silver (500-1499)</strong>, <strong>Gold (1500-2999)</strong>, dan <strong>Platinum (3000+)</strong>.
-                                        </p>
+                                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-100 dark:bg-amber-950 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800">
+                                            /admin/scan-user
+                                        </span>
                                     </div>
+                                    <h4 className="font-bold text-sm text-amber-900 dark:text-amber-200">
+                                        Penukaran & Serah Terima Reward
+                                    </h4>
+                                    <ol className="text-xs text-zinc-600 dark:text-zinc-400 space-y-2 list-decimal pl-4 leading-relaxed">
+                                        <li>
+                                            <strong>Member Redeem:</strong> Member menukarkan hadiah di aplikasi. Saldo poin aktif langsung dipotong, status awal klaim tercatat sebagai <strong className="text-amber-600 dark:text-amber-400">Hold</strong>, dan kuota stok berkurang.
+                                        </li>
+                                        <li>
+                                            <strong>Verifikasi Counter:</strong> Member datang ke AHASS menunjukkan QR Klaim. Kasir membuka menu Scan User atau daftar klaim dashboard.
+                                        </li>
+                                        <li>
+                                            <strong>Serah Terima Fisik:</strong> Kasir mencocokkan identitas dan fisik barang/voucher, lalu klik <strong className="text-emerald-600 dark:text-emerald-400">"Verifikasi & Serahkan"</strong> &rarr; status berubah <strong className="text-emerald-600 dark:text-emerald-400">Claimed</strong>.
+                                        </li>
+                                    </ol>
+                                </div>
 
-                                    <div className="p-4 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-900/50 space-y-2">
-                                        <div className="size-8 rounded-lg bg-emerald-600 text-white flex items-center justify-center font-bold text-xs">
+                                {/* Alur 3 */}
+                                <div className="p-5 rounded-2xl bg-blue-50/40 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-900/50 space-y-3">
+                                    <div className="flex items-center justify-between">
+                                        <div className="size-7 rounded-lg bg-blue-600 text-white flex items-center justify-center font-black text-xs">
                                             3
                                         </div>
-                                        <h4 className="font-bold text-sm text-emerald-900 dark:text-emerald-200">
-                                            Penukaran Reward & Status Hold
-                                        </h4>
-                                        <p className="text-xs text-emerald-800 dark:text-emerald-300 leading-relaxed">
-                                            Poin didebit saat member menukar reward dengan status awal <strong>Hold</strong>, lalu divalidasi oleh admin AHASS saat fisik diserahkan.
-                                        </p>
+                                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800">
+                                            Auto-Rollback
+                                        </span>
                                     </div>
+                                    <h4 className="font-bold text-sm text-blue-900 dark:text-blue-200">
+                                        Penolakan Klaim & Refund Poin Otomatis
+                                    </h4>
+                                    <ol className="text-xs text-zinc-600 dark:text-zinc-400 space-y-2 list-decimal pl-4 leading-relaxed">
+                                        <li>
+                                            <strong>Indikasi Pembatalan:</strong> Terjadi jika pelanggan salah memilih reward, stok fisik di bengkel mendadak rusak/kosong, atau klaim tidak valid.
+                                        </li>
+                                        <li>
+                                            <strong>Tindakan Kasir/Admin:</strong> Petugas menekan tombol <strong className="text-red-600 dark:text-red-400">"Tolak Klaim"</strong> pada dashboard atau modal rincian penukaran reward.
+                                        </li>
+                                        <li>
+                                            <strong>Pemulihan Atomik:</strong> Status klaim berubah <strong className="text-red-600 dark:text-red-400">Rejected</strong>. Sistem mengembalikan saldo poin aktif penuh ke member dan memulihkan stok reward di katalog.
+                                        </li>
+                                    </ol>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* SECTION 4: SECURITY & DATA INTEGRITY */}
+                        <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6 md:p-8 shadow-xs space-y-6">
+                            <div className="border-b border-zinc-100 dark:border-zinc-800/60 pb-4">
+                                <h3 className="text-base md:text-lg font-bold text-zinc-900 dark:text-white flex items-center gap-2">
+                                    <ShieldCheck className="size-5 text-red-600" />
+                                    4. Arsitektur Keamanan & Integritas Data Sistem
+                                </h3>
+                                <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">
+                                    Standar keamanan berlapis untuk menjaga integritas saldo poin, verifikasi pelanggan sah, dan ketertelusuran log.
+                                </p>
+                            </div>
+
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div className="p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-950/50 border border-zinc-200 dark:border-zinc-800 space-y-2">
+                                    <div className="flex items-center gap-2 font-bold text-sm text-zinc-900 dark:text-zinc-100">
+                                        <Database className="size-4 text-blue-600 shrink-0" />
+                                        Integritas Transaksi Atomik (ACID)
+                                    </div>
+                                    <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">
+                                        Setiap mutasi poin (pemberian poin servis, penukaran hadiah, penolakan klaim) dijalankan dalam transaksi database terisolasi (<code className="font-mono text-[11px]">DB::transaction</code>) dengan kunci baris untuk mencegah race-condition dan double-spending poin.
+                                    </p>
                                 </div>
 
-                                <div className="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-950/50 border border-zinc-200 dark:border-zinc-800 space-y-3">
-                                    <h4 className="font-bold text-sm text-zinc-900 dark:text-zinc-100 flex items-center gap-2">
-                                        <ShieldCheck className="size-4 text-emerald-600" />
-                                        Arsitektur Keamanan & Proteksi Database
-                                    </h4>
-                                    <ul className="text-xs text-zinc-600 dark:text-zinc-400 space-y-2 list-disc pl-5">
-                                        <li>
-                                            <strong>Sistem Terpisah & Mandiri:</strong> Beroperasi independen untuk program loyalitas dan verifikasi poin reward tanpa membebani server fisik bengkel.
-                                        </li>
-                                        <li>
-                                            <strong>Verifikasi Email Wajib:</strong> Member harus memverifikasi alamat email mereka sebelum dapat mengklaim voucher atau menukarkan poin reward.
-                                        </li>
-                                        <li>
-                                            <strong>Two-Factor Authentication (2FA):</strong> Dilengkapi proteksi kode OTP 6-digit via Email Gmail SMTP dan aplikasi authenticator TOTP.
-                                        </li>
-                                        <li>
-                                            <strong>Integritas Poin Transaksional:</strong> Setiap penolakan klaim reward secara atomik mengembalikan saldo poin ke akun member dan memulihkan stok reward di database.
-                                        </li>
-                                    </ul>
+                                <div className="p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-950/50 border border-zinc-200 dark:border-zinc-800 space-y-2">
+                                    <div className="flex items-center gap-2 font-bold text-sm text-zinc-900 dark:text-zinc-100">
+                                        <Mail className="size-4 text-amber-600 shrink-0" />
+                                        Verifikasi Email Wajib
+                                    </div>
+                                    <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">
+                                        Member diwajibkan memverifikasi alamat email aktif mereka sebelum sistem mengizinkan penukaran poin atau klaim voucher di katalog AHASS guna mencegah pembuatan akun palsu atau penyalahgunaan nomor rangka motor.
+                                    </p>
                                 </div>
+
+                                <div className="p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-950/50 border border-zinc-200 dark:border-zinc-800 space-y-2">
+                                    <div className="flex items-center gap-2 font-bold text-sm text-zinc-900 dark:text-zinc-100">
+                                        <Lock className="size-4 text-emerald-600 shrink-0" />
+                                        Autentikasi Ganda (2FA TOTP & Email OTP)
+                                    </div>
+                                    <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">
+                                        Dilengkapi proteksi autentikasi 2-faktor berstandar tinggi: aplikasi authenticator TOTP (Google/Microsoft Authenticator) dan kode OTP 6-digit via Email SMTP resmi Honda untuk perlindungan akun staf kasir, admin, dan member.
+                                    </p>
+                                </div>
+
+                                <div className="p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-950/50 border border-zinc-200 dark:border-zinc-800 space-y-2">
+                                    <div className="flex items-center gap-2 font-bold text-sm text-zinc-900 dark:text-zinc-100">
+                                        <Shield className="size-4 text-purple-600 shrink-0" />
+                                        Pemisahan Peran & Otoritas (RBAC Guard)
+                                    </div>
+                                    <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">
+                                        Hak akses scanner kasir AHASS, verifikasi serah terima hadiah, serta manajemen stok reward dipagari ketat untuk role <code className="font-mono text-[11px] font-bold">admin</code>. Member customer hanya memiliki izin akses data personal dan penukaran poin miliknya sendiri.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* SECTION 5: QUICK ACTIONS NAVIGATION */}
+                        <div className="bg-zinc-50 dark:bg-zinc-950/60 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6 md:p-8 space-y-4">
+                            <div>
+                                <h3 className="text-sm md:text-base font-bold text-zinc-900 dark:text-white flex items-center gap-2">
+                                    <Zap className="size-4 text-red-600" />
+                                    Pintasan Cepat Menu Operasional Kasir & Admin AHASS
+                                </h3>
+                                <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">
+                                    Akses cepat ke alat pemindaian, manajemen katalog aktivitas servis, dan katalog reward.
+                                </p>
+                            </div>
+
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                                <Link
+                                    href="/admin/scan"
+                                    className="p-4 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 hover:border-red-500 hover:shadow-xs transition-all flex items-center gap-3 group"
+                                >
+                                    <div className="size-10 rounded-xl bg-red-600/10 text-red-600 flex items-center justify-center group-hover:bg-red-600 group-hover:text-white transition-colors shrink-0">
+                                        <QrCode className="size-5" />
+                                    </div>
+                                    <div className="min-w-0">
+                                        <h4 className="text-xs font-bold text-zinc-900 dark:text-zinc-100 group-hover:text-red-600 transition-colors">Scan Poin AHASS</h4>
+                                        <p className="text-[11px] text-zinc-500 truncate">Kreditkan poin servis member</p>
+                                    </div>
+                                </Link>
+
+                                <Link
+                                    href="/admin/scan-user"
+                                    className="p-4 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 hover:border-amber-500 hover:shadow-xs transition-all flex items-center gap-3 group"
+                                >
+                                    <div className="size-10 rounded-xl bg-amber-600/10 text-amber-600 flex items-center justify-center group-hover:bg-amber-600 group-hover:text-white transition-colors shrink-0">
+                                        <UserCheck className="size-5" />
+                                    </div>
+                                    <div className="min-w-0">
+                                        <h4 className="text-xs font-bold text-zinc-900 dark:text-zinc-100 group-hover:text-amber-600 transition-colors">Scan User & Klaim</h4>
+                                        <p className="text-[11px] text-zinc-500 truncate">Verifikasi serah terima hadiah</p>
+                                    </div>
+                                </Link>
+
+                                <Link
+                                    href="/admin/activities"
+                                    className="p-4 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 hover:border-blue-500 hover:shadow-xs transition-all flex items-center gap-3 group"
+                                >
+                                    <div className="size-10 rounded-xl bg-blue-600/10 text-blue-600 flex items-center justify-center group-hover:bg-blue-600 group-hover:text-white transition-colors shrink-0">
+                                        <ActivityIcon className="size-5" />
+                                    </div>
+                                    <div className="min-w-0">
+                                        <h4 className="text-xs font-bold text-zinc-900 dark:text-zinc-100 group-hover:text-blue-600 transition-colors">Katalog Aktivitas</h4>
+                                        <p className="text-[11px] text-zinc-500 truncate">Atur nominal poin servis AHASS</p>
+                                    </div>
+                                </Link>
+
+                                <Link
+                                    href="/admin/rewards"
+                                    className="p-4 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 hover:border-emerald-500 hover:shadow-xs transition-all flex items-center gap-3 group"
+                                >
+                                    <div className="size-10 rounded-xl bg-emerald-600/10 text-emerald-600 flex items-center justify-center group-hover:bg-emerald-600 group-hover:text-white transition-colors shrink-0">
+                                        <Gift className="size-5" />
+                                    </div>
+                                    <div className="min-w-0">
+                                        <h4 className="text-xs font-bold text-zinc-900 dark:text-zinc-100 group-hover:text-emerald-600 transition-colors">Katalog Reward</h4>
+                                        <p className="text-[11px] text-zinc-500 truncate">Kelola stok & poin hadiah</p>
+                                    </div>
+                                </Link>
                             </div>
                         </div>
                     </div>
