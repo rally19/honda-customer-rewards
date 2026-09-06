@@ -59,7 +59,7 @@ export default function SettingsLayout({ children }: PropsWithChildren) {
             <div className="mt-6 flex flex-col lg:flex-row lg:space-x-10">
                 <aside className="w-full max-w-xl lg:w-56">
                     <nav
-                        className="flex flex-row lg:flex-col gap-1.5 overflow-x-auto pb-2 lg:pb-0"
+                        className="flex flex-col gap-1.5"
                         aria-label="Pengaturan"
                     >
                         {sidebarNavItems.map((item, index) => (
@@ -68,7 +68,7 @@ export default function SettingsLayout({ children }: PropsWithChildren) {
                                 size="sm"
                                 variant="ghost"
                                 asChild
-                                className={cn('justify-start rounded-xl font-semibold whitespace-nowrap cursor-pointer', {
+                                className={cn('w-full justify-start rounded-xl font-semibold whitespace-nowrap cursor-pointer', {
                                     'bg-red-50 text-red-700 dark:bg-red-950/60 dark:text-red-400 font-bold': isCurrentOrParentUrl(item.href),
                                     'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white': !isCurrentOrParentUrl(item.href),
                                 })}
@@ -82,7 +82,7 @@ export default function SettingsLayout({ children }: PropsWithChildren) {
                             </Button>
                         ))}
 
-                        <div className="hidden lg:block my-2 border-t border-zinc-200 dark:border-zinc-800" />
+                        <div className="my-1.5 sm:my-2 border-t border-zinc-200 dark:border-zinc-800" />
 
                         {/* Tombol Logout di bawah Tampilan Tema */}
                         <Button
@@ -90,7 +90,7 @@ export default function SettingsLayout({ children }: PropsWithChildren) {
                             variant="ghost"
                             type="button"
                             onClick={() => setShowLogoutConfirm(true)}
-                            className="justify-start rounded-xl font-semibold text-rose-600 hover:text-rose-700 hover:bg-rose-50 dark:text-rose-400 dark:hover:bg-rose-950/50 cursor-pointer whitespace-nowrap"
+                            className="w-full justify-start rounded-xl font-semibold text-rose-600 hover:text-rose-700 hover:bg-rose-50 dark:text-rose-400 dark:hover:bg-rose-950/50 cursor-pointer whitespace-nowrap"
                         >
                             <LogOut className="h-4 w-4 mr-2" />
                             Keluar dari Akun
@@ -103,7 +103,7 @@ export default function SettingsLayout({ children }: PropsWithChildren) {
                                 variant="ghost"
                                 asChild
                                 className={cn(
-                                    'justify-start rounded-xl font-semibold whitespace-nowrap cursor-pointer text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white',
+                                    'w-full justify-start rounded-xl font-semibold whitespace-nowrap cursor-pointer text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white',
                                     {
                                         'bg-red-50 text-red-700 dark:bg-red-950/60 dark:text-red-400 font-bold': isCurrentOrParentUrl('/admin/dashboard'),
                                     }
@@ -118,9 +118,7 @@ export default function SettingsLayout({ children }: PropsWithChildren) {
                     </nav>
                 </aside>
 
-                <Separator className="my-6 lg:hidden" />
-
-                <div className="flex-1 md:max-w-2xl">
+                <div className="flex-1 md:max-w-2xl mt-6">
                     <section className="max-w-xl space-y-8 rounded-2xl border border-zinc-200/90 dark:border-zinc-800 bg-white/90 dark:bg-zinc-900/90 p-5 sm:p-7 shadow-xs">
                         {children}
                     </section>

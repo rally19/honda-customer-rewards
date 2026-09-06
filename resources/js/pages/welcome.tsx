@@ -266,24 +266,24 @@ export default function Welcome() {
             <header className="sticky top-0 z-50 w-full border-b border-zinc-200/80 bg-white/95 backdrop-blur-md transition-colors dark:border-zinc-800/80 dark:bg-zinc-950/90">
                 <div className="mx-auto flex h-18 lg:h-20 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
                     {/* Brand Logo */}
-                    <a href="#beranda" className="flex items-center gap-3 group shrink-0">
+                    <a href="#beranda" className="flex items-center gap-2.5 sm:gap-3 group shrink-0">
                         <div className="relative flex h-10 lg:h-12 items-center justify-center">
                             <img
                                 src="/images/logo/anper_logo_red.png"
                                 alt="Honda Customer Rewards"
-                                className="h-9 lg:h-10 w-auto object-contain dark:hidden transition-transform group-hover:scale-105"
+                                className="h-8 sm:h-9 lg:h-10 w-auto object-contain dark:hidden transition-transform group-hover:scale-105"
                             />
                             <img
                                 src="/images/logo/anper_logo_white.png"
                                 alt="Honda Customer Rewards"
-                                className="hidden h-9 lg:h-10 w-auto object-contain dark:block transition-transform group-hover:scale-105"
+                                className="hidden h-8 sm:h-9 lg:h-10 w-auto object-contain dark:block transition-transform group-hover:scale-105"
                             />
                         </div>
-                        <div className="hidden sm:block border-l border-zinc-300 dark:border-zinc-700 pl-3">
-                            <span className="block text-[11px] lg:text-xs font-extrabold tracking-wider text-red-600 dark:text-red-500 uppercase whitespace-nowrap">
+                        <div className="border-l border-zinc-300 dark:border-zinc-700 pl-2.5 sm:pl-3">
+                            <span className="block text-[10px] sm:text-[11px] lg:text-xs font-extrabold tracking-wider text-red-600 dark:text-red-500 uppercase whitespace-nowrap leading-tight">
                                 Customer Rewards
                             </span>
-                            <span className="block text-[10px] lg:text-[11px] text-zinc-500 dark:text-zinc-400 whitespace-nowrap">
+                            <span className="block text-[9px] sm:text-[10px] lg:text-[11px] text-zinc-500 dark:text-zinc-400 whitespace-nowrap leading-tight">
                                 Dealer & AHASS Resmi
                             </span>
                         </div>
