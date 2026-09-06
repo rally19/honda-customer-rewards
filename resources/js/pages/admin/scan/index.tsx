@@ -29,7 +29,7 @@ import {
     X,
     Zap,
 } from 'lucide-react';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { toast } from 'sonner';
 import { ErrorBoundary } from '@/components/error-boundary';
 import { Badge } from '@/components/ui/badge';
@@ -118,6 +118,20 @@ export default function AdminScanIndex({ activities, recentScans, awarded, stats
     });
 
     const [notes, setNotes] = useState('');
+    const [activitySearch, setActivitySearch] = useState('');
+
+    // Filter activities by name, description, points, or ID
+    const filteredActivities = useMemo(() => {
+        if (!activitySearch.trim()) return activities;
+        const q = activitySearch.toLowerCase().trim();
+        return activities.filter((act) => {
+            const nameMatch = act.name.toLowerCase().includes(q);
+            const descMatch = act.description ? act.description.toLowerCase().includes(q) : false;
+            const idMatch = act.id.toLowerCase().includes(q);
+            const pointsMatch = act.points.toString().includes(q);
+            return nameMatch || descMatch || idMatch || pointsMatch;
+        });
+    }, [activities, activitySearch]);
 
     // 2. Input Mode ('scanner' | 'manual')
     const [inputMode, setInputMode] = useState<'scanner' | 'manual'>('scanner');
@@ -485,58 +499,104 @@ export default function AdminScanIndex({ activities, recentScans, awarded, stats
                                     </div>
                                 </div>
 
-                                {selectedActivity && (
-                                    <Badge className="bg-red-50 text-red-700 dark:bg-red-950/40 dark:text-red-300 border-red-200 dark:border-red-900 text-[11px] sm:text-xs font-mono font-bold">
-                                        +{customPoints !== '' ? customPoints : selectedActivity.points} PTS
-                                    </Badge>
+                                <div className="flex items-center gap-2">
+                                    {activitySearch.trim() && (
+                                        <span className="text-[11px] font-medium text-zinc-500 dark:text-zinc-400">
+                                            {filteredActivities.length} ditemukan
+                                        </span>
+                                    )}
+                                    {selectedActivity && (
+                                        <Badge className="bg-red-50 text-red-700 dark:bg-red-950/40 dark:text-red-300 border-red-200 dark:border-red-900 text-[11px] sm:text-xs font-mono font-bold">
+                                            +{customPoints !== '' ? customPoints : selectedActivity.points} PTS
+                                        </Badge>
+                                    )}
+                                </div>
+                            </div>
+
+                            {/* Activity Search Input */}
+                            <div className="relative">
+                                <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-zinc-400 pointer-events-none" />
+                                <Input
+                                    type="text"
+                                    placeholder="Cari aktivitas layanan (nama, deskripsi, poin, atau ID)..."
+                                    value={activitySearch}
+                                    onChange={(e) => setActivitySearch(e.target.value)}
+                                    className="pl-9 pr-8 text-xs sm:text-sm bg-zinc-50/70 dark:bg-zinc-800/50 border-zinc-200 dark:border-zinc-700/80 rounded-xl focus-visible:ring-red-500"
+                                />
+                                {activitySearch && (
+                                    <button
+                                        type="button"
+                                        onClick={() => setActivitySearch('')}
+                                        className="absolute right-2.5 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 p-1 rounded-md transition-colors cursor-pointer"
+                                        title="Hapus pencarian"
+                                    >
+                                        <X className="size-3.5" />
+                                    </button>
                                 )}
                             </div>
 
                             {/* Activity Cards List */}
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 max-h-72 overflow-y-auto pr-1">
-                                {activities.map((act) => {
-                                    const isSelected = selectedActivity?.id === act.id;
-                                    return (
-                                        <button
-                                            key={act.id}
-                                            type="button"
-                                            onClick={() => handleSelectActivity(act)}
-                                            className={`p-3 sm:p-3.5 rounded-2xl border text-left transition-all cursor-pointer flex flex-col justify-between gap-2.5 active:scale-[0.99] ${
-                                                isSelected
-                                                    ? 'border-red-600 bg-red-50/70 dark:bg-red-950/30 dark:border-red-500 shadow-xs ring-1 ring-red-600/30'
-                                                    : 'border-zinc-200 dark:border-zinc-800 bg-zinc-50/40 dark:bg-zinc-800/40 hover:border-zinc-300 dark:hover:border-zinc-700'
-                                            }`}
-                                        >
-                                            <div className="flex items-start justify-between gap-2">
-                                                <div className="space-y-0.5 min-w-0">
-                                                    <span className="font-bold text-xs sm:text-sm text-zinc-900 dark:text-zinc-100 block truncate">
-                                                        {act.name}
-                                                    </span>
-                                                    <p className="text-[11px] text-zinc-500 line-clamp-1">
-                                                        {act.description || 'Layanan resmi AHASS'}
-                                                    </p>
+                            {filteredActivities.length > 0 ? (
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 max-h-72 overflow-y-auto pr-1">
+                                    {filteredActivities.map((act) => {
+                                        const isSelected = selectedActivity?.id === act.id;
+                                        return (
+                                            <button
+                                                key={act.id}
+                                                type="button"
+                                                onClick={() => handleSelectActivity(act)}
+                                                className={`p-3 sm:p-3.5 rounded-2xl border text-left transition-all cursor-pointer flex flex-col justify-between gap-2.5 active:scale-[0.99] ${
+                                                    isSelected
+                                                        ? 'border-red-600 bg-red-50/70 dark:bg-red-950/30 dark:border-red-500 shadow-xs ring-1 ring-red-600/30'
+                                                        : 'border-zinc-200 dark:border-zinc-800 bg-zinc-50/40 dark:bg-zinc-800/40 hover:border-zinc-300 dark:hover:border-zinc-700'
+                                                }`}
+                                            >
+                                                <div className="flex items-start justify-between gap-2">
+                                                    <div className="space-y-0.5 min-w-0">
+                                                        <span className="font-bold text-xs sm:text-sm text-zinc-900 dark:text-zinc-100 block truncate">
+                                                            {act.name}
+                                                        </span>
+                                                        <p className="text-[11px] text-zinc-500 line-clamp-1">
+                                                            {act.description || 'Layanan resmi AHASS'}
+                                                        </p>
+                                                    </div>
+                                                    {isSelected ? (
+                                                        <span className="size-5 rounded-full bg-red-600 text-white flex items-center justify-center shrink-0 shadow-xs">
+                                                            <Check className="size-3" />
+                                                        </span>
+                                                    ) : (
+                                                        <span className="size-5 rounded-full border border-zinc-300 dark:border-zinc-700 shrink-0" />
+                                                    )}
                                                 </div>
-                                                {isSelected ? (
-                                                    <span className="size-5 rounded-full bg-red-600 text-white flex items-center justify-center shrink-0 shadow-xs">
-                                                        <Check className="size-3" />
-                                                    </span>
-                                                ) : (
-                                                    <span className="size-5 rounded-full border border-zinc-300 dark:border-zinc-700 shrink-0" />
-                                                )}
-                                            </div>
 
-                                            <div className="flex items-center justify-between pt-1 border-t border-zinc-100 dark:border-zinc-800/80">
-                                                <span className="text-[10px] font-mono text-zinc-600 dark:text-zinc-400">
-                                                    ID: {act.id}
-                                                </span>
-                                                <span className="font-mono text-xs font-black text-red-600 dark:text-red-400">
-                                                    +{act.points} PTS
-                                                </span>
-                                            </div>
-                                        </button>
-                                    );
-                                })}
-                            </div>
+                                                <div className="flex items-center justify-between pt-1 border-t border-zinc-100 dark:border-zinc-800/80">
+                                                    <span className="text-[10px] font-mono text-zinc-600 dark:text-zinc-400">
+                                                        ID: {act.id}
+                                                    </span>
+                                                    <span className="font-mono text-xs font-black text-red-600 dark:text-red-400">
+                                                        +{act.points} PTS
+                                                    </span>
+                                                </div>
+                                            </button>
+                                        );
+                                    })}
+                                </div>
+                            ) : (
+                                <div className="text-center py-7 px-4 rounded-2xl border border-dashed border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-800/30 space-y-2">
+                                    <p className="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400">
+                                        Tidak ada aktivitas yang cocok dengan &ldquo;<span className="font-semibold text-zinc-800 dark:text-zinc-200">{activitySearch}</span>&rdquo;
+                                    </p>
+                                    <Button
+                                        type="button"
+                                        variant="outline"
+                                        size="sm"
+                                        onClick={() => setActivitySearch('')}
+                                        className="text-xs h-7 px-3 text-red-600 dark:text-red-400 border-zinc-200 dark:border-zinc-700 hover:bg-red-50 dark:hover:bg-red-950/30 cursor-pointer"
+                                    >
+                                        Reset Pencarian
+                                    </Button>
+                                </div>
+                            )}
 
                             {/* Optional: Points Override & Notes */}
                             {selectedActivity && (

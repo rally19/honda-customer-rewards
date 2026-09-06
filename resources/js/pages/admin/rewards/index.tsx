@@ -492,7 +492,7 @@ export default function AdminRewardsPage({
             <div className="flex flex-1 flex-col gap-6 p-4 md:p-8 max-w-7xl mx-auto w-full">
                 {/* Header Banner */}
                 <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5 bg-gradient-to-r from-red-600 via-red-700 to-zinc-950 text-white p-6 md:p-8 rounded-3xl shadow-xl shadow-red-950/20 relative overflow-hidden">
-                    <div className="absolute -right-8 -bottom-10 opacity-15 pointer-events-none select-none">
+                    <div className="absolute right-0 -bottom-11 opacity-15 pointer-events-none select-none">
                         <img src="/images/logo/honda_logo_white.png" alt="Honda" className="w-84 md:w-96 h-auto" />
                     </div>
 
@@ -502,7 +502,6 @@ export default function AdminRewardsPage({
                                 <Gift className="size-3.5" />
                                 Modul Hadiah & Penukaran AHASS
                             </span>
-                            <span className="text-xs text-red-200/90 font-mono">Honda Admin v2.5</span>
                         </div>
                         <h1 className="text-2xl md:text-3xl lg:text-4xl font-black tracking-tight text-white">
                             Manajemen Hadiah & Penukaran Poin
@@ -618,20 +617,18 @@ export default function AdminRewardsPage({
                         <button
                             type="button"
                             onClick={() => setCurrentTab('rewards')}
-                            className={`pb-3.5 px-3 text-xs md:text-sm font-bold flex items-center gap-2 border-b-2 transition-all cursor-pointer whitespace-nowrap ${
-                                currentTab === 'rewards'
-                                    ? 'border-red-600 text-red-600 dark:text-red-400'
-                                    : 'border-transparent text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-200'
-                            }`}
+                            className={`pb-3.5 px-3 text-xs md:text-sm font-bold flex items-center gap-2 border-b-2 transition-all cursor-pointer whitespace-nowrap ${currentTab === 'rewards'
+                                ? 'border-red-600 text-red-600 dark:text-red-400'
+                                : 'border-transparent text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-200'
+                                }`}
                         >
                             <Gift className="size-4" />
                             <span>Katalog Hadiah & Reward</span>
                             <span
-                                className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
-                                    currentTab === 'rewards'
-                                        ? 'bg-red-100 dark:bg-red-950/80 text-red-700 dark:text-red-300'
-                                        : 'bg-zinc-200/80 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400'
-                                }`}
+                                className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${currentTab === 'rewards'
+                                    ? 'bg-red-100 dark:bg-red-950/80 text-red-700 dark:text-red-300'
+                                    : 'bg-zinc-200/80 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400'
+                                    }`}
                             >
                                 {rewards.length}
                             </span>
@@ -640,20 +637,18 @@ export default function AdminRewardsPage({
                         <button
                             type="button"
                             onClick={() => setCurrentTab('exchanges')}
-                            className={`pb-3.5 px-3 text-xs md:text-sm font-bold flex items-center gap-2 border-b-2 transition-all cursor-pointer whitespace-nowrap ${
-                                currentTab === 'exchanges'
-                                    ? 'border-red-600 text-red-600 dark:text-red-400'
-                                    : 'border-transparent text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-200'
-                            }`}
+                            className={`pb-3.5 px-3 text-xs md:text-sm font-bold flex items-center gap-2 border-b-2 transition-all cursor-pointer whitespace-nowrap ${currentTab === 'exchanges'
+                                ? 'border-red-600 text-red-600 dark:text-red-400'
+                                : 'border-transparent text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-200'
+                                }`}
                         >
                             <History className="size-4" />
                             <span>Log Riwayat Penukaran Poin</span>
                             <span
-                                className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
-                                    currentTab === 'exchanges'
-                                        ? 'bg-red-100 dark:bg-red-950/80 text-red-700 dark:text-red-300'
-                                        : 'bg-zinc-200/80 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400'
-                                }`}
+                                className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${currentTab === 'exchanges'
+                                    ? 'bg-red-100 dark:bg-red-950/80 text-red-700 dark:text-red-300'
+                                    : 'bg-zinc-200/80 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400'
+                                    }`}
                             >
                                 {exchanges.total}
                             </span>
@@ -708,11 +703,10 @@ export default function AdminRewardsPage({
                                             setTempStatus(statusFilter);
                                             setFilterModalOpen(true);
                                         }}
-                                        className={`text-xs h-9.5 gap-2 rounded-xl transition-all cursor-pointer ${
-                                            statusFilter !== 'all'
-                                                ? 'border-red-300 dark:border-red-900 bg-red-50/70 dark:bg-red-950/40 text-red-600 dark:text-red-400 font-bold'
-                                                : 'text-zinc-700 dark:text-zinc-300'
-                                        }`}
+                                        className={`text-xs h-9.5 gap-2 rounded-xl transition-all cursor-pointer ${statusFilter !== 'all'
+                                            ? 'border-red-300 dark:border-red-900 bg-red-50/70 dark:bg-red-950/40 text-red-600 dark:text-red-400 font-bold'
+                                            : 'text-zinc-700 dark:text-zinc-300'
+                                            }`}
                                     >
                                         <Filter className="size-3.5 text-red-600" />
                                         <span>Filter</span>
@@ -869,11 +863,10 @@ export default function AdminRewardsPage({
                                                     {/* Stok */}
                                                     <td className="py-3.5 px-4">
                                                         <span
-                                                            className={`font-mono font-bold text-xs ${
-                                                                reward.stock <= 5
-                                                                    ? 'text-red-600 dark:text-red-400'
-                                                                    : 'text-zinc-900 dark:text-zinc-100'
-                                                            }`}
+                                                            className={`font-mono font-bold text-xs ${reward.stock <= 5
+                                                                ? 'text-red-600 dark:text-red-400'
+                                                                : 'text-zinc-900 dark:text-zinc-100'
+                                                                }`}
                                                         >
                                                             {reward.stock} unit
                                                         </span>
@@ -1070,11 +1063,10 @@ export default function AdminRewardsPage({
                                             setTempExchangeStatus(exchangeStatusFilter);
                                             setExchangeFilterModalOpen(true);
                                         }}
-                                        className={`text-xs h-9.5 gap-2 rounded-xl transition-all cursor-pointer ${
-                                            exchangeStatusFilter !== 'all'
-                                                ? 'border-red-300 dark:border-red-900 bg-red-50/70 dark:bg-red-950/40 text-red-600 dark:text-red-400 font-bold'
-                                                : 'text-zinc-700 dark:text-zinc-300'
-                                        }`}
+                                        className={`text-xs h-9.5 gap-2 rounded-xl transition-all cursor-pointer ${exchangeStatusFilter !== 'all'
+                                            ? 'border-red-300 dark:border-red-900 bg-red-50/70 dark:bg-red-950/40 text-red-600 dark:text-red-400 font-bold'
+                                            : 'text-zinc-700 dark:text-zinc-300'
+                                            }`}
                                     >
                                         <Filter className="size-3.5 text-red-600" />
                                         <span>Filter Status</span>
@@ -1406,13 +1398,12 @@ export default function AdminRewardsPage({
                                                 key={i}
                                                 href={link.url || '#'}
                                                 preserveScroll
-                                                className={`px-3 py-1.5 rounded-lg font-medium transition-all ${
-                                                    link.active
-                                                        ? 'bg-red-600 text-white font-bold'
-                                                        : link.url
-                                                          ? 'text-zinc-600 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-800'
-                                                          : 'text-zinc-300 dark:text-zinc-600 pointer-events-none'
-                                                }`}
+                                                className={`px-3 py-1.5 rounded-lg font-medium transition-all ${link.active
+                                                    ? 'bg-red-600 text-white font-bold'
+                                                    : link.url
+                                                        ? 'text-zinc-600 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-800'
+                                                        : 'text-zinc-300 dark:text-zinc-600 pointer-events-none'
+                                                    }`}
                                                 dangerouslySetInnerHTML={{ __html: link.label }}
                                             />
                                         ))}
@@ -1820,11 +1811,10 @@ export default function AdminRewardsPage({
                                 key={item.id}
                                 type="button"
                                 onClick={() => setTempStatus(item.id)}
-                                className={`flex w-full items-center justify-between rounded-xl p-3 text-xs font-semibold transition-colors cursor-pointer ${
-                                    tempStatus === item.id
-                                        ? 'bg-red-50 text-red-600 dark:bg-red-950/40 dark:text-red-400'
-                                        : 'hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-700 dark:text-zinc-300'
-                                }`}
+                                className={`flex w-full items-center justify-between rounded-xl p-3 text-xs font-semibold transition-colors cursor-pointer ${tempStatus === item.id
+                                    ? 'bg-red-50 text-red-600 dark:bg-red-950/40 dark:text-red-400'
+                                    : 'hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-700 dark:text-zinc-300'
+                                    }`}
                             >
                                 <span>{item.label}</span>
                                 {tempStatus === item.id && <Check className="size-4" />}
@@ -1886,11 +1876,10 @@ export default function AdminRewardsPage({
                                 key={item.id}
                                 type="button"
                                 onClick={() => setTempExchangeStatus(item.id)}
-                                className={`flex w-full items-center justify-between rounded-xl p-3 text-xs font-semibold transition-colors cursor-pointer ${
-                                    tempExchangeStatus === item.id
-                                        ? 'bg-red-50 text-red-600 dark:bg-red-950/40 dark:text-red-400'
-                                        : 'hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-700 dark:text-zinc-300'
-                                }`}
+                                className={`flex w-full items-center justify-between rounded-xl p-3 text-xs font-semibold transition-colors cursor-pointer ${tempExchangeStatus === item.id
+                                    ? 'bg-red-50 text-red-600 dark:bg-red-950/40 dark:text-red-400'
+                                    : 'hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-700 dark:text-zinc-300'
+                                    }`}
                             >
                                 <span>{item.label}</span>
                                 {tempExchangeStatus === item.id && <Check className="size-4" />}

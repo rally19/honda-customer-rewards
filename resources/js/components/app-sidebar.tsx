@@ -14,50 +14,69 @@ import {
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { dashboard } from '@/routes';
-import type { NavItem, User } from '@/types';
+import type { NavGroup, NavItem, User } from '@/types';
 
 export function AppSidebar() {
     const { auth } = usePage<{ auth?: { user: User } }>().props;
     const isAdmin = auth?.user?.role === 'admin';
 
-    const mainNavItems: NavItem[] = isAdmin
+    const navGroups: NavGroup[] = isAdmin
         ? [
               {
-                  title: 'Admin Dashboard',
-                  href: '/admin/dashboard',
-                  icon: LayoutDashboard,
+                  label: 'Dashboard',
+                  items: [
+                      {
+                          title: 'Admin Dashboard',
+                          href: '/admin/dashboard',
+                          icon: LayoutDashboard,
+                      },
+                  ],
               },
               {
-                  title: 'Scan / Input Poin',
-                  href: '/admin/scan',
-                  icon: QrCode,
+                  label: 'Scan / Input',
+                  items: [
+                      {
+                          title: 'Scan / Input Poin',
+                          href: '/admin/scan',
+                          icon: QrCode,
+                      },
+                      {
+                          title: 'Scan / Input User',
+                          href: '/admin/scan-user',
+                          icon: UserCheck,
+                      },
+                  ],
               },
               {
-                  title: 'Scan / Input User',
-                  href: '/admin/scan-user',
-                  icon: UserCheck,
-              },
-              {
-                  title: 'Manajemen Aktivitas',
-                  href: '/admin/activities',
-                  icon: Award,
-              },
-              {
-                  title: 'Manajemen Reward',
-                  href: '/admin/rewards',
-                  icon: Gift,
-              },
-              {
-                  title: 'Manajemen User',
-                  href: '/admin/users',
-                  icon: Users,
+                  label: 'Manajemen',
+                  items: [
+                      {
+                          title: 'Manajemen Aktivitas',
+                          href: '/admin/activities',
+                          icon: Award,
+                      },
+                      {
+                          title: 'Manajemen Reward',
+                          href: '/admin/rewards',
+                          icon: Gift,
+                      },
+                      {
+                          title: 'Manajemen User',
+                          href: '/admin/users',
+                          icon: Users,
+                      },
+                  ],
               },
           ]
         : [
               {
-                  title: 'User Dashboard',
-                  href: dashboard(),
-                  icon: Smartphone,
+                  items: [
+                      {
+                          title: 'User Dashboard',
+                          href: dashboard(),
+                          icon: Smartphone,
+                      },
+                  ],
               },
           ];
 
@@ -89,7 +108,7 @@ export function AppSidebar() {
             </SidebarHeader>
 
             <SidebarContent>
-                <NavMain items={mainNavItems} />
+                <NavMain groups={navGroups} />
             </SidebarContent>
 
             <SidebarFooter>

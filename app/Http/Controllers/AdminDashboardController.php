@@ -2,11 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\MemberTier;
 use App\Enums\UserRole;
 use App\Models\Activity;
 use App\Models\ActivityHistory;
+use App\Models\PointExchange;
+use App\Models\Reward;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
 class AdminDashboardController extends Controller
@@ -18,194 +22,145 @@ class AdminDashboardController extends Controller
             return redirect()->route('dashboard')->with('error', 'Akses ditolak. Halaman ini khusus untuk Administrator.');
         }
 
+        // 1. User & Member Metrics
         $totalMembers = User::where('role', 'user')->count();
         $totalAdmins = User::where('role', 'admin')->count();
         $verifiedMembers = User::whereNotNull('email_verified_at')->count();
         $newMembersThisWeek = User::where('created_at', '>=', now()->subDays(7))->count();
 
-        // Recent registered members
+        // Recent registered members with tier & points from DB
         $recentMembers = User::latest()
-            ->take(10)
-            ->get(['id', 'name', 'email', 'phone_number', 'address', 'role', 'email_verified_at', 'created_at'])
-            ->map(fn ($user) => [
-                'id' => (string) $user->id,
-                'name' => $user->name,
-                'email' => $user->email,
-                'phone_number' => $user->phone_number ?? '-',
-                'address' => $user->address ?? '-',
-                'role' => $user->role instanceof UserRole ? $user->role->value : (string) $user->role,
-                'is_verified' => ! is_null($user->email_verified_at),
-                'joined_at' => $user->created_at?->format('d M Y, H:i') ?? '-',
-            ]);
+            ->take(25)
+            ->get(['id', 'name', 'email', 'phone_number', 'address', 'role', 'points', 'lifetime_points', 'tier', 'email_verified_at', 'created_at'])
+            ->map(function ($user) {
+                $tier = $user->tier instanceof MemberTier
+                    ? $user->tier
+                    : MemberTier::calculate((int) $user->lifetime_points);
 
+                return [
+                    'id' => (string) $user->id,
+                    'name' => $user->name,
+                    'email' => $user->email,
+                    'phone_number' => $user->phone_number ?? '-',
+                    'address' => $user->address ?? '-',
+                    'role' => $user->role instanceof UserRole ? $user->role->value : (string) $user->role,
+                    'points' => (int) $user->points,
+                    'lifetime_points' => (int) $user->lifetime_points,
+                    'tier' => $tier->value,
+                    'is_verified' => ! is_null($user->email_verified_at),
+                    'joined_at' => $user->created_at?->format('d M Y, H:i') ?? '-',
+                ];
+            });
+
+        // 2. Points & Activity Statistics
         $totalPointsCirculating = (int) User::sum('points');
         $totalLifetimePoints = (int) User::sum('lifetime_points');
-        $totalActivitiesCount = Activity::count();
-        $totalActivitiesAwarded = ActivityHistory::count();
+        $totalPointsRedeemed = (int) PointExchange::where('status', 'claimed')->sum('points_cost');
+        $totalActivitiesCount = Activity::where('is_active', true)->count();
+        $totalScansAwarded = ActivityHistory::count();
+        $todayScansAwarded = ActivityHistory::whereDate('created_at', today())->count();
+        $todayPointsAwarded = (int) ActivityHistory::whereDate('created_at', today())->sum('points');
 
-        // Key metrics summary
+        // 3. Rewards & Exchanges Statistics
+        $activeRewardsCount = Reward::where('is_active', true)->count();
+        $totalExchangesCount = PointExchange::count();
+        $pendingHoldClaims = PointExchange::where('status', 'hold')->count();
+        $completedClaims = PointExchange::where('status', 'claimed')->count();
+
         $stats = [
             'totalMembers' => $totalMembers,
             'totalAdmins' => $totalAdmins,
             'verifiedRate' => ($totalMembers + $totalAdmins) > 0 ? round(($verifiedMembers / ($totalMembers + $totalAdmins)) * 100) : 100,
             'newMembersThisWeek' => $newMembersThisWeek,
-            'totalPointsCirculating' => $totalPointsCirculating > 0 ? $totalPointsCirculating : 348500,
+            'totalPointsCirculating' => $totalPointsCirculating,
             'totalLifetimePoints' => $totalLifetimePoints,
+            'totalPointsRedeemed' => $totalPointsRedeemed,
             'totalActivitiesCount' => $totalActivitiesCount,
-            'totalActivitiesAwarded' => $totalActivitiesAwarded,
-            'totalPointsRedeemed' => 124200,
-            'activeVouchersCount' => 5,
-            'pendingServiceClaims' => 4,
-            'satisfactionRate' => 98.4,
+            'totalScansAwarded' => $totalScansAwarded,
+            'todayScansAwarded' => $todayScansAwarded,
+            'todayPointsAwarded' => $todayPointsAwarded,
+            'activeRewardsCount' => $activeRewardsCount,
+            'totalExchangesCount' => $totalExchangesCount,
+            'pendingHoldClaims' => $pendingHoldClaims,
+            'completedClaims' => $completedClaims,
         ];
 
-        // Active Rewards Vouchers Management
-        $vouchers = [
-            [
-                'id' => 'VCH-01',
-                'title' => 'Oli Honda gratis',
-                'category' => 'Oli & Pelumas',
-                'points_required' => 200,
-                'stock' => 142,
-                'claimed' => 358,
-                'status' => 'active',
-                'image' => '/images/pictures/oli_honda_img.jpg',
-            ],
-            [
-                'id' => 'VCH-02',
-                'title' => 'Voucher servis',
-                'category' => 'Servis Berkala',
-                'points_required' => 150,
-                'stock' => 89,
-                'claimed' => 411,
-                'status' => 'active',
-                'image' => '/images/pictures/voucher_service_img.jpg',
-            ],
-            [
-                'id' => 'VCH-03',
-                'title' => 'Potongan pembelian aksesori',
-                'category' => 'Aksesori & Sparepart',
-                'points_required' => 100,
-                'stock' => 210,
-                'claimed' => 190,
-                'status' => 'active',
-                'image' => '/images/pictures/potongan_pembelian_aksesori_img.jpg',
-            ],
-            [
-                'id' => 'VCH-04',
-                'title' => 'Voucher pembelian motor',
-                'category' => 'Unit Motor Baru',
-                'points_required' => 800,
-                'stock' => 25,
-                'claimed' => 15,
-                'status' => 'active',
-                'image' => '/images/pictures/voucher_pembelian_motor_img.jpg',
-            ],
-            [
-                'id' => 'VCH-05',
-                'title' => 'Merchandise resmi Honda',
-                'category' => 'Merchandise',
-                'points_required' => 350,
-                'stock' => 34,
-                'claimed' => 66,
-                'status' => 'active',
-                'image' => '/images/pictures/merchandise_resmi_honda_img.jpg',
-            ],
-            [
-                'id' => 'VCH-06',
-                'title' => 'Kesempatan mengikuti undian hadiah khusus',
-                'category' => 'Undian Spesial',
-                'points_required' => 50,
-                'stock' => 100,
-                'claimed' => 88,
-                'status' => 'active',
-                'image' => '/images/pictures/kesempatan_mengikuti_undian_hadiah_khusus_img.jpg',
-            ],
-        ];
+        // 4. Real Reward Claims Stream (PointExchange from DB)
+        $recentClaims = PointExchange::with(['reward:id,name,image_url', 'admin:id,name'])
+            ->latest('created_at')
+            ->take(20)
+            ->get()
+            ->map(fn ($exchange) => [
+                'id' => (string) $exchange->id,
+                'reward_id' => (string) ($exchange->reward_id ?? '-'),
+                'reward_name' => $exchange->reward_name,
+                'reward_image' => $exchange->reward_image ?? $exchange->reward?->image_url ?? '',
+                'points_cost' => (int) $exchange->points_cost,
+                'user_id' => (string) $exchange->user_id,
+                'user_name' => $exchange->user_name,
+                'user_email' => $exchange->user_email,
+                'user_phone' => $exchange->user_phone ?? '-',
+                'user_address' => $exchange->user_address ?? '-',
+                'status' => $exchange->status,
+                'admin_name' => $exchange->admin?->name ?? 'Staf AHASS',
+                'admin_notes' => $exchange->admin_notes ?? '',
+                'time_ago' => $exchange->created_at?->diffForHumans() ?? '-',
+                'created_at' => $exchange->created_at?->format('d M Y, H:i') ?? '-',
+            ]);
 
-        // Activity Transactions log
-        $pointClaims = [
-            [
-                'id' => 'CLM-8921',
-                'transaction_code' => 'TRX-AHASS-0142',
-                'member_name' => 'Leonel Rally Squall',
-                'member_id' => '8844766994',
-                'phone_number' => '085641667668',
-                'merchant_name' => 'AHASS Mitra Motor Utama',
-                'transaction_type' => 'Servis Berkala & Ganti Oli AHM MPX',
-                'transaction_amount' => 185000,
-                'points_claimed' => 185,
-                'status' => 'pending',
-                'date' => '04 Sep 2026, 14:15',
-                'notes' => 'Servis berkala dan ganti oli MPX telah diverifikasi petugas AHASS.',
-            ],
-            [
-                'id' => 'CLM-8920',
-                'transaction_code' => 'TRX-AHASS-0098',
-                'member_name' => 'Siti Nurhaliza',
-                'member_id' => '4920194821',
-                'phone_number' => '081298492019',
-                'merchant_name' => 'AHASS Nusantara Honda',
-                'transaction_type' => 'Servis Berkala & Pembersihan CVT',
-                'transaction_amount' => 245000,
-                'points_claimed' => 245,
-                'status' => 'approved',
-                'date' => '04 Sep 2026, 11:30',
-                'notes' => 'Pembersihan CVT dan servis berkala tuntas terkonfirmasi.',
-            ],
-            [
-                'id' => 'CLM-8919',
-                'transaction_code' => 'TRX-PART-0312',
-                'member_name' => 'Ahmad Fauzi',
-                'member_id' => '1029481923',
-                'phone_number' => '085710294819',
-                'merchant_name' => 'AHASS Daya Motor Sudirman',
-                'transaction_type' => 'Pembelian Sparepart HGP Asli & Ban Tubeless',
-                'transaction_amount' => 320000,
-                'points_claimed' => 320,
-                'status' => 'approved',
-                'date' => '03 Sep 2026, 16:45',
-                'notes' => 'Pembelian suku cadang resmi Honda Genuine Parts.',
-            ],
-            [
-                'id' => 'CLM-8918',
-                'transaction_code' => 'TRX-AHASS-0139',
-                'member_name' => 'Budi Santoso',
-                'member_id' => '7192840192',
-                'phone_number' => '081371928401',
-                'merchant_name' => 'AHASS Mitra Motor Utama',
-                'transaction_type' => 'Tune Up & Uji Emisi',
-                'transaction_amount' => 120000,
-                'points_claimed' => 120,
-                'status' => 'approved',
-                'date' => '03 Sep 2026, 10:10',
-                'notes' => 'Tune up dan uji emisi tervalidasi oleh kasir AHASS.',
-            ],
-        ];
+        // 5. Real Scan / Point Award Transactions (ActivityHistory from DB)
+        $recentScans = ActivityHistory::with(['admin:id,name'])
+            ->latest('created_at')
+            ->take(20)
+            ->get()
+            ->map(fn ($history) => [
+                'id' => (string) $history->id,
+                'activity_id' => (string) ($history->activity_id ?? '-'),
+                'activity_name' => $history->activity_name,
+                'points' => (int) $history->points,
+                'user_id' => (string) $history->user_id,
+                'user_name' => $history->user_name,
+                'admin_name' => $history->admin?->name ?? 'Staf AHASS',
+                'time_ago' => $history->created_at?->diffForHumans() ?? '-',
+                'created_at' => $history->created_at?->format('d M Y, H:i') ?? '-',
+            ]);
 
-        // Claims breakdown by transaction category
-        $claimCategories = [
-            ['category' => 'Jasa Servis Berkala AHASS', 'count' => 184, 'percentage' => 45, 'badge' => 'Servis AHASS'],
-            ['category' => 'Oli & Pelumas Resmi AHM MPX/SPX', 'count' => 114, 'percentage' => 28, 'badge' => 'Oli & Cairan'],
-            ['category' => 'Suku Cadang Asli (Honda Genuine Parts)', 'count' => 74, 'percentage' => 18, 'badge' => 'Sparepart HGP'],
-            ['category' => 'Aksesori & Apparel Resmi Honda', 'count' => 37, 'percentage' => 9, 'badge' => 'Aksesori'],
-        ];
+        // 6. Real Active Rewards Catalog (Reward from DB)
+        $rewards = Reward::withCount(['exchanges as claimed_count' => fn ($q) => $q->where('status', 'claimed')])
+            ->latest('created_at')
+            ->take(20)
+            ->get()
+            ->map(fn ($reward) => [
+                'id' => (string) $reward->id,
+                'name' => $reward->name,
+                'description' => $reward->description ?? '',
+                'points_cost' => (int) $reward->points_cost,
+                'stock' => (int) $reward->stock,
+                'claimed_count' => (int) $reward->claimed_count,
+                'is_active' => (bool) $reward->is_active,
+                'image_url' => $reward->image_url ?? '',
+                'created_at' => $reward->created_at?->format('d M Y') ?? '-',
+            ]);
 
-        // AHASS Dealer branches / Partner networks
-        $ahassBranches = [
-            ['code' => 'AHASS-001', 'name' => 'AHASS Mitra Motor Utama', 'city' => 'Jakarta Pusat', 'active_services' => 28, 'rating' => 4.9],
-            ['code' => 'AHASS-002', 'name' => 'AHASS Nusantara Honda', 'city' => 'Bandung', 'active_services' => 19, 'rating' => 4.8],
-            ['code' => 'AHASS-003', 'name' => 'AHASS Daya Motor Sudirman', 'city' => 'Jakarta Selatan', 'active_services' => 34, 'rating' => 4.9],
-            ['code' => 'AHASS-004', 'name' => 'AHASS Bintang Motor Pratama', 'city' => 'Surabaya', 'active_services' => 15, 'rating' => 4.7],
-        ];
+        // 7. Top Activity Usage (Aggregated from ActivityHistory DB)
+        $topActivities = ActivityHistory::select('activity_name', DB::raw('count(*) as count'), DB::raw('sum(points) as total_points'))
+            ->groupBy('activity_name')
+            ->orderByDesc('count')
+            ->take(5)
+            ->get()
+            ->map(fn ($row) => [
+                'name' => $row->activity_name,
+                'count' => (int) $row->count,
+                'total_points' => (int) $row->total_points,
+            ]);
 
         return Inertia::render('admin/dashboard', [
             'stats' => $stats,
             'recentMembers' => $recentMembers,
-            'vouchers' => $vouchers,
-            'pointClaims' => $pointClaims,
-            'claimCategories' => $claimCategories,
-            'ahassBranches' => $ahassBranches,
+            'recentClaims' => $recentClaims,
+            'recentScans' => $recentScans,
+            'rewards' => $rewards,
+            'topActivities' => $topActivities,
         ]);
     }
 }

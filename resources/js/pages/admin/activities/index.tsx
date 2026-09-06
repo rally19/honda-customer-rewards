@@ -278,7 +278,7 @@ export default function AdminActivitiesIndex({
                 {/* Hero Header Banner */}
                 <div className="bg-gradient-to-r from-red-600 via-red-700 to-zinc-950 text-white p-6 md:p-8 rounded-3xl shadow-xl shadow-red-950/20 relative overflow-hidden">
                     {/* Honda Watermark Vector */}
-                    <div className="absolute -right-8 -bottom-10 opacity-15 pointer-events-none select-none">
+                    <div className="absolute right-0 -bottom-11 opacity-15 pointer-events-none select-none">
                         <img
                             src="/images/logo/honda_logo_white.png"
                             alt="Honda"
@@ -293,7 +293,6 @@ export default function AdminActivitiesIndex({
                                     <Sparkles className="size-3.5" />
                                     Modul Aktivitas & Poin AHASS
                                 </span>
-                                <span className="text-xs text-red-200/90 font-mono">Honda Admin v2.5</span>
                             </div>
                             <h1 className="text-2xl md:text-3xl font-black tracking-tight">
                                 Manajemen Aktivitas & Riwayat Poin
@@ -411,20 +410,18 @@ export default function AdminActivitiesIndex({
                         <button
                             type="button"
                             onClick={() => setActiveTab('activities')}
-                            className={`pb-3.5 px-3 text-xs md:text-sm font-bold flex items-center gap-2 border-b-2 transition-all cursor-pointer whitespace-nowrap ${
-                                activeTab === 'activities'
-                                    ? 'border-red-600 text-red-600 dark:text-red-400'
-                                    : 'border-transparent text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-200'
-                            }`}
+                            className={`pb-3.5 px-3 text-xs md:text-sm font-bold flex items-center gap-2 border-b-2 transition-all cursor-pointer whitespace-nowrap ${activeTab === 'activities'
+                                ? 'border-red-600 text-red-600 dark:text-red-400'
+                                : 'border-transparent text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-200'
+                                }`}
                         >
                             <Award className="size-4" />
                             <span>Katalog Layanan Aktivitas</span>
                             <span
-                                className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
-                                    activeTab === 'activities'
-                                        ? 'bg-red-100 dark:bg-red-950/80 text-red-700 dark:text-red-300'
-                                        : 'bg-zinc-200/80 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400'
-                                }`}
+                                className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${activeTab === 'activities'
+                                    ? 'bg-red-100 dark:bg-red-950/80 text-red-700 dark:text-red-300'
+                                    : 'bg-zinc-200/80 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400'
+                                    }`}
                             >
                                 {activities.length}
                             </span>
@@ -433,20 +430,18 @@ export default function AdminActivitiesIndex({
                         <button
                             type="button"
                             onClick={() => setActiveTab('histories')}
-                            className={`pb-3.5 px-3 text-xs md:text-sm font-bold flex items-center gap-2 border-b-2 transition-all cursor-pointer whitespace-nowrap ${
-                                activeTab === 'histories'
-                                    ? 'border-red-600 text-red-600 dark:text-red-400'
-                                    : 'border-transparent text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-200'
-                            }`}
+                            className={`pb-3.5 px-3 text-xs md:text-sm font-bold flex items-center gap-2 border-b-2 transition-all cursor-pointer whitespace-nowrap ${activeTab === 'histories'
+                                ? 'border-red-600 text-red-600 dark:text-red-400'
+                                : 'border-transparent text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-200'
+                                }`}
                         >
                             <History className="size-4" />
                             <span>Log Riwayat Aktivitas & Poin</span>
                             <span
-                                className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
-                                    activeTab === 'histories'
-                                        ? 'bg-red-100 dark:bg-red-950/80 text-red-700 dark:text-red-300'
-                                        : 'bg-zinc-200/80 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400'
-                                }`}
+                                className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${activeTab === 'histories'
+                                    ? 'bg-red-100 dark:bg-red-950/80 text-red-700 dark:text-red-300'
+                                    : 'bg-zinc-200/80 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400'
+                                    }`}
                             >
                                 {histories.total}
                             </span>
@@ -493,11 +488,10 @@ export default function AdminActivitiesIndex({
                                             setTempStatus(statusFilter);
                                             setFilterModalOpen(true);
                                         }}
-                                        className={`text-xs h-9.5 gap-2 rounded-xl transition-all cursor-pointer ${
-                                            activeFilterCount > 0
-                                                ? 'border-red-300 dark:border-red-900 bg-red-50/70 dark:bg-red-950/40 text-red-600 dark:text-red-400 font-bold'
-                                                : 'text-zinc-700 dark:text-zinc-300'
-                                        }`}
+                                        className={`text-xs h-9.5 gap-2 rounded-xl transition-all cursor-pointer ${activeFilterCount > 0
+                                            ? 'border-red-300 dark:border-red-900 bg-red-50/70 dark:bg-red-950/40 text-red-600 dark:text-red-400 font-bold'
+                                            : 'text-zinc-700 dark:text-zinc-300'
+                                            }`}
                                     >
                                         <Filter className="size-3.5 text-red-600" />
                                         <span>Filter</span>
@@ -1041,13 +1035,12 @@ export default function AdminActivitiesIndex({
                                                 key={i}
                                                 href={link.url || '#'}
                                                 preserveScroll
-                                                className={`px-3 py-1.5 rounded-lg font-medium transition-all ${
-                                                    link.active
-                                                        ? 'bg-red-600 text-white font-bold'
-                                                        : link.url
-                                                          ? 'text-zinc-600 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-800'
-                                                          : 'text-zinc-300 dark:text-zinc-600 pointer-events-none'
-                                                }`}
+                                                className={`px-3 py-1.5 rounded-lg font-medium transition-all ${link.active
+                                                    ? 'bg-red-600 text-white font-bold'
+                                                    : link.url
+                                                        ? 'text-zinc-600 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-800'
+                                                        : 'text-zinc-300 dark:text-zinc-600 pointer-events-none'
+                                                    }`}
                                                 dangerouslySetInnerHTML={{ __html: link.label }}
                                             />
                                         ))}
@@ -1402,33 +1395,30 @@ export default function AdminActivitiesIndex({
                                 <button
                                     type="button"
                                     onClick={() => setTempStatus('all')}
-                                    className={`p-3 rounded-2xl border text-center transition-all cursor-pointer ${
-                                        tempStatus === 'all'
-                                            ? 'border-red-600 bg-red-50/70 dark:bg-red-950/50 text-red-600 font-bold shadow-xs'
-                                            : 'border-zinc-200 dark:border-zinc-800 hover:border-zinc-300 text-zinc-700 dark:text-zinc-300'
-                                    }`}
+                                    className={`p-3 rounded-2xl border text-center transition-all cursor-pointer ${tempStatus === 'all'
+                                        ? 'border-red-600 bg-red-50/70 dark:bg-red-950/50 text-red-600 font-bold shadow-xs'
+                                        : 'border-zinc-200 dark:border-zinc-800 hover:border-zinc-300 text-zinc-700 dark:text-zinc-300'
+                                        }`}
                                 >
                                     Semua Status
                                 </button>
                                 <button
                                     type="button"
                                     onClick={() => setTempStatus('active')}
-                                    className={`p-3 rounded-2xl border text-center transition-all cursor-pointer ${
-                                        tempStatus === 'active'
-                                            ? 'border-emerald-600 bg-emerald-50/70 dark:bg-emerald-950/50 text-emerald-600 font-bold shadow-xs'
-                                            : 'border-zinc-200 dark:border-zinc-800 hover:border-zinc-300 text-zinc-700 dark:text-zinc-300'
-                                    }`}
+                                    className={`p-3 rounded-2xl border text-center transition-all cursor-pointer ${tempStatus === 'active'
+                                        ? 'border-emerald-600 bg-emerald-50/70 dark:bg-emerald-950/50 text-emerald-600 font-bold shadow-xs'
+                                        : 'border-zinc-200 dark:border-zinc-800 hover:border-zinc-300 text-zinc-700 dark:text-zinc-300'
+                                        }`}
                                 >
                                     Hanya Aktif
                                 </button>
                                 <button
                                     type="button"
                                     onClick={() => setTempStatus('inactive')}
-                                    className={`p-3 rounded-2xl border text-center transition-all cursor-pointer ${
-                                        tempStatus === 'inactive'
-                                            ? 'border-zinc-600 bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 font-bold shadow-xs'
-                                            : 'border-zinc-200 dark:border-zinc-800 hover:border-zinc-300 text-zinc-700 dark:text-zinc-300'
-                                    }`}
+                                    className={`p-3 rounded-2xl border text-center transition-all cursor-pointer ${tempStatus === 'inactive'
+                                        ? 'border-zinc-600 bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 font-bold shadow-xs'
+                                        : 'border-zinc-200 dark:border-zinc-800 hover:border-zinc-300 text-zinc-700 dark:text-zinc-300'
+                                        }`}
                                 >
                                     Hanya Nonaktif
                                 </button>

@@ -219,7 +219,7 @@ export default function AdminUsersIndex({ users, filters, stats }: Props) {
             <div className="flex flex-1 flex-col gap-6 p-4 md:p-8 max-w-7xl mx-auto w-full">
                 {/* Header Banner */}
                 <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5 bg-gradient-to-r from-red-600 via-red-700 to-zinc-950 text-white p-6 md:p-8 rounded-3xl shadow-xl shadow-red-950/20 relative overflow-hidden">
-                    <div className="absolute -right-8 -bottom-10 opacity-15 pointer-events-none select-none">
+                    <div className="absolute right-0 -bottom-11 opacity-15 pointer-events-none select-none">
                         <img src="/images/logo/honda_logo_white.png" alt="Honda" className="w-84 md:w-96 h-auto" />
                     </div>
 
@@ -229,7 +229,6 @@ export default function AdminUsersIndex({ users, filters, stats }: Props) {
                                 <Users className="size-3.5" />
                                 Modul CRUD Pengguna & Role Guard
                             </span>
-                            <span className="text-xs text-red-200/90 font-mono">Honda Admin v2.5</span>
                         </div>
                         <h1 className="text-2xl md:text-3xl lg:text-4xl font-black tracking-tight text-white">
                             Manajemen Akun Pengguna
@@ -374,11 +373,10 @@ export default function AdminUsersIndex({ users, filters, stats }: Props) {
                                     setTempStatus(selectedStatus);
                                     setFilterModalOpen(true);
                                 }}
-                                className={`text-xs h-9.5 gap-2 rounded-xl transition-all cursor-pointer ${
-                                    activeFilterCount > 0
-                                        ? 'border-red-300 dark:border-red-900 bg-red-50/70 dark:bg-red-950/40 text-red-600 dark:text-red-400 font-bold'
-                                        : 'text-zinc-700 dark:text-zinc-300'
-                                }`}
+                                className={`text-xs h-9.5 gap-2 rounded-xl transition-all cursor-pointer ${activeFilterCount > 0
+                                    ? 'border-red-300 dark:border-red-900 bg-red-50/70 dark:bg-red-950/40 text-red-600 dark:text-red-400 font-bold'
+                                    : 'text-zinc-700 dark:text-zinc-300'
+                                    }`}
                             >
                                 <Filter className="size-3.5 text-red-600" />
                                 <span>Filter</span>
@@ -541,17 +539,16 @@ export default function AdminUsersIndex({ users, filters, stats }: Props) {
                                                 <td className="py-3.5 px-4">
                                                     <div className="space-y-1">
                                                         <Badge
-                                                            className={`text-[9px] font-extrabold px-2 py-0.5 border ${
-                                                                user.tier === 'Diamond'
-                                                                    ? 'bg-purple-100 text-purple-700 border-purple-300 dark:bg-purple-950/60 dark:text-purple-300 dark:border-purple-700'
-                                                                    : user.tier === 'Platinum'
-                                                                      ? 'bg-cyan-100 text-cyan-700 border-cyan-300 dark:bg-cyan-950/60 dark:text-cyan-300 dark:border-cyan-700'
-                                                                      : user.tier === 'Gold'
+                                                            className={`text-[9px] font-extrabold px-2 py-0.5 border ${user.tier === 'Diamond'
+                                                                ? 'bg-purple-100 text-purple-700 border-purple-300 dark:bg-purple-950/60 dark:text-purple-300 dark:border-purple-700'
+                                                                : user.tier === 'Platinum'
+                                                                    ? 'bg-cyan-100 text-cyan-700 border-cyan-300 dark:bg-cyan-950/60 dark:text-cyan-300 dark:border-cyan-700'
+                                                                    : user.tier === 'Gold'
                                                                         ? 'bg-yellow-100 text-yellow-800 border-yellow-400 dark:bg-yellow-950/60 dark:text-yellow-300 dark:border-yellow-700'
                                                                         : user.tier === 'Silver'
-                                                                          ? 'bg-slate-100 text-slate-700 border-slate-300 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-600'
-                                                                          : 'bg-amber-100 text-amber-800 border-amber-300 dark:bg-amber-950/60 dark:text-amber-300 dark:border-amber-700'
-                                                            }`}
+                                                                            ? 'bg-slate-100 text-slate-700 border-slate-300 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-600'
+                                                                            : 'bg-amber-100 text-amber-800 border-amber-300 dark:bg-amber-950/60 dark:text-amber-300 dark:border-amber-700'
+                                                                }`}
                                                         >
                                                             {user.tier || 'Bronze'} Member
                                                         </Badge>
@@ -624,13 +621,12 @@ export default function AdminUsersIndex({ users, filters, stats }: Props) {
                                         key={i}
                                         href={link.url || '#'}
                                         preserveScroll
-                                        className={`px-3 py-1.5 rounded-lg font-medium transition-all ${
-                                            link.active
-                                                ? 'bg-red-600 text-white font-bold'
-                                                : link.url
-                                                  ? 'text-zinc-600 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-800'
-                                                  : 'text-zinc-300 dark:text-zinc-600 pointer-events-none'
-                                        }`}
+                                        className={`px-3 py-1.5 rounded-lg font-medium transition-all ${link.active
+                                            ? 'bg-red-600 text-white font-bold'
+                                            : link.url
+                                                ? 'text-zinc-600 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-800'
+                                                : 'text-zinc-300 dark:text-zinc-600 pointer-events-none'
+                                            }`}
                                         dangerouslySetInnerHTML={{ __html: link.label }}
                                     />
                                 ))}
@@ -993,33 +989,30 @@ export default function AdminUsersIndex({ users, filters, stats }: Props) {
                                 <button
                                     type="button"
                                     onClick={() => setTempRole('all')}
-                                    className={`p-3 rounded-2xl border text-center transition-all cursor-pointer ${
-                                        tempRole === 'all'
-                                            ? 'border-red-600 bg-red-50/70 dark:bg-red-950/50 text-red-600 font-bold shadow-xs'
-                                            : 'border-zinc-200 dark:border-zinc-800 hover:border-zinc-300 text-zinc-700 dark:text-zinc-300'
-                                    }`}
+                                    className={`p-3 rounded-2xl border text-center transition-all cursor-pointer ${tempRole === 'all'
+                                        ? 'border-red-600 bg-red-50/70 dark:bg-red-950/50 text-red-600 font-bold shadow-xs'
+                                        : 'border-zinc-200 dark:border-zinc-800 hover:border-zinc-300 text-zinc-700 dark:text-zinc-300'
+                                        }`}
                                 >
                                     Semua Role
                                 </button>
                                 <button
                                     type="button"
                                     onClick={() => setTempRole('user')}
-                                    className={`p-3 rounded-2xl border text-center transition-all cursor-pointer ${
-                                        tempRole === 'user'
-                                            ? 'border-red-600 bg-red-50/70 dark:bg-red-950/50 text-red-600 font-bold shadow-xs'
-                                            : 'border-zinc-200 dark:border-zinc-800 hover:border-zinc-300 text-zinc-700 dark:text-zinc-300'
-                                    }`}
+                                    className={`p-3 rounded-2xl border text-center transition-all cursor-pointer ${tempRole === 'user'
+                                        ? 'border-red-600 bg-red-50/70 dark:bg-red-950/50 text-red-600 font-bold shadow-xs'
+                                        : 'border-zinc-200 dark:border-zinc-800 hover:border-zinc-300 text-zinc-700 dark:text-zinc-300'
+                                        }`}
                                 >
                                     Member
                                 </button>
                                 <button
                                     type="button"
                                     onClick={() => setTempRole('admin')}
-                                    className={`p-3 rounded-2xl border text-center transition-all cursor-pointer ${
-                                        tempRole === 'admin'
-                                            ? 'border-red-600 bg-red-50/70 dark:bg-red-950/50 text-red-600 font-bold shadow-xs'
-                                            : 'border-zinc-200 dark:border-zinc-800 hover:border-zinc-300 text-zinc-700 dark:text-zinc-300'
-                                    }`}
+                                    className={`p-3 rounded-2xl border text-center transition-all cursor-pointer ${tempRole === 'admin'
+                                        ? 'border-red-600 bg-red-50/70 dark:bg-red-950/50 text-red-600 font-bold shadow-xs'
+                                        : 'border-zinc-200 dark:border-zinc-800 hover:border-zinc-300 text-zinc-700 dark:text-zinc-300'
+                                        }`}
                                 >
                                     Admin
                                 </button>
@@ -1035,33 +1028,30 @@ export default function AdminUsersIndex({ users, filters, stats }: Props) {
                                 <button
                                     type="button"
                                     onClick={() => setTempStatus('all')}
-                                    className={`p-3 rounded-2xl border text-center transition-all cursor-pointer ${
-                                        tempStatus === 'all'
-                                            ? 'border-red-600 bg-red-50/70 dark:bg-red-950/50 text-red-600 font-bold shadow-xs'
-                                            : 'border-zinc-200 dark:border-zinc-800 hover:border-zinc-300 text-zinc-700 dark:text-zinc-300'
-                                    }`}
+                                    className={`p-3 rounded-2xl border text-center transition-all cursor-pointer ${tempStatus === 'all'
+                                        ? 'border-red-600 bg-red-50/70 dark:bg-red-950/50 text-red-600 font-bold shadow-xs'
+                                        : 'border-zinc-200 dark:border-zinc-800 hover:border-zinc-300 text-zinc-700 dark:text-zinc-300'
+                                        }`}
                                 >
                                     Status: Semua
                                 </button>
                                 <button
                                     type="button"
                                     onClick={() => setTempStatus('verified')}
-                                    className={`p-3 rounded-2xl border text-center transition-all cursor-pointer ${
-                                        tempStatus === 'verified'
-                                            ? 'border-emerald-600 bg-emerald-50/70 dark:bg-emerald-950/50 text-emerald-600 font-bold shadow-xs'
-                                            : 'border-zinc-200 dark:border-zinc-800 hover:border-zinc-300 text-zinc-700 dark:text-zinc-300'
-                                    }`}
+                                    className={`p-3 rounded-2xl border text-center transition-all cursor-pointer ${tempStatus === 'verified'
+                                        ? 'border-emerald-600 bg-emerald-50/70 dark:bg-emerald-950/50 text-emerald-600 font-bold shadow-xs'
+                                        : 'border-zinc-200 dark:border-zinc-800 hover:border-zinc-300 text-zinc-700 dark:text-zinc-300'
+                                        }`}
                                 >
                                     Terverifikasi
                                 </button>
                                 <button
                                     type="button"
                                     onClick={() => setTempStatus('unverified')}
-                                    className={`p-3 rounded-2xl border text-center transition-all cursor-pointer ${
-                                        tempStatus === 'unverified'
-                                            ? 'border-amber-600 bg-amber-50/70 dark:bg-amber-950/50 text-amber-600 font-bold shadow-xs'
-                                            : 'border-zinc-200 dark:border-zinc-800 hover:border-zinc-300 text-zinc-700 dark:text-zinc-300'
-                                    }`}
+                                    className={`p-3 rounded-2xl border text-center transition-all cursor-pointer ${tempStatus === 'unverified'
+                                        ? 'border-amber-600 bg-amber-50/70 dark:bg-amber-950/50 text-amber-600 font-bold shadow-xs'
+                                        : 'border-zinc-200 dark:border-zinc-800 hover:border-zinc-300 text-zinc-700 dark:text-zinc-300'
+                                        }`}
                                 >
                                     Belum Verifikasi
                                 </button>
