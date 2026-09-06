@@ -10,9 +10,10 @@ use App\Http\Controllers\Auth\TwoFactorEmailController;
 use App\Http\Controllers\CustomerDashboardController;
 use App\Http\Controllers\CustomerHistoryController;
 use App\Http\Controllers\CustomerRewardController;
+use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Route;
 
-Route::inertia('/', 'welcome')->name('home');
+Route::get('/', HomeController::class)->name('home');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     // Customer Dashboard (E-Wallet / Digital Member Rewards)
