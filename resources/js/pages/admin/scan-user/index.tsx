@@ -128,7 +128,7 @@ export default function AdminScanUserIndex({
     // 1. Input Mode ('scanner' | 'manual')
     const [inputMode, setInputMode] = useState<'scanner' | 'manual'>('scanner');
     const [scannerError, setScannerError] = useState<string | null>(null);
-    const [isCameraActive, setIsCameraActive] = useState(true);
+    const [isCameraActive, setIsCameraActive] = useState(false);
     const [facingMode, setFacingMode] = useState<'environment' | 'user'>('environment');
 
     const toggleFacingMode = () => {
@@ -625,14 +625,19 @@ export default function AdminScanUserIndex({
                                                 </div>
                                             ) : (
                                                 <div className="text-center p-6 space-y-3">
-                                                    <Camera className="size-10 mx-auto text-zinc-500" />
-                                                    <p className="text-xs text-zinc-400">
-                                                        Kamera sedang dijeda.
-                                                    </p>
+                                                    <CameraOff className="size-10 mx-auto text-zinc-500 opacity-80" />
+                                                    <div className="space-y-1">
+                                                        <p className="text-xs font-semibold text-zinc-300">
+                                                            Kamera sedang dijeda.
+                                                        </p>
+                                                        <p className="text-[11px] text-zinc-500">
+                                                            Klik tombol di bawah untuk mengaktifkan pemindaian QR kamera.
+                                                        </p>
+                                                    </div>
                                                     <Button
                                                         size="sm"
                                                         onClick={() => setIsCameraActive(true)}
-                                                        className="rounded-xl text-xs bg-red-600 text-white hover:bg-red-700"
+                                                        className="rounded-xl text-xs bg-red-600 text-white hover:bg-red-700 font-semibold cursor-pointer"
                                                     >
                                                         Aktifkan Kamera
                                                     </Button>

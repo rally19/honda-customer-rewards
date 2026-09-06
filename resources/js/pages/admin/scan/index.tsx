@@ -137,7 +137,7 @@ export default function AdminScanIndex({ activities, recentScans, awarded, stats
     // 2. Input Mode ('scanner' | 'manual')
     const [inputMode, setInputMode] = useState<'scanner' | 'manual'>('scanner');
     const [scannerError, setScannerError] = useState<string | null>(null);
-    const [isCameraActive, setIsCameraActive] = useState(true);
+    const [isCameraActive, setIsCameraActive] = useState(false);
     const [facingMode, setFacingMode] = useState<'environment' | 'user'>('environment');
 
     const toggleFacingMode = () => {
@@ -816,7 +816,10 @@ export default function AdminScanIndex({ activities, recentScans, awarded, stats
                                             ) : (
                                                 <div className="text-center p-6 space-y-3">
                                                     <CameraOff className="size-10 mx-auto text-zinc-500 opacity-80" />
-                                                    <p className="text-xs text-zinc-400">Kamera sedang dijeda.</p>
+                                                    <div className="space-y-1">
+                                                        <p className="text-xs font-semibold text-zinc-300">Kamera sedang dijeda.</p>
+                                                        <p className="text-[11px] text-zinc-500">Klik tombol di bawah untuk mengaktifkan pemindaian QR kamera.</p>
+                                                    </div>
                                                     <Button
                                                         size="sm"
                                                         onClick={() => setIsCameraActive(true)}
