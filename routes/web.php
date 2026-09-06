@@ -4,6 +4,7 @@ use App\Http\Controllers\AdminActivityController;
 use App\Http\Controllers\AdminDashboardController;
 use App\Http\Controllers\AdminRewardController;
 use App\Http\Controllers\AdminScanController;
+use App\Http\Controllers\AdminScanUserController;
 use App\Http\Controllers\AdminUserController;
 use App\Http\Controllers\Auth\TwoFactorEmailController;
 use App\Http\Controllers\CustomerDashboardController;
@@ -33,6 +34,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('admin/scan', [AdminScanController::class, 'index'])->name('admin.scan.index');
     Route::post('admin/scan/lookup', [AdminScanController::class, 'lookup'])->name('admin.scan.lookup');
     Route::post('admin/scan', [AdminScanController::class, 'store'])->name('admin.scan.store');
+
+    // Scan & Input Member User (Reward Claims & Detail Info)
+    Route::get('admin/scan-user', [AdminScanUserController::class, 'index'])->name('admin.scan-user.index');
+    Route::post('admin/scan-user/lookup', [AdminScanUserController::class, 'lookup'])->name('admin.scan-user.lookup');
 
     // Activities & Activity Histories Management
     Route::get('admin/activities', [AdminActivityController::class, 'index'])->name('admin.activities.index');

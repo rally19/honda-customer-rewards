@@ -52,9 +52,46 @@ class AdminScanController extends Controller
                 'created_at' => $history->created_at?->format('d M Y, H:i') ?? '-',
             ]);
 
+        $stats = [
+            'activeActivities' => $activities->count(),
+            'todayPointsAwarded' => (int) ActivityHistory::whereDate('created_at', today())->sum('points'),
+            'todayScansCount' => ActivityHistory::whereDate('created_at', today())->count(),
+            'totalScans' => ActivityHistory::count(),
+        ];
+
+        // Optional pre-load by user_id query parameter
+        $initialMember = null;
+        if ($request->filled('user_id')) {
+            $foundUser = User::find($request->query('user_id'));
+            if ($foundUser) {
+                $tier = $foundUser->tier instanceof MemberTier
+                    ? $foundUser->tier
+                    : MemberTier::calculate((int) $foundUser->lifetime_points);
+
+                $initialMember = [
+                    'id' => (string) $foundUser->id,
+                    'name' => $foundUser->name,
+                    'email' => $foundUser->email,
+                    'phone_number' => $foundUser->phone_number ?? '-',
+                    'address' => $foundUser->address ?? '-',
+                    'role' => $foundUser->role instanceof UserRole ? $foundUser->role->value : (string) $foundUser->role,
+                    'points' => (int) $foundUser->points,
+                    'lifetime_points' => (int) $foundUser->lifetime_points,
+                    'tier' => $tier->value,
+                    'next_tier' => $tier->nextTier()?->value,
+                    'points_to_next_tier' => $tier->pointsToNextTier((int) $foundUser->lifetime_points),
+                    'tier_progress' => $tier->progress((int) $foundUser->lifetime_points),
+                    'email_verified' => $foundUser->hasVerifiedEmail(),
+                    'created_at' => $foundUser->created_at?->format('d M Y') ?? '-',
+                ];
+            }
+        }
+
         return Inertia::render('admin/scan/index', [
             'activities' => $activities,
             'recentScans' => $recentScans,
+            'stats' => $stats,
+            'initialMember' => $initialMember,
             'awarded' => session('awarded'),
         ]);
     }
@@ -116,6 +153,8 @@ class AdminScanController extends Controller
                 'next_tier' => $tier->nextTier()?->value,
                 'points_to_next_tier' => $tier->pointsToNextTier((int) $user->lifetime_points),
                 'tier_progress' => $tier->progress((int) $user->lifetime_points),
+                'email_verified' => $user->hasVerifiedEmail(),
+                'created_at' => $user->created_at?->format('d M Y') ?? '-',
             ],
         ]);
     }

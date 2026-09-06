@@ -258,6 +258,13 @@ export default function AdminDashboard({
                             <QrCode className="size-4 text-amber-300" />
                             Scan / Input Poin
                         </Link>
+                        <Link
+                            href="/admin/scan-user"
+                            className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-xs md:text-sm font-bold bg-black/30 hover:bg-black/50 border border-white/30 text-white active:scale-95 transition-all shadow-md cursor-pointer"
+                        >
+                            <UserCheck className="size-4 text-emerald-300" />
+                            Scan / Input User
+                        </Link>
                     </div>
                 </div>
 

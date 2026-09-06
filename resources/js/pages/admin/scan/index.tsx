@@ -1,4 +1,4 @@
-import { Head, router } from '@inertiajs/react';
+import { Head, Link, router } from '@inertiajs/react';
 import { Scanner } from '@yudiel/react-qr-scanner';
 import {
     AlertCircle,
@@ -9,7 +9,9 @@ import {
     Check,
     CheckCircle2,
     Clock,
+    Copy,
     Flame,
+    Gift,
     History,
     Keyboard,
     MapPin,
@@ -20,8 +22,10 @@ import {
     RotateCcw,
     Search,
     Shield,
+    ShieldCheck,
     Sparkles,
     User,
+    UserCheck,
     X,
     Zap,
 } from 'lucide-react';
@@ -67,6 +71,8 @@ type MemberData = {
     next_tier: string | null;
     points_to_next_tier: number;
     tier_progress: number;
+    email_verified?: boolean;
+    created_at?: string;
 };
 
 type AwardedSession = {
@@ -83,13 +89,22 @@ type AwardedSession = {
     new_tier: string;
 };
 
+type ScanStats = {
+    activeActivities: number;
+    todayPointsAwarded: number;
+    todayScansCount: number;
+    totalScans: number;
+};
+
 type Props = {
     activities: ActivityItem[];
     recentScans: RecentScan[];
     awarded?: AwardedSession | null;
+    stats?: ScanStats;
+    initialMember?: MemberData | null;
 };
 
-export default function AdminScanIndex({ activities, recentScans, awarded }: Props) {
+export default function AdminScanIndex({ activities, recentScans, awarded, stats, initialMember = null }: Props) {
     // 0. Mounted state to guarantee 100% SSR hydration match
     const [isMounted, setIsMounted] = useState(false);
 
@@ -114,8 +129,9 @@ export default function AdminScanIndex({ activities, recentScans, awarded }: Pro
 
     // 4. Looked-up Member state
     const [isSearching, setIsSearching] = useState(false);
-    const [member, setMember] = useState<MemberData | null>(null);
+    const [member, setMember] = useState<MemberData | null>(initialMember || null);
     const [searchError, setSearchError] = useState<string | null>(null);
+    const [copiedId, setCopiedId] = useState(false);
 
     // 5. Processing state
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -220,9 +236,12 @@ export default function AdminScanIndex({ activities, recentScans, awarded }: Pro
         }
     };
 
-    // Beep audio effect on scan
+    // Beep audio effect on scan & haptic vibration
     const playBeepSound = () => {
         try {
+            if (typeof navigator !== 'undefined' && navigator.vibrate) {
+                navigator.vibrate(100);
+            }
             const AudioCtx = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
             if (!AudioCtx) return;
             const ctx = new AudioCtx();
@@ -237,6 +256,16 @@ export default function AdminScanIndex({ activities, recentScans, awarded }: Pro
             osc.stop(ctx.currentTime + 0.15);
         } catch {
             // Ignore audio context failures
+        }
+    };
+
+    // Copy ID Helper
+    const copyMemberId = (id: string) => {
+        if (typeof navigator !== 'undefined' && navigator.clipboard) {
+            navigator.clipboard.writeText(id);
+            setCopiedId(true);
+            toast.success('ID Member disalin ke clipboard');
+            setTimeout(() => setCopiedId(false), 2000);
         }
     };
 
@@ -364,10 +393,32 @@ export default function AdminScanIndex({ activities, recentScans, awarded }: Pro
                             </p>
                         </div>
 
-                        <div className="flex items-center gap-3 self-start md:self-auto">
-                            <div className="flex flex-col items-start md:items-end px-3.5 py-2 rounded-2xl bg-black/25 backdrop-blur-md border border-white/10">
-                                <span className="text-[10px] sm:text-[11px] font-medium text-red-200">Aktivitas Tersedia</span>
-                                <span className="text-lg sm:text-xl font-bold font-mono">{activities.length} Jenis</span>
+                        <div className="grid grid-cols-3 sm:flex sm:items-center gap-2.5 shrink-0 bg-black/20 backdrop-blur-md p-3 rounded-2xl border border-white/15">
+                            <div className="px-3 py-1 text-center">
+                                <div className="text-lg font-black text-white">
+                                    {stats?.activeActivities ?? activities.length}
+                                </div>
+                                <div className="text-[10px] uppercase font-bold text-red-200">
+                                    Aktivitas
+                                </div>
+                            </div>
+                            <div className="w-px h-8 bg-white/20 hidden sm:block" />
+                            <div className="px-3 py-1 text-center">
+                                <div className="text-lg font-black text-emerald-300">
+                                    +{(stats?.todayPointsAwarded ?? 0).toLocaleString('id-ID')}
+                                </div>
+                                <div className="text-[10px] uppercase font-bold text-red-200">
+                                    Poin Hari Ini
+                                </div>
+                            </div>
+                            <div className="w-px h-8 bg-white/20 hidden sm:block" />
+                            <div className="px-3 py-1 text-center">
+                                <div className="text-lg font-black text-amber-300">
+                                    {stats?.todayScansCount ?? 0}
+                                </div>
+                                <div className="text-[10px] uppercase font-bold text-red-200">
+                                    Scan Hari Ini
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -653,24 +704,31 @@ export default function AdminScanIndex({ activities, recentScans, awarded }: Pro
                                                         </div>
                                                     </div>
 
-                                                    <div className="absolute bottom-3 inset-x-0 flex justify-center">
-                                                        <div className="px-3 py-1 rounded-full bg-black/80 backdrop-blur-md text-[11px] text-white font-medium flex items-center gap-1.5 border border-white/15 shadow-md">
-                                                            <span className="size-2 rounded-full bg-red-500 animate-pulse" />
-                                                            Arahkan ke QR Member Pelanggan
+                                                    {/* Scanning status banner with Pause action */}
+                                                    <div className="absolute bottom-3 inset-x-4 flex items-center justify-between rounded-xl bg-black/75 px-3 py-1.5 text-xs text-white backdrop-blur-md border border-white/10 shadow-lg">
+                                                        <div className="flex items-center gap-2">
+                                                            <span className="size-2 rounded-full bg-emerald-400 animate-ping" />
+                                                            <span className="text-[11px] font-medium">Mencari QR ID Member...</span>
                                                         </div>
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => setIsCameraActive(false)}
+                                                            className="text-zinc-300 hover:text-white text-[11px] underline cursor-pointer"
+                                                        >
+                                                            Pause
+                                                        </button>
                                                     </div>
                                                 </>
                                             ) : (
-                                                <div className="text-center p-6 space-y-2 text-zinc-400">
-                                                    <CameraOff className="size-10 mx-auto opacity-50" />
-                                                    <p className="text-xs">Kamera dinonaktifkan sementara.</p>
+                                                <div className="text-center p-6 space-y-3">
+                                                    <CameraOff className="size-10 mx-auto text-zinc-500 opacity-80" />
+                                                    <p className="text-xs text-zinc-400">Kamera sedang dijeda.</p>
                                                     <Button
                                                         size="sm"
-                                                        variant="outline"
                                                         onClick={() => setIsCameraActive(true)}
-                                                        className="rounded-xl text-xs mt-2"
+                                                        className="rounded-xl text-xs bg-red-600 text-white hover:bg-red-700 font-semibold cursor-pointer"
                                                     >
-                                                        Aktifkan Kembali Kamera
+                                                        Aktifkan Kamera
                                                     </Button>
                                                 </div>
                                             )}
@@ -787,33 +845,85 @@ export default function AdminScanIndex({ activities, recentScans, awarded }: Pro
                             {member ? (
                                 <div className="space-y-5 animate-in fade-in zoom-in-95 duration-200">
                                     {/* Member Card Profile */}
-                                    <div className="p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/60 space-y-3">
-                                        <div className="flex items-start justify-between gap-3">
-                                            <div className="min-w-0 flex-1">
-                                                <h3 className="font-bold text-zinc-900 dark:text-zinc-100 text-base truncate">
-                                                    {member.name}
-                                                </h3>
-                                                <div className="flex items-center gap-2 mt-0.5 flex-wrap">
-                                                    <span className="font-mono text-xs font-black text-red-600 dark:text-red-400">
-                                                        ID: {member.id}
-                                                    </span>
-                                                    <span className="text-zinc-400 text-xs">•</span>
-                                                    <span className="text-xs text-zinc-500 truncate">
-                                                        {member.email}
-                                                    </span>
+                                    <div className="p-4 sm:p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200/90 dark:border-zinc-700/60 space-y-4">
+                                        <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
+                                            <div className="flex items-start gap-3">
+                                                <div className="size-12 rounded-2xl bg-red-600 text-white flex items-center justify-center text-lg font-black shrink-0 shadow-md shadow-red-600/20">
+                                                    {member.name.charAt(0).toUpperCase()}
+                                                </div>
+                                                <div className="min-w-0">
+                                                    <div className="flex items-center gap-2 flex-wrap">
+                                                        <h3 className="font-bold text-zinc-900 dark:text-zinc-100 text-base sm:text-lg truncate">
+                                                            {member.name}
+                                                        </h3>
+                                                        <Badge
+                                                            className={`font-black text-[10px] tracking-wider uppercase border px-2.5 py-0.5 rounded-lg shrink-0 ${getTierBadgeStyle(
+                                                                member.tier
+                                                            )}`}
+                                                        >
+                                                            {member.tier}
+                                                        </Badge>
+                                                    </div>
+
+                                                    <div className="flex items-center gap-2 mt-1 flex-wrap text-xs">
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => copyMemberId(member.id)}
+                                                            className="inline-flex items-center gap-1 font-mono font-bold text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/50 px-2 py-0.5 rounded-md hover:bg-red-100 dark:hover:bg-red-900/60 transition-colors cursor-pointer"
+                                                            title="Klik untuk menyalin ID"
+                                                        >
+                                                            ID: {member.id}
+                                                            {copiedId ? (
+                                                                <Check className="size-3 text-emerald-600" />
+                                                            ) : (
+                                                                <Copy className="size-3" />
+                                                            )}
+                                                        </button>
+                                                        <span className="text-zinc-400">•</span>
+                                                        <span className="text-zinc-500 dark:text-zinc-400 truncate">
+                                                            {member.email}
+                                                        </span>
+                                                    </div>
                                                 </div>
                                             </div>
 
-                                            <Badge
-                                                className={`font-black text-[11px] tracking-wider uppercase border px-2.5 py-0.5 rounded-lg shrink-0 ${getTierBadgeStyle(
-                                                    member.tier
-                                                )}`}
-                                            >
-                                                {member.tier}
-                                            </Badge>
+                                            {/* Saldo Poin Pill */}
+                                            <div className="sm:text-right bg-white dark:bg-zinc-900 sm:bg-transparent sm:dark:bg-transparent p-3 sm:p-0 rounded-xl border sm:border-0 border-zinc-200 dark:border-zinc-800">
+                                                <div className="text-[10px] font-bold uppercase tracking-wider text-zinc-500">
+                                                    Saldo Poin Aktif
+                                                </div>
+                                                <div className="text-2xl font-black text-red-600 dark:text-red-400">
+                                                    {member.points.toLocaleString('id-ID')}{' '}
+                                                    <span className="text-xs font-bold text-zinc-500">PTS</span>
+                                                </div>
+                                                <div className="text-[11px] text-zinc-400">
+                                                    Akumulasi: {member.lifetime_points.toLocaleString('id-ID')} Pts
+                                                </div>
+                                            </div>
                                         </div>
 
-                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-2 border-t border-zinc-200/60 dark:border-zinc-700/60 text-xs">
+                                        {/* Tier Progress Bar */}
+                                        <div className="space-y-1.5 pt-1">
+                                            <div className="flex items-center justify-between text-xs">
+                                                <span className="font-semibold text-zinc-600 dark:text-zinc-400">
+                                                    Tingkat Loyalitas: <strong className="text-zinc-900 dark:text-zinc-100">{member.tier}</strong>
+                                                </span>
+                                                <span className="text-[11px] font-bold text-zinc-500">
+                                                    {member.next_tier
+                                                        ? `${member.points_to_next_tier.toLocaleString('id-ID')} Poin lagi menuju ${member.next_tier}`
+                                                        : 'Tingkat Tertinggi (Diamond)'}
+                                                </span>
+                                            </div>
+                                            <div className="h-2 w-full rounded-full bg-zinc-200 dark:bg-zinc-700 overflow-hidden">
+                                                <div
+                                                    className="h-full bg-linear-to-r from-red-600 to-amber-500 rounded-full transition-all duration-500"
+                                                    style={{ width: `${Math.min(100, Math.max(0, member.tier_progress))}%` }}
+                                                />
+                                            </div>
+                                        </div>
+
+                                        {/* Contact & Detail Grid */}
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-3 border-t border-zinc-200/60 dark:border-zinc-700/60 text-xs">
                                             <div className="flex items-center gap-1.5 text-zinc-600 dark:text-zinc-400">
                                                 <Phone className="size-3.5 text-zinc-400 shrink-0" />
                                                 <span className="truncate">{member.phone_number}</span>
@@ -822,6 +932,30 @@ export default function AdminScanIndex({ activities, recentScans, awarded }: Pro
                                                 <MapPin className="size-3.5 text-zinc-400 shrink-0" />
                                                 <span className="truncate">{member.address}</span>
                                             </div>
+                                            {member.email_verified !== undefined && (
+                                                <div className="flex items-center gap-1.5 text-zinc-600 dark:text-zinc-400">
+                                                    <ShieldCheck className={`size-3.5 shrink-0 ${member.email_verified ? 'text-emerald-500' : 'text-amber-500'}`} />
+                                                    <span>{member.email_verified ? 'Email Terverifikasi' : 'Email Belum Diverifikasi'}</span>
+                                                </div>
+                                            )}
+                                            {member.created_at && (
+                                                <div className="flex items-center gap-1.5 text-zinc-600 dark:text-zinc-400">
+                                                    <UserCheck className="size-3.5 text-zinc-400 shrink-0" />
+                                                    <span>Terdaftar: {member.created_at}</span>
+                                                </div>
+                                            )}
+                                        </div>
+
+                                        {/* Cross-Link: Shortcut to Scan User / Kelola Klaim Reward */}
+                                        <div className="pt-2.5 border-t border-zinc-200/60 dark:border-zinc-700/60 flex items-center justify-between gap-2">
+                                            <span className="text-[11px] text-zinc-500">Perlu cek serah terima reward?</span>
+                                            <Link
+                                                href={`/admin/scan-user?user_id=${member.id}`}
+                                                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-red-50 hover:bg-red-100 dark:bg-red-950/50 dark:hover:bg-red-900/60 text-red-600 dark:text-red-400 text-xs font-bold transition-colors border border-red-200/80 dark:border-red-900/60 cursor-pointer"
+                                            >
+                                                <Gift className="size-3.5" />
+                                                Lihat Klaim Reward
+                                            </Link>
                                         </div>
                                     </div>
 
@@ -961,6 +1095,23 @@ export default function AdminScanIndex({ activities, recentScans, awarded }: Pro
                                                 {scan.time_ago}
                                             </span>
                                         </div>
+
+                                        <div className="flex items-center justify-end gap-2 pt-1.5 border-t border-zinc-200/40 dark:border-zinc-700/40">
+                                            <button
+                                                type="button"
+                                                onClick={() => lookupMember(scan.user_id)}
+                                                className="h-6 px-2.5 text-[11px] font-bold text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/40 rounded-lg cursor-pointer transition-colors"
+                                            >
+                                                Pilih Member
+                                            </button>
+                                            <Link
+                                                href={`/admin/scan-user?user_id=${scan.user_id}`}
+                                                className="h-6 px-2.5 inline-flex items-center text-[11px] font-medium text-zinc-600 dark:text-zinc-400 hover:bg-zinc-200/60 dark:hover:bg-zinc-700/60 rounded-lg cursor-pointer transition-colors"
+                                            >
+                                                <Gift className="size-3 mr-1" />
+                                                Lihat Klaim
+                                            </Link>
+                                        </div>
                                     </div>
                                 ))}
                             </div>
@@ -975,7 +1126,8 @@ export default function AdminScanIndex({ activities, recentScans, awarded }: Pro
                                             <th className="pb-3 font-semibold">Jenis Aktivitas</th>
                                             <th className="pb-3 font-semibold text-center">Poin Diberikan</th>
                                             <th className="pb-3 font-semibold">Petugas Admin</th>
-                                            <th className="pb-3 font-semibold text-right">Waktu</th>
+                                            <th className="pb-3 font-semibold">Waktu</th>
+                                            <th className="pb-3 font-semibold text-right">Aksi</th>
                                         </tr>
                                     </thead>
                                     <tbody className="divide-y divide-zinc-100 dark:divide-zinc-800/60">
@@ -1003,8 +1155,29 @@ export default function AdminScanIndex({ activities, recentScans, awarded }: Pro
                                                 <td className="py-3 text-zinc-600 dark:text-zinc-400">
                                                     {scan.admin_name}
                                                 </td>
-                                                <td className="py-3 text-right text-zinc-500 font-mono text-[11px]">
+                                                <td className="py-3 text-zinc-500 font-mono text-[11px]">
                                                     {scan.created_at}
+                                                </td>
+                                                <td className="py-3 text-right">
+                                                    <div className="flex items-center justify-end gap-1.5">
+                                                        <Button
+                                                            size="sm"
+                                                            variant="ghost"
+                                                            onClick={() => lookupMember(scan.user_id)}
+                                                            className="h-7 px-2.5 text-[11px] font-bold text-red-600 dark:text-red-400 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950/40 rounded-lg cursor-pointer"
+                                                            title="Pilih Member ini untuk Tambah Poin"
+                                                        >
+                                                            Pilih
+                                                        </Button>
+                                                        <Link
+                                                            href={`/admin/scan-user?user_id=${scan.user_id}`}
+                                                            className="h-7 px-2.5 inline-flex items-center text-[11px] font-semibold text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-lg transition-colors cursor-pointer"
+                                                            title="Buka Data & Klaim Reward Member"
+                                                        >
+                                                            <Gift className="size-3 mr-1" />
+                                                            Klaim
+                                                        </Link>
+                                                    </div>
                                                 </td>
                                             </tr>
                                         ))}
