@@ -236,7 +236,7 @@ export default function CustomerLayout({
 
                             {/* Notification Dropdown Preview */}
                             {notifOpen && (
-                                <div className="absolute right-0 mt-2 w-84 sm:w-96 rounded-2xl border border-zinc-200 bg-white p-4 shadow-xl dark:border-zinc-800 dark:bg-zinc-900 z-50">
+                                <div className="absolute right-0 mt-2 w-84 sm:w-96 rounded-2xl border border-zinc-200/90 dark:border-zinc-800 bg-white/95 dark:bg-zinc-900/95 backdrop-blur-xl p-4 shadow-2xl z-50 animate-smooth-scale origin-top-right">
                                     <div className="flex items-center justify-between border-b border-zinc-100 pb-2.5 dark:border-zinc-800">
                                         <div className="flex items-center gap-2">
                                             <h4 className="text-xs font-bold uppercase tracking-wider text-zinc-900 dark:text-zinc-100">
@@ -398,7 +398,7 @@ export default function CustomerLayout({
             {/* ========================================================================= */}
             {/* MAIN CONTENT CONTAINER                                                    */}
             {/* ========================================================================= */}
-            <main className="relative z-10 flex-1 mx-auto w-full max-w-5xl px-4 sm:px-6 pt-5">
+            <main className="relative z-10 flex-1 mx-auto w-full max-w-5xl px-4 sm:px-6 pt-5 animate-smooth-in">
                 {children}
             </main>
 
@@ -406,7 +406,7 @@ export default function CustomerLayout({
             {/* BOTTOM NAVIGATION BAR (MODERN FLOATING DOCK - E-WALLET STYLE)             */}
             {/* ========================================================================= */}
             <nav
-                className="fixed bottom-3 inset-x-0 z-40 mx-auto w-[94%] max-w-md sm:max-w-lg md:max-w-xl rounded-3xl border border-zinc-200/90 dark:border-zinc-800 bg-white/95 dark:bg-zinc-900/95 backdrop-blur-xl shadow-2xl shadow-zinc-950/15 dark:shadow-black/60 px-3 py-2 transition-all"
+                className="fixed bottom-3 inset-x-0 z-40 mx-auto w-[94%] max-w-md sm:max-w-lg md:max-w-xl rounded-3xl border border-zinc-200/90 dark:border-zinc-800 bg-white/95 dark:bg-zinc-900/95 backdrop-blur-xl shadow-2xl shadow-zinc-950/15 dark:shadow-black/60 px-3 py-2 transition-colors"
                 aria-label="Navigasi Bawah"
             >
                 <div className="flex items-center justify-around relative">

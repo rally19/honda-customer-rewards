@@ -119,7 +119,7 @@ export default function SettingsLayout({ children }: PropsWithChildren) {
                 </aside>
 
                 <div className="flex-1 md:max-w-2xl mt-6">
-                    <section className="max-w-xl space-y-8 rounded-2xl border border-zinc-200/90 dark:border-zinc-800 bg-white/90 dark:bg-zinc-900/90 p-5 sm:p-7 shadow-xs">
+                    <section key={usePage().url.split('?')[0]} className="max-w-xl space-y-8 rounded-2xl border border-zinc-200/90 dark:border-zinc-800 bg-white/90 dark:bg-zinc-900/90 p-5 sm:p-7 shadow-xs animate-smooth-in">
                         {children}
                     </section>
                 </div>

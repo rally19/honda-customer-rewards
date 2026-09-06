@@ -33,7 +33,7 @@ export default function AuthSimpleLayout({
             </header>
 
             {/* Main Auth Container */}
-            <main className="relative z-10 w-full max-w-md my-auto pt-16 pb-8">
+            <main className="relative z-10 w-full max-w-md my-auto pt-16 pb-8 animate-smooth-in">
                 <div className="flex flex-col gap-6">
                     {/* Brand Header */}
                     <div className="flex flex-col items-center text-center gap-3">

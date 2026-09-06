@@ -838,7 +838,7 @@ export default function AdminScanUserIndex({
                             </div>
 
                             {member ? (
-                                <div className="space-y-6 animate-in fade-in zoom-in-95 duration-200">
+                                <div className="space-y-6 animate-smooth-in">
                                     {/* Member Identity Card */}
                                     <div className="p-4 sm:p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200/90 dark:border-zinc-700/60 space-y-4">
                                         <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
@@ -1382,7 +1382,7 @@ export default function AdminScanUserIndex({
 
             {/* FLOATING MOBILE STICKY ACTION BAR: Pops up when member is selected on phone screens */}
             {member && (
-                <div className="fixed bottom-4 inset-x-3 sm:inset-x-6 z-30 lg:hidden animate-in fade-in slide-in-from-bottom-3 duration-300">
+                <div className="fixed bottom-4 inset-x-3 sm:inset-x-6 z-30 lg:hidden">
                     <div className="rounded-2xl bg-zinc-950/95 dark:bg-zinc-900/95 backdrop-blur-xl border border-white/10 p-3 shadow-2xl shadow-black/50 flex items-center justify-between gap-3 text-white">
                         <div className="min-w-0 flex-1">
                             <div className="flex items-center gap-1.5">

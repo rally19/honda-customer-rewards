@@ -42,7 +42,7 @@ export default function AuthCardLayout({
                 </div>
             </header>
 
-            <div className="relative z-10 flex w-full max-w-md flex-col gap-6 my-auto pt-16 pb-8">
+            <div className="relative z-10 flex w-full max-w-md flex-col gap-6 my-auto pt-16 pb-8 animate-smooth-in">
                 <div className="flex flex-col items-center gap-2">
                     <Link href={home()} className="flex items-center gap-2 transition-transform hover:scale-105">
                         <img

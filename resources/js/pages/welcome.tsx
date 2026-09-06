@@ -453,7 +453,7 @@ export default function Welcome({
 
                 {/* Mobile Navigation Drawer */}
                 {mobileMenuOpen && (
-                    <div className="lg:hidden border-b border-zinc-200 bg-white px-4 py-5 dark:border-zinc-800 dark:bg-zinc-950">
+                    <div className="lg:hidden border-b border-zinc-200 bg-white px-4 py-5 dark:border-zinc-800 dark:bg-zinc-950 animate-smooth-down">
                         <nav className="flex flex-col gap-3 text-sm font-medium text-zinc-800 dark:text-zinc-200">
                             <a
                                 href="#beranda"
@@ -544,7 +544,7 @@ export default function Welcome({
                 <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                     <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-12 lg:gap-8">
                         {/* Text Content Column */}
-                        <div className="lg:col-span-6 space-y-6 text-center lg:text-left">
+                        <div className="lg:col-span-6 space-y-6 text-center lg:text-left animate-smooth-in">
                             <div className="inline-flex items-center gap-2 rounded-full border border-red-200 bg-red-50/80 px-3.5 py-1.5 text-xs font-semibold text-red-700 backdrop-blur-sm dark:border-red-900/60 dark:bg-red-950/60 dark:text-red-400">
                                 <Flame className="size-4 text-red-600 animate-pulse" />
                                 <span>Program Loyalitas Resmi Dealer & Bengkel AHASS</span>
@@ -637,7 +637,7 @@ export default function Welcome({
                         </div>
 
                         {/* Interactive Banner Slider Column */}
-                        <div className="lg:col-span-6 relative">
+                        <div className="lg:col-span-6 relative animate-smooth-scale">
                             <div className="relative mx-auto max-w-lg lg:max-w-none rounded-3xl overflow-hidden border-2 border-red-500/20 shadow-2xl shadow-red-600/15 bg-zinc-900">
                                 {/* Slide Image Container */}
                                 <div className="relative aspect-[4/3] sm:aspect-[16/10] w-full overflow-hidden">

@@ -149,3 +149,258 @@
     }
 }
 
+/* ========================================================================= */
+/* SMOOTH-IN ANIMATIONS & TRANSITIONS SUITE                                   */
+/* ========================================================================= */
+
+html {
+    scroll-behavior: smooth;
+}
+
+@keyframes smooth-in {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes smooth-in-scale {
+    from {
+        opacity: 0;
+        transform: scale(0.96) translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+@keyframes smooth-fade-in {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes smooth-slide-in-up {
+    from {
+        opacity: 0;
+        transform: translateY(16px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes smooth-slide-in-down {
+    from {
+        opacity: 0;
+        transform: translateY(-12px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes smooth-slide-in-left {
+    from {
+        opacity: 0;
+        transform: translateX(-16px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes smooth-slide-in-right {
+    from {
+        opacity: 0;
+        transform: translateX(16px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* ========================================================================= */
+/* UNIVERSAL MODAL & DIALOG SMOOTH-IN ANIMATIONS                             */
+/* ========================================================================= */
+
+@keyframes smooth-modal-in {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, calc(-50% + 22px)) scale(0.95);
+    }
+    100% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
+}
+
+@keyframes smooth-modal-out {
+    0% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
+    100% {
+        opacity: 0;
+        transform: translate(-50%, calc(-50% + 12px)) scale(0.97);
+    }
+}
+
+@keyframes smooth-overlay-in {
+    0% {
+        opacity: 0;
+        backdrop-filter: blur(0px);
+        -webkit-backdrop-filter: blur(0px);
+    }
+    100% {
+        opacity: 1;
+        backdrop-filter: blur(4px);
+        -webkit-backdrop-filter: blur(4px);
+    }
+}
+
+@keyframes smooth-overlay-out {
+    0% {
+        opacity: 1;
+        backdrop-filter: blur(4px);
+        -webkit-backdrop-filter: blur(4px);
+    }
+    100% {
+        opacity: 0;
+        backdrop-filter: blur(0px);
+        -webkit-backdrop-filter: blur(0px);
+    }
+}
+
+/* Universal Dialog & Sheet Overlay Smooth Animations */
+[data-slot="dialog-overlay"],
+[data-slot="sheet-overlay"] {
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    will-change: opacity, backdrop-filter;
+}
+
+[data-slot="dialog-overlay"][data-state="open"],
+[data-slot="sheet-overlay"][data-state="open"] {
+    animation: smooth-overlay-in 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+}
+
+[data-slot="dialog-overlay"][data-state="closed"],
+[data-slot="sheet-overlay"][data-state="closed"] {
+    animation: smooth-overlay-out 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+}
+
+/* Universal Dialog Content Smooth Animations (Auto-applied to 100% of modals across the app) */
+[data-slot="dialog-content"] {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    will-change: transform, opacity;
+}
+
+[data-slot="dialog-content"][data-state="open"] {
+    animation: smooth-modal-in 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+}
+
+[data-slot="dialog-content"][data-state="closed"] {
+    animation: smooth-modal-out 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+}
+
+/* Utility Classes with Modern Cubic-Bezier Easing (Apple / Linear style) */
+.animate-smooth-in {
+    animation: smooth-in 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.animate-smooth-fade {
+    animation: smooth-fade-in 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.animate-smooth-scale {
+    animation: smooth-in-scale 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.animate-smooth-up {
+    animation: smooth-slide-in-up 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.animate-smooth-down {
+    animation: smooth-slide-in-down 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.animate-smooth-left {
+    animation: smooth-slide-in-left 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.animate-smooth-right {
+    animation: smooth-slide-in-right 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@utility animate-modal-in {
+    animation: smooth-modal-in 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@utility animate-modal-out {
+    animation: smooth-modal-out 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@utility animate-overlay-in {
+    animation: smooth-overlay-in 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@utility animate-overlay-out {
+    animation: smooth-overlay-out 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-modal-in {
+    animation: smooth-modal-in 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-modal-out {
+    animation: smooth-modal-out 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-overlay-in {
+    animation: smooth-overlay-in 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-overlay-out {
+    animation: smooth-overlay-out 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Stagger Animation Delays */
+.stagger-1 { animation-delay: 50ms; }
+.stagger-2 { animation-delay: 100ms; }
+.stagger-3 { animation-delay: 150ms; }
+.stagger-4 { animation-delay: 200ms; }
+.stagger-5 { animation-delay: 250ms; }
+.stagger-6 { animation-delay: 300ms; }
+.stagger-7 { animation-delay: 350ms; }
+.stagger-8 { animation-delay: 400ms; }
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    ::before,
+    ::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+
