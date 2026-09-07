@@ -7,6 +7,7 @@ use App\Http\Controllers\AdminScanController;
 use App\Http\Controllers\AdminScanUserController;
 use App\Http\Controllers\AdminUserController;
 use App\Http\Controllers\Auth\TwoFactorEmailController;
+use App\Http\Controllers\Auth\VerifyEmailController;
 use App\Http\Controllers\CustomerDashboardController;
 use App\Http\Controllers\CustomerHistoryController;
 use App\Http\Controllers\CustomerRewardController;
@@ -58,5 +59,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
 Route::post('two-factor-challenge/resend-email', [TwoFactorEmailController::class, 'resend'])
     ->middleware(['web'])
     ->name('two-factor.resend-email');
+
+Route::get('/email/verify/{id}/{hash}', VerifyEmailController::class)
+    ->middleware(['web', 'signed', 'throttle:6,1'])
+    ->name('verification.verify');
 
 require __DIR__.'/settings.php';
