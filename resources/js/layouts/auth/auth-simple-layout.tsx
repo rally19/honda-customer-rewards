@@ -10,7 +10,7 @@ export default function AuthSimpleLayout({
     description,
 }: AuthLayoutProps) {
     return (
-        <div className="relative flex min-h-svh flex-col items-center justify-center bg-zinc-50 dark:bg-zinc-950 p-6 md:p-10 transition-colors">
+        <div className="relative flex min-h-svh flex-col items-center justify-center bg-zinc-50 dark:bg-zinc-950 p-4 sm:p-6 md:p-10 transition-colors">
             {/* Ambient Red Glow Background */}
             <div className="pointer-events-none absolute inset-0 overflow-hidden">
                 <div className="absolute -top-32 left-1/2 -translate-x-1/2 w-[550px] h-[350px] bg-red-500/10 dark:bg-red-600/15 blur-[120px] rounded-full" />
@@ -18,10 +18,10 @@ export default function AuthSimpleLayout({
             </div>
 
             {/* Top Navigation Bar */}
-            <header className="absolute top-0 left-0 right-0 flex items-center justify-between px-6 py-5 max-w-6xl mx-auto w-full">
+            <header className="relative sm:absolute top-0 left-0 right-0 z-30 flex items-center justify-between px-4 sm:px-6 py-3 sm:py-5 max-w-6xl mx-auto w-full shrink-0 pointer-events-auto">
                 <Link
                     href={home()}
-                    className="inline-flex items-center gap-2 text-sm font-medium text-zinc-600 dark:text-zinc-400 hover:text-red-600 dark:hover:text-red-400 transition-colors"
+                    className="inline-flex items-center gap-2 text-sm font-medium text-zinc-600 dark:text-zinc-400 hover:text-red-600 dark:hover:text-red-400 transition-colors py-1.5 px-2 -ml-2 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-900"
                 >
                     <ArrowLeft className="size-4" />
                     <span>Kembali ke Beranda</span>
@@ -33,7 +33,7 @@ export default function AuthSimpleLayout({
             </header>
 
             {/* Main Auth Container */}
-            <main className="relative z-10 w-full max-w-md my-auto pt-16 pb-8 animate-smooth-in">
+            <main className="relative z-10 w-full max-w-md my-auto pt-4 sm:pt-20 pb-8 animate-smooth-in">
                 <div className="flex flex-col gap-6">
                     {/* Brand Header */}
                     <div className="flex flex-col items-center text-center gap-3">
