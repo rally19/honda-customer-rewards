@@ -546,19 +546,22 @@ export default function CustomerLayout({
                         </div>
 
                         {/* Interactive QR Code Visual (qr-code-styling) */}
-                        <div className="relative p-2.5 sm:p-3 rounded-2xl bg-white border-2 border-red-500/20 shadow-lg shadow-red-500/5 flex flex-col items-center">
-                            <QrCode
-                                ref={qrCodeRef}
-                                data={`HND-MEMBER-${rawId}`}
-                                width={165}
-                                height={165}
-                                image="/images/logo/honda_logo_red.png"
-                                dotsColor="#DC2626"
-                                dotsType="rounded"
-                                cornersSquareType="extra-rounded"
-                                cornersDotType="dot"
-                            />
-                            <div className="mt-1.5 text-[10px] font-mono text-zinc-500 font-bold tracking-wider">
+                        <div className="relative w-full max-w-[280px] sm:max-w-[320px] mx-auto p-3 sm:p-4 rounded-3xl bg-white border-2 border-red-500/20 shadow-xl shadow-red-500/10 flex flex-col items-center justify-center">
+                            <div className="w-full aspect-square flex items-center justify-center">
+                                <QrCode
+                                    ref={qrCodeRef}
+                                    data={`HND-MEMBER-${rawId}`}
+                                    width={320}
+                                    height={320}
+                                    className="w-full h-full flex items-center justify-center"
+                                    image="/images/logo/honda_logo_red.png"
+                                    dotsColor="#DC2626"
+                                    dotsType="rounded"
+                                    cornersSquareType="extra-rounded"
+                                    cornersDotType="dot"
+                                />
+                            </div>
+                            <div className="mt-2 text-[11px] sm:text-xs font-mono text-zinc-600 font-bold tracking-wider">
                                 SCAN ID: HND-{rawId}
                             </div>
                         </div>

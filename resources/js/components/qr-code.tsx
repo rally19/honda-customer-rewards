@@ -119,7 +119,7 @@ const QrCode = forwardRef<QrCodeHandle, QrCodeProps>(function QrCode(
     return (
         <div
             ref={containerRef}
-            className={`flex items-center justify-center overflow-hidden [&_svg]:max-w-full [&_svg]:h-auto ${className}`}
+            className={`flex items-center justify-center overflow-hidden [&_svg]:w-full [&_svg]:h-full [&_svg]:max-w-full [&_svg]:aspect-square ${className}`}
         />
     );
 });

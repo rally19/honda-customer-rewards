@@ -702,7 +702,7 @@ export default function AdminScanIndex({ activities, recentScans, awarded, stats
                             {/* TAB 1: SCANNER KAMERA (@yudiel/react-qr-scanner) dengan ErrorBoundary */}
                             {inputMode === 'scanner' ? (
                                 <div className="space-y-3">
-                                    <div className="relative overflow-hidden rounded-2xl bg-zinc-950 aspect-square sm:aspect-4/3 max-h-72 sm:max-h-80 flex flex-col items-center justify-center border-2 border-dashed border-red-500/30 shadow-inner">
+                                    <div className="relative w-full max-w-xl mx-auto overflow-hidden rounded-2xl sm:rounded-3xl bg-zinc-950 aspect-square sm:aspect-[4/3] flex flex-col items-center justify-center border-2 border-dashed border-red-500/30 shadow-inner">
                                         <ErrorBoundary
                                             name="Kamera Scanner QR"
                                             onReset={() => {
@@ -774,11 +774,11 @@ export default function AdminScanIndex({ activities, recentScans, awarded, stats
 
                                                     {/* Visual Viewfinder Reticle */}
                                                     <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-                                                        <div className="relative size-40 sm:size-52 border-2 border-red-500/90 rounded-3xl shadow-2xl shadow-red-500/20 flex items-center justify-center">
-                                                            <div className="absolute top-2 left-2 size-4 border-t-4 border-l-4 border-white rounded-tl-lg" />
-                                                            <div className="absolute top-2 right-2 size-4 border-t-4 border-r-4 border-white rounded-tr-lg" />
-                                                            <div className="absolute bottom-2 left-2 size-4 border-b-4 border-l-4 border-white rounded-bl-lg" />
-                                                            <div className="absolute bottom-2 right-2 size-4 border-b-4 border-r-4 border-white rounded-br-lg" />
+                                                        <div className="relative size-48 sm:size-60 md:size-64 border-2 border-red-500/90 rounded-3xl shadow-2xl shadow-red-500/20 flex items-center justify-center">
+                                                            <div className="absolute top-2 left-2 size-5 border-t-4 border-l-4 border-white rounded-tl-lg" />
+                                                            <div className="absolute top-2 right-2 size-5 border-t-4 border-r-4 border-white rounded-tr-lg" />
+                                                            <div className="absolute bottom-2 left-2 size-5 border-b-4 border-l-4 border-white rounded-bl-lg" />
+                                                            <div className="absolute bottom-2 right-2 size-5 border-b-4 border-r-4 border-white rounded-br-lg" />
 
                                                             {/* Scanning Laser Line */}
                                                             <div className="w-full h-0.5 bg-red-500 shadow-md shadow-red-500 animate-bounce opacity-80" />

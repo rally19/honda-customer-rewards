@@ -513,7 +513,7 @@ export default function AdminScanUserIndex({
                             {/* TAB 1: SCANNER KAMERA (@yudiel/react-qr-scanner) */}
                             {inputMode === 'scanner' ? (
                                 <div className="space-y-3">
-                                    <div className="relative overflow-hidden rounded-2xl bg-zinc-950 aspect-square sm:aspect-4/3 max-h-72 sm:max-h-80 flex flex-col items-center justify-center border-2 border-dashed border-red-500/30 shadow-inner">
+                                    <div className="relative w-full max-w-xl mx-auto overflow-hidden rounded-2xl sm:rounded-3xl bg-zinc-950 aspect-square sm:aspect-[4/3] flex flex-col items-center justify-center border-2 border-dashed border-red-500/30 shadow-inner">
                                         <ErrorBoundary
                                             name="Kamera Scanner QR Member"
                                             onReset={() => {
@@ -586,7 +586,7 @@ export default function AdminScanUserIndex({
 
                                                     {/* Scanner Target Guide Overlay */}
                                                     <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-                                                        <div className="relative size-48 sm:size-52 rounded-2xl border-2 border-red-500/70 shadow-2xl">
+                                                        <div className="relative size-48 sm:size-60 md:size-64 rounded-2xl sm:rounded-3xl border-2 border-red-500/70 shadow-2xl">
                                                             <div className="absolute -top-1 -left-1 size-5 border-t-4 border-l-4 border-red-500 rounded-tl-md" />
                                                             <div className="absolute -top-1 -right-1 size-5 border-t-4 border-r-4 border-red-500 rounded-tr-md" />
                                                             <div className="absolute -bottom-1 -left-1 size-5 border-b-4 border-l-4 border-red-500 rounded-bl-md" />
