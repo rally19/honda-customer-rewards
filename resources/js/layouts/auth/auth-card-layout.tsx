@@ -51,7 +51,7 @@ export default function AuthCardLayout({
                             className="h-12 w-auto object-contain dark:hidden"
                         />
                         <img
-                            src="/images/logo/anper_logo_white.png"
+                            src="/images/logo/anper_sartika_logo_white.png"
                             alt="Honda Customer Rewards"
                             className="h-12 w-auto object-contain hidden dark:block"
                         />

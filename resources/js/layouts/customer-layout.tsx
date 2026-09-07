@@ -182,7 +182,7 @@ export default function CustomerLayout({
                                 className="h-8 w-auto object-contain dark:hidden"
                             />
                             <img
-                                src="/images/logo/anper_logo_white.png"
+                                src="/images/logo/anper_sartika_logo_white.png"
                                 alt="Honda Customer Rewards"
                                 className="hidden h-8 w-auto object-contain dark:block"
                             />

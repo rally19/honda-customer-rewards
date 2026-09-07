@@ -346,7 +346,7 @@ export default function Welcome({
                                 className="h-8 sm:h-9 lg:h-10 w-auto object-contain dark:hidden transition-transform group-hover:scale-105"
                             />
                             <img
-                                src="/images/logo/anper_logo_white.png"
+                                src="/images/logo/anper_sartika_logo_white.png"
                                 alt="Honda Customer Rewards"
                                 className="hidden h-8 sm:h-9 lg:h-10 w-auto object-contain dark:block transition-transform group-hover:scale-105"
                             />
@@ -1392,7 +1392,7 @@ export default function Welcome({
                         <div className="lg:col-span-4 space-y-4">
                             <div className="flex items-center gap-3">
                                 <img
-                                    src="/images/logo/anper_logo_white.png"
+                                    src="/images/logo/anper_sartika_logo_white.png"
                                     alt="Honda Customer Rewards"
                                     className="h-10 w-auto object-contain"
                                 />

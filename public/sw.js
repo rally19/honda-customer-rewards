@@ -3,17 +3,19 @@
  * CV Anugerah Perdana
  */
 
-const CACHE_NAME = 'honda-rewards-v1.0.0';
+const CACHE_NAME = 'honda-rewards-v1.0.1';
 const OFFLINE_URL = '/offline.html';
 
 const PRECACHE_ASSETS = [
     OFFLINE_URL,
     '/site.webmanifest',
+    '/favicon.ico',
     '/icons/pwa-192x192.png',
     '/icons/pwa-512x512.png',
     '/icons/pwa-maskable-512x512.png',
     '/apple-touch-icon.png',
-    '/images/logo/anper_logo_white.png',
+    '/images/logo/anper_sartika_logo_white.png',
+    '/images/logo/anper_sartika_logo_white_1x1.png',
     '/images/logo/anper_logo_red.png',
     '/images/logo/honda_logo_red.png',
     '/images/logo/honda_logo_white.png',

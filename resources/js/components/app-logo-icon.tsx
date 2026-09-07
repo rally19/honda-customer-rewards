@@ -11,7 +11,7 @@ export default function AppLogoIcon(props: ImgHTMLAttributes<HTMLImageElement>) 
                 {...rest}
             />
             <img
-                src="/images/logo/anper_logo_white.png"
+                src="/images/logo/anper_sartika_logo_white.png"
                 alt={alt}
                 className={`hidden ${className} dark:block`}
                 {...rest}

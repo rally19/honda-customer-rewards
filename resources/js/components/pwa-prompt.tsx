@@ -154,7 +154,7 @@ export function PwaPrompt() {
                 <div className="flex items-start gap-3.5">
                     <div className="size-11 rounded-2xl bg-red-600 text-white flex items-center justify-center shrink-0 shadow-md shadow-red-600/30">
                         <img
-                            src="/images/logo/anper_logo_white.png"
+                            src="/images/logo/anper_sartika_logo_white.png"
                             alt="Logo Anper"
                             className="size-8 object-contain"
                             onError={(e) => {

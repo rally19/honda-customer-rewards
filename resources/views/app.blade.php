@@ -48,10 +48,11 @@
         <meta name="application-name" content="Honda Rewards">
         <meta name="msapplication-TileColor" content="#DC2626">
 
+        <link rel="icon" type="image/x-icon" href="/favicon.ico">
+        <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
         <link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32x32.png">
         <link rel="icon" type="image/png" sizes="16x16" href="/icons/favicon-16x16.png">
-        <link rel="icon" type="image/png" href="/images/logo/anper_logo_white.png">
-        <link rel="shortcut icon" type="image/png" href="/images/logo/anper_logo_white.png">
+        <link rel="icon" type="image/png" href="/images/logo/anper_sartika_logo_white_1x1.png">
         <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 
         {{-- PWA Service Worker Registration --}}
