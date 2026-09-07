@@ -5,11 +5,15 @@ import { Button } from '@/components/ui/button';
 
 interface BeforeInstallPromptEvent extends Event {
     prompt: () => Promise<void>;
-    userChoice: Promise<{ outcome: 'accepted' | 'dismissed'; platform: string }>;
+    userChoice: Promise<{
+        outcome: 'accepted' | 'dismissed';
+        platform: string;
+    }>;
 }
 
 export function PwaPrompt() {
-    const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
+    const [deferredPrompt, setDeferredPrompt] =
+        useState<BeforeInstallPromptEvent | null>(null);
     const [showBanner, setShowBanner] = useState(false);
     const [isStandalone, setIsStandalone] = useState(false);
 
@@ -17,7 +21,8 @@ export function PwaPrompt() {
         // Check if app is already running in standalone mode (installed PWA)
         const isAppStandalone =
             window.matchMedia('(display-mode: standalone)').matches ||
-            (window.navigator as unknown as { standalone?: boolean }).standalone === true ||
+            (window.navigator as unknown as { standalone?: boolean })
+                .standalone === true ||
             document.referrer.includes('android-app://');
 
         setIsStandalone(isAppStandalone);
@@ -33,7 +38,9 @@ export function PwaPrompt() {
             setDeferredPrompt(promptEvent);
 
             // Check if dismissed in this session
-            const isDismissed = sessionStorage.getItem('honda_pwa_prompt_dismissed');
+            const isDismissed = sessionStorage.getItem(
+                'honda_pwa_prompt_dismissed',
+            );
             if (!isDismissed) {
                 // Show banner with a smooth gentle delay so it does not interfere with page entry
                 const timer = setTimeout(() => {
@@ -49,16 +56,21 @@ export function PwaPrompt() {
                 deferredPrompt.prompt().then(() => {
                     deferredPrompt.userChoice.then((choice) => {
                         if (choice.outcome === 'accepted') {
-                            toast.success('Terima kasih telah memasang Honda Rewards!');
+                            toast.success(
+                                'Terima kasih telah memasang Honda Rewards!',
+                            );
                             setShowBanner(false);
                             setDeferredPrompt(null);
                         }
                     });
                 });
             } else if (!isAppStandalone) {
-                toast.info('Buka menu browser Anda lalu pilih "Tambahkan ke Layar Utama" (Add to Home screen).', {
-                    duration: 5000,
-                });
+                toast.info(
+                    'Buka menu browser Anda lalu pilih "Tambahkan ke Layar Utama" (Add to Home screen).',
+                    {
+                        duration: 5000,
+                    },
+                );
             }
         };
 
@@ -66,16 +78,21 @@ export function PwaPrompt() {
         const handleAppInstalled = () => {
             setShowBanner(false);
             setDeferredPrompt(null);
-            toast.success('Aplikasi Honda Rewards berhasil dipasang di perangkat Anda!');
+            toast.success(
+                'Aplikasi Honda Rewards berhasil dipasang di perangkat Anda!',
+            );
         };
 
         // 4. Handle Service Worker Update Notification
         const handleUpdateAvailable = (e: Event) => {
-            const customEvent = e as CustomEvent<{ registration?: ServiceWorkerRegistration }>;
+            const customEvent = e as CustomEvent<{
+                registration?: ServiceWorkerRegistration;
+            }>;
             const reg = customEvent.detail?.registration;
 
             toast('Pembaruan Versi Baru Tersedia', {
-                description: 'Versi terbaru sistem Honda Rewards siap digunakan.',
+                description:
+                    'Versi terbaru sistem Honda Rewards siap digunakan.',
                 action: {
                     label: 'Perbarui',
                     onClick: () => {
@@ -95,21 +112,38 @@ export function PwaPrompt() {
         };
 
         const handleOffline = () => {
-            toast.warning('Anda sedang offline. Menampilkan data dari memori cache.');
+            toast.warning(
+                'Anda sedang offline. Menampilkan data dari memori cache.',
+            );
         };
 
-        window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
-        window.addEventListener('pwa-install-requested', handleManualInstallRequest);
+        window.addEventListener(
+            'beforeinstallprompt',
+            handleBeforeInstallPrompt,
+        );
+        window.addEventListener(
+            'pwa-install-requested',
+            handleManualInstallRequest,
+        );
         window.addEventListener('appinstalled', handleAppInstalled);
         window.addEventListener('pwa-update-available', handleUpdateAvailable);
         window.addEventListener('online', handleOnline);
         window.addEventListener('offline', handleOffline);
 
         return () => {
-            window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
-            window.removeEventListener('pwa-install-requested', handleManualInstallRequest);
+            window.removeEventListener(
+                'beforeinstallprompt',
+                handleBeforeInstallPrompt,
+            );
+            window.removeEventListener(
+                'pwa-install-requested',
+                handleManualInstallRequest,
+            );
             window.removeEventListener('appinstalled', handleAppInstalled);
-            window.removeEventListener('pwa-update-available', handleUpdateAvailable);
+            window.removeEventListener(
+                'pwa-update-available',
+                handleUpdateAvailable,
+            );
             window.removeEventListener('online', handleOnline);
             window.removeEventListener('offline', handleOffline);
         };
@@ -145,14 +179,14 @@ export function PwaPrompt() {
     return (
         <aside
             aria-label="Pemasangan Aplikasi Honda Rewards"
-            className="fixed bottom-20 sm:bottom-6 right-4 sm:right-6 left-4 sm:left-auto sm:max-w-md z-50 animate-smooth-up pointer-events-auto"
+            className="animate-smooth-up pointer-events-auto fixed right-4 bottom-20 left-4 z-50 sm:right-6 sm:bottom-6 sm:left-auto sm:max-w-md"
         >
-            <div className="relative overflow-hidden rounded-2xl sm:rounded-3xl border border-red-500/30 bg-white/95 dark:bg-zinc-900/95 backdrop-blur-xl p-4 shadow-2xl shadow-red-500/10 dark:shadow-black/40">
+            <div className="relative overflow-hidden rounded-2xl border border-red-500/30 bg-white/95 p-4 shadow-2xl shadow-red-500/10 backdrop-blur-xl sm:rounded-3xl dark:bg-zinc-900/95 dark:shadow-black/40">
                 {/* Subtle top brand accent line */}
-                <div className="absolute top-0 inset-x-0 h-1 bg-linear-to-r from-red-600 via-amber-500 to-red-600" />
+                <div className="absolute inset-x-0 top-0 h-1 bg-linear-to-r from-red-600 via-amber-500 to-red-600" />
 
                 <div className="flex items-start gap-3.5">
-                    <div className="size-11 rounded-2xl bg-red-600 text-white flex items-center justify-center shrink-0 shadow-md shadow-red-600/30">
+                    <div className="flex size-11 shrink-0 items-center justify-center rounded-2xl bg-red-600 text-white shadow-md shadow-red-600/30">
                         <img
                             src="/images/logo/anper_sartika_logo_white.png"
                             alt="Logo Anper"
@@ -164,28 +198,29 @@ export function PwaPrompt() {
                         />
                     </div>
 
-                    <div className="flex-1 min-w-0 pr-6">
+                    <div className="min-w-0 flex-1 pr-6">
                         <div className="flex items-center gap-1.5">
-                            <h4 className="text-xs sm:text-sm font-black text-zinc-900 dark:text-white tracking-tight">
+                            <h4 className="text-xs font-black tracking-tight text-zinc-900 sm:text-sm dark:text-white">
                                 Pasang Aplikasi Honda Rewards
                             </h4>
-                            <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full bg-red-50 dark:bg-red-950/60 text-red-600 dark:text-red-400 text-[9px] font-bold border border-red-200 dark:border-red-900/50 shrink-0">
+                            <span className="inline-flex shrink-0 items-center gap-0.5 rounded-full border border-red-200 bg-red-50 px-1.5 py-0.5 text-[9px] font-bold text-red-600 dark:border-red-900/50 dark:bg-red-950/60 dark:text-red-400">
                                 <Sparkles className="size-2.5" />
                                 PWA
                             </span>
                         </div>
-                        <p className="text-[11px] text-zinc-500 dark:text-zinc-400 mt-0.5 leading-relaxed">
-                            Buka lebih cepat langsung dari layar utama HP atau desktop tanpa perlu buka browser.
+                        <p className="mt-0.5 text-[11px] leading-relaxed text-zinc-500 dark:text-zinc-400">
+                            Buka lebih cepat langsung dari layar utama HP atau
+                            desktop tanpa perlu buka browser.
                         </p>
 
-                        <div className="flex items-center gap-2 mt-3">
+                        <div className="mt-3 flex items-center gap-2">
                             <Button
                                 type="button"
                                 size="sm"
                                 onClick={handleInstallClick}
-                                className="h-8 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-xs px-3 shadow-md shadow-red-600/20 active:scale-95 transition-all cursor-pointer"
+                                className="h-8 cursor-pointer rounded-xl bg-red-600 px-3 text-xs font-bold text-white shadow-md shadow-red-600/20 transition-all hover:bg-red-700 active:scale-95"
                             >
-                                <Download className="size-3.5 mr-1" />
+                                <Download className="mr-1 size-3.5" />
                                 Pasang Sekarang
                             </Button>
                             <Button
@@ -193,7 +228,7 @@ export function PwaPrompt() {
                                 size="sm"
                                 variant="ghost"
                                 onClick={handleDismiss}
-                                className="h-8 rounded-xl text-zinc-500 hover:text-zinc-900 dark:hover:text-white text-xs px-2.5 cursor-pointer"
+                                className="h-8 cursor-pointer rounded-xl px-2.5 text-xs text-zinc-500 hover:text-zinc-900 dark:hover:text-white"
                             >
                                 Nanti Saja
                             </Button>
@@ -204,7 +239,7 @@ export function PwaPrompt() {
                     <button
                         type="button"
                         onClick={handleDismiss}
-                        className="absolute top-3 right-3 p-1 rounded-lg text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors cursor-pointer"
+                        className="absolute top-3 right-3 cursor-pointer rounded-lg p-1 text-zinc-400 transition-colors hover:bg-zinc-100 hover:text-zinc-600 dark:hover:bg-zinc-800 dark:hover:text-zinc-200"
                         title="Tutup banner"
                     >
                         <X className="size-4" />

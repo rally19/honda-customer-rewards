@@ -86,7 +86,9 @@ export default function Profile({
                             </div>
 
                             <div className="grid gap-2">
-                                <Label htmlFor="phone_number">No. Telepon / WhatsApp</Label>
+                                <Label htmlFor="phone_number">
+                                    No. Telepon / WhatsApp
+                                </Label>
 
                                 <Input
                                     id="phone_number"
@@ -127,12 +129,18 @@ export default function Profile({
                                 <Label>Tipe Akun (Role)</Label>
                                 <div className="flex items-center gap-3">
                                     <Badge
-                                        variant={auth.user.role === 'admin' ? 'destructive' : 'secondary'}
+                                        variant={
+                                            auth.user.role === 'admin'
+                                                ? 'destructive'
+                                                : 'secondary'
+                                        }
                                         className="font-medium capitalize"
                                     >
-                                        {auth.user.role === 'admin' ? 'Administrator' : 'Member (User)'}
+                                        {auth.user.role === 'admin'
+                                            ? 'Administrator'
+                                            : 'Member (User)'}
                                     </Badge>
-                                    <span className="text-xs text-muted-foreground">
+                                    <span className="text-muted-foreground text-xs">
                                         ID: #{auth.user.id}
                                     </span>
                                 </div>

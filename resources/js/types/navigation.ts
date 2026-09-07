@@ -17,4 +17,3 @@ export type NavGroup = {
     label?: string;
     items: NavItem[];
 };
-

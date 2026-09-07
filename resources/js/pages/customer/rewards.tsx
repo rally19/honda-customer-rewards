@@ -86,10 +86,16 @@ export default function CustomerRewardsPage({
     stats,
     memberId,
 }: Props) {
-    const [activeTab, setActiveTab] = useState<'catalog' | 'my-claims'>('catalog');
-    const [pointFilter, setPointFilter] = useState<'all' | 'affordable' | 'low' | 'medium' | 'high'>('all');
-    const [selectedRewardToClaim, setSelectedRewardToClaim] = useState<RewardItem | null>(null);
-    const [selectedClaimToCancel, setSelectedClaimToCancel] = useState<MyClaimItem | null>(null);
+    const [activeTab, setActiveTab] = useState<'catalog' | 'my-claims'>(
+        'catalog',
+    );
+    const [pointFilter, setPointFilter] = useState<
+        'all' | 'affordable' | 'low' | 'medium' | 'high'
+    >('all');
+    const [selectedRewardToClaim, setSelectedRewardToClaim] =
+        useState<RewardItem | null>(null);
+    const [selectedClaimToCancel, setSelectedClaimToCancel] =
+        useState<MyClaimItem | null>(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [copiedId, setCopiedId] = useState<string | null>(null);
 
@@ -172,29 +178,29 @@ export default function CustomerRewardsPage({
         switch (status) {
             case 'hold':
                 return (
-                    <Badge className="bg-amber-100 dark:bg-amber-950/80 text-amber-700 dark:text-amber-300 border-amber-300 dark:border-amber-800 text-[10px] font-bold">
-                        <Clock className="size-3 mr-1" />
+                    <Badge className="border-amber-300 bg-amber-100 text-[10px] font-bold text-amber-700 dark:border-amber-800 dark:bg-amber-950/80 dark:text-amber-300">
+                        <Clock className="mr-1 size-3" />
                         HOLD (Menunggu Admin)
                     </Badge>
                 );
             case 'claimed':
                 return (
-                    <Badge className="bg-emerald-100 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300 border-emerald-300 dark:border-emerald-800 text-[10px] font-bold">
-                        <CheckCircle2 className="size-3 mr-1" />
+                    <Badge className="border-emerald-300 bg-emerald-100 text-[10px] font-bold text-emerald-700 dark:border-emerald-800 dark:bg-emerald-950/80 dark:text-emerald-300">
+                        <CheckCircle2 className="mr-1 size-3" />
                         Disetujui (Claimed)
                     </Badge>
                 );
             case 'rejected':
                 return (
-                    <Badge className="bg-rose-100 dark:bg-rose-950/80 text-rose-700 dark:text-rose-300 border-rose-300 dark:border-rose-800 text-[10px] font-bold">
-                        <XCircle className="size-3 mr-1" />
+                    <Badge className="border-rose-300 bg-rose-100 text-[10px] font-bold text-rose-700 dark:border-rose-800 dark:bg-rose-950/80 dark:text-rose-300">
+                        <XCircle className="mr-1 size-3" />
                         Ditolak (Poin Kembali)
                     </Badge>
                 );
             case 'cancelled':
                 return (
-                    <Badge className="bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 border-zinc-200 dark:border-zinc-700 text-[10px] font-semibold">
-                        <RotateCcw className="size-3 mr-1" />
+                    <Badge className="border-zinc-200 bg-zinc-100 text-[10px] font-semibold text-zinc-600 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-400">
+                        <RotateCcw className="mr-1 size-3" />
                         Dibatalkan
                     </Badge>
                 );
@@ -205,17 +211,17 @@ export default function CustomerRewardsPage({
         <CustomerLayout activeTab="rewards">
             <Head title="Katalog Reward & Penukaran Poin - Honda Loyalty" />
 
-            <div className="space-y-6 max-w-4xl mx-auto w-full pb-10">
+            <div className="mx-auto w-full max-w-4xl space-y-6 pb-10">
                 {/* ========================================================================= */}
                 {/* 1. HEADER SECTION & IDENTITAS MEMBER                                      */}
                 {/* ========================================================================= */}
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2">
+                <div className="flex flex-col justify-between gap-3 pt-2 sm:flex-row sm:items-center">
                     <div className="space-y-1">
                         <Link
                             href="/dashboard"
-                            className="inline-flex items-center gap-1.5 text-xs font-semibold text-zinc-500 hover:text-red-600 dark:text-zinc-400 dark:hover:text-red-400 transition-colors group mb-1"
+                            className="group mb-1 inline-flex items-center gap-1.5 text-xs font-semibold text-zinc-500 transition-colors hover:text-red-600 dark:text-zinc-400 dark:hover:text-red-400"
                         >
-                            <ArrowLeft className="size-3.5 group-hover:-translate-x-0.5 transition-transform" />
+                            <ArrowLeft className="size-3.5 transition-transform group-hover:-translate-x-0.5" />
                             <span>Kembali ke Beranda</span>
                         </Link>
                         <div className="flex items-center gap-2">
@@ -223,11 +229,13 @@ export default function CustomerRewardsPage({
                                 <Gift className="size-5" />
                             </div>
                             <div>
-                                <h1 className="text-xl sm:text-2xl font-black tracking-tight text-zinc-900 dark:text-white">
+                                <h1 className="text-xl font-black tracking-tight text-zinc-900 sm:text-2xl dark:text-white">
                                     Katalog Reward & Hadiah
                                 </h1>
                                 <p className="text-xs text-zinc-500 dark:text-zinc-400">
-                                    Tukarkan saldo poin dengan merchandise resmi, voucher servis, oli, dan penawaran eksklusif
+                                    Tukarkan saldo poin dengan merchandise
+                                    resmi, voucher servis, oli, dan penawaran
+                                    eksklusif
                                 </p>
                             </div>
                         </div>
@@ -236,12 +244,12 @@ export default function CustomerRewardsPage({
                     <div className="flex items-center gap-2">
                         <Badge
                             variant="outline"
-                            className="px-3 py-1 text-[11px] font-mono font-semibold bg-white dark:bg-zinc-900 border-zinc-200 dark:border-zinc-800"
+                            className="border-zinc-200 bg-white px-3 py-1 font-mono text-[11px] font-semibold dark:border-zinc-800 dark:bg-zinc-900"
                         >
-                            <Shield className="size-3 text-red-600 mr-1.5" />
+                            <Shield className="mr-1.5 size-3 text-red-600" />
                             ID: {formattedMemberId}
                         </Badge>
-                        <Badge className="bg-red-600 hover:bg-red-700 text-white text-[11px] font-bold px-3 py-1">
+                        <Badge className="bg-red-600 px-3 py-1 text-[11px] font-bold text-white hover:bg-red-700">
                             {stats.tierBadge}
                         </Badge>
                     </div>
@@ -250,39 +258,50 @@ export default function CustomerRewardsPage({
                 {/* ========================================================================= */}
                 {/* 2. CARD SALDO POIN & KETENTUAN LEVEL MEMBER                               */}
                 {/* ========================================================================= */}
-                <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-red-600 via-red-700 to-zinc-950 p-6 sm:p-7 text-white shadow-xl shadow-red-950/20">
+                <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-red-600 via-red-700 to-zinc-950 p-6 text-white shadow-xl shadow-red-950/20 sm:p-7">
                     <div className="pointer-events-none absolute -right-8 -bottom-10 opacity-15 select-none">
                         <img
                             src="/images/logo/honda_logo_white.png"
                             alt="Honda"
-                            className="w-64 h-auto"
+                            className="h-auto w-64"
                         />
                     </div>
 
-                    <div className="relative z-10 grid grid-cols-1 sm:grid-cols-3 gap-6 items-center">
+                    <div className="relative z-10 grid grid-cols-1 items-center gap-6 sm:grid-cols-3">
                         <div className="space-y-1 sm:col-span-2">
-                            <span className="text-xs font-semibold text-red-200 uppercase tracking-wider">
+                            <span className="text-xs font-semibold tracking-wider text-red-200 uppercase">
                                 Saldo Poin Anda Saat Ini
                             </span>
                             <div className="flex items-baseline gap-2">
-                                <span className="font-mono text-3xl sm:text-4xl font-black text-white drop-shadow-sm">
-                                    {stats.currentPoints.toLocaleString('id-ID')}
+                                <span className="font-mono text-3xl font-black text-white drop-shadow-sm sm:text-4xl">
+                                    {stats.currentPoints.toLocaleString(
+                                        'id-ID',
+                                    )}
                                 </span>
-                                <span className="text-sm font-bold text-red-100">POIN AKTIF</span>
+                                <span className="text-sm font-bold text-red-100">
+                                    POIN AKTIF
+                                </span>
                             </div>
 
-                            <p className="text-[11px] text-red-100/90 pt-1 flex items-center gap-1.5">
+                            <p className="flex items-center gap-1.5 pt-1 text-[11px] text-red-100/90">
                                 <Info className="size-3.5 shrink-0 text-amber-300" />
                                 <span>
-                                    Level member Anda (<strong>{stats.tier}</strong>) dihitung dari{' '}
-                                    <strong>{stats.lifetimePoints.toLocaleString('id-ID')} akumulasi poin</strong> dan tidak akan turun saat menukarkan reward.
+                                    Level member Anda (
+                                    <strong>{stats.tier}</strong>) dihitung dari{' '}
+                                    <strong>
+                                        {stats.lifetimePoints.toLocaleString(
+                                            'id-ID',
+                                        )}{' '}
+                                        akumulasi poin
+                                    </strong>{' '}
+                                    dan tidak akan turun saat menukarkan reward.
                                 </span>
                             </p>
                         </div>
 
-                        <div className="flex sm:flex-col items-center sm:items-end justify-between sm:justify-center gap-3 pt-3 sm:pt-0 border-t sm:border-t-0 border-white/15">
+                        <div className="flex items-center justify-between gap-3 border-t border-white/15 pt-3 sm:flex-col sm:items-end sm:justify-center sm:border-t-0 sm:pt-0">
                             <div className="text-left sm:text-right">
-                                <span className="text-[10px] text-red-200 block uppercase font-medium">
+                                <span className="block text-[10px] font-medium text-red-200 uppercase">
                                     Status Klaim Berjalan
                                 </span>
                                 <span className="font-mono text-base font-bold text-white">
@@ -293,9 +312,9 @@ export default function CustomerRewardsPage({
                                 type="button"
                                 size="sm"
                                 onClick={() => setActiveTab('my-claims')}
-                                className="rounded-xl bg-white text-red-600 hover:bg-red-50 font-bold text-xs shadow-sm cursor-pointer"
+                                className="cursor-pointer rounded-xl bg-white text-xs font-bold text-red-600 shadow-sm hover:bg-red-50"
                             >
-                                <Clock className="size-3.5 mr-1 text-red-600" />
+                                <Clock className="mr-1 size-3.5 text-red-600" />
                                 Lihat Klaim Saya
                             </Button>
                         </div>
@@ -306,19 +325,19 @@ export default function CustomerRewardsPage({
                 {/* 3. TAB CONTROLLER & FILTER                                                */}
                 {/* ========================================================================= */}
                 <div className="space-y-3">
-                    <div className="flex items-center gap-2 border-b border-zinc-200 dark:border-zinc-800 pb-2">
+                    <div className="flex items-center gap-2 border-b border-zinc-200 pb-2 dark:border-zinc-800">
                         <button
                             type="button"
                             onClick={() => setActiveTab('catalog')}
-                            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                            className={`flex cursor-pointer items-center gap-2 rounded-xl px-4 py-2 text-xs font-bold transition-all ${
                                 activeTab === 'catalog'
                                     ? 'bg-red-600 text-white shadow-xs'
-                                    : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800'
+                                    : 'text-zinc-600 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-800'
                             }`}
                         >
                             <ShoppingBag className="size-4" />
                             <span>Katalog Pilihan Reward</span>
-                            <span className="rounded-full bg-white/20 px-1.5 py-0.2 text-[10px]">
+                            <span className="py-0.2 rounded-full bg-white/20 px-1.5 text-[10px]">
                                 {rewards.length}
                             </span>
                         </button>
@@ -326,21 +345,21 @@ export default function CustomerRewardsPage({
                         <button
                             type="button"
                             onClick={() => setActiveTab('my-claims')}
-                            className={`relative flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                            className={`relative flex cursor-pointer items-center gap-2 rounded-xl px-4 py-2 text-xs font-bold transition-all ${
                                 activeTab === 'my-claims'
                                     ? 'bg-red-600 text-white shadow-xs'
-                                    : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800'
+                                    : 'text-zinc-600 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-800'
                             }`}
                         >
                             <Clock className="size-4" />
                             <span>Klaim Saya</span>
-                            <span className="rounded-full bg-white/20 px-1.5 py-0.2 text-[10px]">
+                            <span className="py-0.2 rounded-full bg-white/20 px-1.5 text-[10px]">
                                 {myClaims.length}
                             </span>
                             {stats.totalHold > 0 && (
                                 <span className="absolute -top-1 -right-1 flex size-3">
-                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
-                                    <span className="relative inline-flex rounded-full size-3 bg-amber-500"></span>
+                                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-amber-400 opacity-75"></span>
+                                    <span className="relative inline-flex size-3 rounded-full bg-amber-500"></span>
                                 </span>
                             )}
                         </button>
@@ -348,8 +367,8 @@ export default function CustomerRewardsPage({
 
                     {/* Quick Filters for Catalog */}
                     {activeTab === 'catalog' && (
-                        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 text-xs no-scrollbar">
-                            <span className="text-[11px] font-semibold text-zinc-400 mr-1 shrink-0 flex items-center gap-1">
+                        <div className="no-scrollbar flex items-center gap-1.5 overflow-x-auto pb-1 text-xs">
+                            <span className="mr-1 flex shrink-0 items-center gap-1 text-[11px] font-semibold text-zinc-400">
                                 <Filter className="size-3" /> Filter Poin:
                             </span>
                             {[
@@ -363,9 +382,9 @@ export default function CustomerRewardsPage({
                                     key={f.id}
                                     type="button"
                                     onClick={() => setPointFilter(f.id as any)}
-                                    className={`rounded-xl px-3 py-1 text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
+                                    className={`cursor-pointer rounded-xl px-3 py-1 text-xs font-semibold whitespace-nowrap transition-all ${
                                         pointFilter === f.id
-                                            ? 'bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900 shadow-xs'
+                                            ? 'bg-zinc-900 text-white shadow-xs dark:bg-zinc-100 dark:text-zinc-900'
                                             : 'bg-zinc-100 text-zinc-600 hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-700'
                                     }`}
                                 >
@@ -382,11 +401,11 @@ export default function CustomerRewardsPage({
                 {activeTab === 'catalog' && (
                     <div className="space-y-4">
                         {filteredRewards.length > 0 ? (
-                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
                                 {filteredRewards.map((reward) => (
                                     <div
                                         key={reward.id}
-                                        className="group flex flex-col justify-between overflow-hidden rounded-3xl border border-zinc-200/90 bg-white shadow-xs dark:border-zinc-800 dark:bg-zinc-900 transition-all hover:shadow-md hover:border-red-200 dark:hover:border-zinc-700"
+                                        className="group flex flex-col justify-between overflow-hidden rounded-3xl border border-zinc-200/90 bg-white shadow-xs transition-all hover:border-red-200 hover:shadow-md dark:border-zinc-800 dark:bg-zinc-900 dark:hover:border-zinc-700"
                                     >
                                         {/* Image Box */}
                                         <div className="relative aspect-video w-full overflow-hidden bg-zinc-100 dark:bg-zinc-800">
@@ -396,7 +415,10 @@ export default function CustomerRewardsPage({
                                                     alt={reward.name}
                                                     className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
                                                     onError={(e) => {
-                                                        (e.target as HTMLElement).style.display = 'none';
+                                                        (
+                                                            e.target as HTMLElement
+                                                        ).style.display =
+                                                            'none';
                                                     }}
                                                 />
                                             ) : (
@@ -406,48 +428,53 @@ export default function CustomerRewardsPage({
                                             )}
 
                                             {/* Top badges */}
-                                            <div className="absolute top-2.5 inset-x-2.5 flex items-center justify-between pointer-events-none">
+                                            <div className="pointer-events-none absolute inset-x-2.5 top-2.5 flex items-center justify-between">
                                                 <Badge
-                                                    className={`text-[10px] font-mono font-black shadow-sm ${
+                                                    className={`font-mono text-[10px] font-black shadow-sm ${
                                                         reward.stock > 0
                                                             ? 'bg-zinc-900/90 text-white backdrop-blur-md'
                                                             : 'bg-rose-600 text-white'
                                                     }`}
                                                 >
-                                                    {reward.stock > 0 ? `Stok: ${reward.stock}` : 'Habis'}
+                                                    {reward.stock > 0
+                                                        ? `Stok: ${reward.stock}`
+                                                        : 'Habis'}
                                                 </Badge>
 
-                                                <Badge className="bg-amber-500 text-zinc-950 font-mono font-black text-xs shadow-sm">
-                                                    <Coins className="size-3 mr-1" />
+                                                <Badge className="bg-amber-500 font-mono text-xs font-black text-zinc-950 shadow-sm">
+                                                    <Coins className="mr-1 size-3" />
                                                     {reward.points_cost} Poin
                                                 </Badge>
                                             </div>
                                         </div>
 
                                         {/* Content Box */}
-                                        <div className="p-4 sm:p-5 flex-1 flex flex-col justify-between space-y-4">
+                                        <div className="flex flex-1 flex-col justify-between space-y-4 p-4 sm:p-5">
                                             <div className="space-y-1.5">
-                                                <div className="flex items-center justify-between text-[11px] text-zinc-400 font-mono">
+                                                <div className="flex items-center justify-between font-mono text-[11px] text-zinc-400">
                                                     <span>#{reward.id}</span>
-                                                    <span>s/d {reward.end_period}</span>
+                                                    <span>
+                                                        s/d {reward.end_period}
+                                                    </span>
                                                 </div>
 
-                                                <h3 className="font-bold text-sm text-zinc-900 dark:text-white line-clamp-1 group-hover:text-red-600 transition-colors">
+                                                <h3 className="line-clamp-1 text-sm font-bold text-zinc-900 transition-colors group-hover:text-red-600 dark:text-white">
                                                     {reward.name}
                                                 </h3>
 
-                                                <p className="text-xs text-zinc-500 dark:text-zinc-400 line-clamp-2 leading-relaxed">
-                                                    {reward.description || 'Penawaran reward resmi eksklusif jaringan bengkel dan dealer AHASS.'}
+                                                <p className="line-clamp-2 text-xs leading-relaxed text-zinc-500 dark:text-zinc-400">
+                                                    {reward.description ||
+                                                        'Penawaran reward resmi eksklusif jaringan bengkel dan dealer AHASS.'}
                                                 </p>
                                             </div>
 
                                             {/* Action Button */}
-                                            <div className="pt-2 border-t border-zinc-100 dark:border-zinc-800">
+                                            <div className="border-t border-zinc-100 pt-2 dark:border-zinc-800">
                                                 {reward.stock <= 0 ? (
                                                     <Button
                                                         type="button"
                                                         disabled
-                                                        className="w-full rounded-2xl text-xs font-semibold bg-zinc-100 text-zinc-400 dark:bg-zinc-800 dark:text-zinc-500"
+                                                        className="w-full rounded-2xl bg-zinc-100 text-xs font-semibold text-zinc-400 dark:bg-zinc-800 dark:text-zinc-500"
                                                     >
                                                         Stok Habis
                                                     </Button>
@@ -455,17 +482,24 @@ export default function CustomerRewardsPage({
                                                     <Button
                                                         type="button"
                                                         disabled
-                                                        className="w-full rounded-2xl text-xs font-semibold bg-zinc-100 text-zinc-400 dark:bg-zinc-800 dark:text-zinc-500"
+                                                        className="w-full rounded-2xl bg-zinc-100 text-xs font-semibold text-zinc-400 dark:bg-zinc-800 dark:text-zinc-500"
                                                     >
-                                                        Kurang {reward.points_cost - stats.currentPoints} Poin
+                                                        Kurang{' '}
+                                                        {reward.points_cost -
+                                                            stats.currentPoints}{' '}
+                                                        Poin
                                                     </Button>
                                                 ) : (
                                                     <Button
                                                         type="button"
-                                                        onClick={() => setSelectedRewardToClaim(reward)}
-                                                        className="w-full rounded-2xl text-xs font-bold bg-red-600 hover:bg-red-700 text-white shadow-xs cursor-pointer group-hover:shadow-red-600/20"
+                                                        onClick={() =>
+                                                            setSelectedRewardToClaim(
+                                                                reward,
+                                                            )
+                                                        }
+                                                        className="w-full cursor-pointer rounded-2xl bg-red-600 text-xs font-bold text-white shadow-xs group-hover:shadow-red-600/20 hover:bg-red-700"
                                                     >
-                                                        <Gift className="size-3.5 mr-1.5" />
+                                                        <Gift className="mr-1.5 size-3.5" />
                                                         Tukar Reward
                                                     </Button>
                                                 )}
@@ -475,15 +509,16 @@ export default function CustomerRewardsPage({
                                 ))}
                             </div>
                         ) : (
-                            <div className="p-12 text-center rounded-3xl border border-dashed border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 space-y-3">
-                                <div className="mx-auto flex size-12 items-center justify-center rounded-2xl bg-zinc-100 dark:bg-zinc-800 text-zinc-400">
+                            <div className="space-y-3 rounded-3xl border border-dashed border-zinc-200 bg-white p-12 text-center dark:border-zinc-800 dark:bg-zinc-900">
+                                <div className="mx-auto flex size-12 items-center justify-center rounded-2xl bg-zinc-100 text-zinc-400 dark:bg-zinc-800">
                                     <ShoppingBag className="size-6" />
                                 </div>
                                 <h3 className="text-sm font-bold text-zinc-900 dark:text-white">
                                     Tidak Ada Reward yang Cocok
                                 </h3>
-                                <p className="text-xs text-zinc-500 max-w-sm mx-auto">
-                                    Coba ubah filter rentang poin Anda untuk melihat reward lainnya.
+                                <p className="mx-auto max-w-sm text-xs text-zinc-500">
+                                    Coba ubah filter rentang poin Anda untuk
+                                    melihat reward lainnya.
                                 </p>
                                 <Button
                                     type="button"
@@ -505,14 +540,14 @@ export default function CustomerRewardsPage({
                 {activeTab === 'my-claims' && (
                     <div className="space-y-3">
                         {myClaims.length > 0 ? (
-                            <div className="divide-y divide-zinc-200/80 rounded-3xl border border-zinc-200/90 bg-white shadow-xs dark:divide-zinc-800 dark:border-zinc-800 dark:bg-zinc-900 overflow-hidden">
+                            <div className="divide-y divide-zinc-200/80 overflow-hidden rounded-3xl border border-zinc-200/90 bg-white shadow-xs dark:divide-zinc-800 dark:border-zinc-800 dark:bg-zinc-900">
                                 {myClaims.map((claim) => (
                                     <div
                                         key={claim.id}
-                                        className="p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-zinc-50/50 dark:hover:bg-zinc-800/30 transition-colors"
+                                        className="flex flex-col justify-between gap-4 p-4 transition-colors hover:bg-zinc-50/50 sm:flex-row sm:items-center sm:p-5 dark:hover:bg-zinc-800/30"
                                     >
                                         <div className="flex items-start gap-3.5">
-                                            <div className="size-14 shrink-0 rounded-2xl overflow-hidden bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700">
+                                            <div className="size-14 shrink-0 overflow-hidden rounded-2xl border border-zinc-200 bg-zinc-100 dark:border-zinc-700 dark:bg-zinc-800">
                                                 {claim.reward_image ? (
                                                     <img
                                                         src={claim.reward_image}
@@ -528,52 +563,69 @@ export default function CustomerRewardsPage({
 
                                             <div className="space-y-1">
                                                 <div className="flex flex-wrap items-center gap-2">
-                                                    <h4 className="font-bold text-sm text-zinc-900 dark:text-white">
+                                                    <h4 className="text-sm font-bold text-zinc-900 dark:text-white">
                                                         {claim.reward_name}
                                                     </h4>
-                                                    {getStatusBadge(claim.status)}
+                                                    {getStatusBadge(
+                                                        claim.status,
+                                                    )}
                                                 </div>
 
                                                 <div className="flex flex-wrap items-center gap-2 text-xs text-zinc-500">
                                                     <button
                                                         type="button"
-                                                        onClick={() => handleCopy(claim.id)}
-                                                        className="inline-flex items-center gap-1 font-mono font-bold text-zinc-700 dark:text-zinc-300 hover:text-red-600 transition-colors cursor-pointer"
+                                                        onClick={() =>
+                                                            handleCopy(claim.id)
+                                                        }
+                                                        className="inline-flex cursor-pointer items-center gap-1 font-mono font-bold text-zinc-700 transition-colors hover:text-red-600 dark:text-zinc-300"
                                                         title="Salin No. Referensi"
                                                     >
                                                         <span>#{claim.id}</span>
-                                                        {copiedId === claim.id ? (
+                                                        {copiedId ===
+                                                        claim.id ? (
                                                             <Check className="size-3 text-emerald-600" />
                                                         ) : (
                                                             <Copy className="size-3 text-zinc-400" />
                                                         )}
                                                     </button>
                                                     <span>&bull;</span>
-                                                    <span>{claim.date} WIB</span>
+                                                    <span>
+                                                        {claim.date} WIB
+                                                    </span>
                                                 </div>
 
                                                 {/* Explanation or Admin Notes */}
                                                 {claim.status === 'hold' && (
-                                                    <p className="text-[11px] text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/40 px-2.5 py-1 rounded-lg border border-amber-200 dark:border-amber-900/50">
-                                                        Saldo {claim.points_cost} poin dan stok sedang di-hold. Anda dapat membatalkannya untuk mengembalikan poin.
+                                                    <p className="rounded-lg border border-amber-200 bg-amber-50 px-2.5 py-1 text-[11px] text-amber-700 dark:border-amber-900/50 dark:bg-amber-950/40 dark:text-amber-400">
+                                                        Saldo{' '}
+                                                        {claim.points_cost} poin
+                                                        dan stok sedang di-hold.
+                                                        Anda dapat
+                                                        membatalkannya untuk
+                                                        mengembalikan poin.
                                                     </p>
                                                 )}
 
-                                                {claim.status === 'claimed' && claim.admin_notes && (
-                                                    <p className="text-[11px] text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/40 px-2.5 py-1 rounded-lg border border-emerald-200 dark:border-emerald-900/50">
-                                                        Petugas: {claim.admin_notes}
-                                                    </p>
-                                                )}
+                                                {claim.status === 'claimed' &&
+                                                    claim.admin_notes && (
+                                                        <p className="rounded-lg border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-[11px] text-emerald-700 dark:border-emerald-900/50 dark:bg-emerald-950/40 dark:text-emerald-300">
+                                                            Petugas:{' '}
+                                                            {claim.admin_notes}
+                                                        </p>
+                                                    )}
 
-                                                {claim.status === 'rejected' && (
-                                                    <p className="text-[11px] text-rose-700 dark:text-rose-300 bg-rose-50 dark:bg-rose-950/40 px-2.5 py-1 rounded-lg border border-rose-200 dark:border-rose-900/50">
-                                                        Alasan: {claim.admin_notes || 'Ditolak oleh admin. Poin Anda telah dipulihkan.'}
+                                                {claim.status ===
+                                                    'rejected' && (
+                                                    <p className="rounded-lg border border-rose-200 bg-rose-50 px-2.5 py-1 text-[11px] text-rose-700 dark:border-rose-900/50 dark:bg-rose-950/40 dark:text-rose-300">
+                                                        Alasan:{' '}
+                                                        {claim.admin_notes ||
+                                                            'Ditolak oleh admin. Poin Anda telah dipulihkan.'}
                                                     </p>
                                                 )}
                                             </div>
                                         </div>
 
-                                        <div className="flex sm:flex-col items-center sm:items-end justify-between sm:justify-center gap-2 pt-2 sm:pt-0 border-t sm:border-t-0 border-zinc-100 dark:border-zinc-800">
+                                        <div className="flex items-center justify-between gap-2 border-t border-zinc-100 pt-2 sm:flex-col sm:items-end sm:justify-center sm:border-t-0 sm:pt-0 dark:border-zinc-800">
                                             <span className="font-mono text-sm font-bold text-red-600 dark:text-red-400">
                                                 -{claim.points_cost} Poin
                                             </span>
@@ -583,10 +635,14 @@ export default function CustomerRewardsPage({
                                                     type="button"
                                                     size="sm"
                                                     variant="outline"
-                                                    onClick={() => setSelectedClaimToCancel(claim)}
-                                                    className="rounded-xl text-xs font-semibold text-rose-600 border-rose-200 hover:bg-rose-50 hover:text-rose-700 dark:border-rose-900/50 dark:hover:bg-rose-950/40"
+                                                    onClick={() =>
+                                                        setSelectedClaimToCancel(
+                                                            claim,
+                                                        )
+                                                    }
+                                                    className="rounded-xl border-rose-200 text-xs font-semibold text-rose-600 hover:bg-rose-50 hover:text-rose-700 dark:border-rose-900/50 dark:hover:bg-rose-950/40"
                                                 >
-                                                    <X className="size-3 mr-1" />
+                                                    <X className="mr-1 size-3" />
                                                     Batalkan Klaim
                                                 </Button>
                                             )}
@@ -595,20 +651,21 @@ export default function CustomerRewardsPage({
                                 ))}
                             </div>
                         ) : (
-                            <div className="p-12 text-center rounded-3xl border border-dashed border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 space-y-3">
-                                <div className="mx-auto flex size-12 items-center justify-center rounded-2xl bg-zinc-100 dark:bg-zinc-800 text-zinc-400">
+                            <div className="space-y-3 rounded-3xl border border-dashed border-zinc-200 bg-white p-12 text-center dark:border-zinc-800 dark:bg-zinc-900">
+                                <div className="mx-auto flex size-12 items-center justify-center rounded-2xl bg-zinc-100 text-zinc-400 dark:bg-zinc-800">
                                     <Clock className="size-6" />
                                 </div>
                                 <h3 className="text-sm font-bold text-zinc-900 dark:text-white">
                                     Belum Ada Riwayat Penukaran
                                 </h3>
-                                <p className="text-xs text-zinc-500 max-w-sm mx-auto">
-                                    Anda belum menukarkan poin reward. Jelajahi katalog dan pilih reward yang Anda inginkan.
+                                <p className="mx-auto max-w-sm text-xs text-zinc-500">
+                                    Anda belum menukarkan poin reward. Jelajahi
+                                    katalog dan pilih reward yang Anda inginkan.
                                 </p>
                                 <Button
                                     type="button"
                                     onClick={() => setActiveTab('catalog')}
-                                    className="rounded-xl text-xs bg-red-600 hover:bg-red-700 text-white font-semibold"
+                                    className="rounded-xl bg-red-600 text-xs font-semibold text-white hover:bg-red-700"
                                 >
                                     Buka Katalog Reward
                                 </Button>
@@ -621,33 +678,41 @@ export default function CustomerRewardsPage({
             {/* ========================================================================= */}
             {/* MODAL KONFIRMASI KLAIM REWARD                                             */}
             {/* ========================================================================= */}
-            <Dialog open={!!selectedRewardToClaim} onOpenChange={(open) => !open && !isSubmitting && setSelectedRewardToClaim(null)}>
-                <DialogContent className="sm:max-w-md rounded-3xl border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-6 space-y-4">
+            <Dialog
+                open={!!selectedRewardToClaim}
+                onOpenChange={(open) =>
+                    !open && !isSubmitting && setSelectedRewardToClaim(null)
+                }
+            >
+                <DialogContent className="space-y-4 rounded-3xl border-zinc-200 bg-white p-6 sm:max-w-md dark:border-zinc-800 dark:bg-zinc-900">
                     {selectedRewardToClaim && (
                         <>
-                            <DialogHeader className="text-left space-y-1">
-                                <div className="flex size-11 items-center justify-center rounded-2xl bg-red-100 dark:bg-red-950/80 text-red-600 mb-1">
+                            <DialogHeader className="space-y-1 text-left">
+                                <div className="mb-1 flex size-11 items-center justify-center rounded-2xl bg-red-100 text-red-600 dark:bg-red-950/80">
                                     <Gift className="size-6" />
                                 </div>
                                 <DialogTitle className="text-base font-bold text-zinc-900 dark:text-white">
                                     Konfirmasi Penukaran Reward
                                 </DialogTitle>
                                 <DialogDescription className="text-xs text-zinc-500">
-                                    Pastikan rincian penukaran poin reward Anda sudah sesuai.
+                                    Pastikan rincian penukaran poin reward Anda
+                                    sudah sesuai.
                                 </DialogDescription>
                             </DialogHeader>
 
-                            <div className="rounded-2xl border border-zinc-200/90 bg-zinc-50 p-4 dark:border-zinc-800 dark:bg-zinc-950 space-y-3 text-xs">
+                            <div className="space-y-3 rounded-2xl border border-zinc-200/90 bg-zinc-50 p-4 text-xs dark:border-zinc-800 dark:bg-zinc-950">
                                 <div className="flex items-center gap-3">
                                     {selectedRewardToClaim.image_url && (
                                         <img
-                                            src={selectedRewardToClaim.image_url}
+                                            src={
+                                                selectedRewardToClaim.image_url
+                                            }
                                             alt={selectedRewardToClaim.name}
-                                            className="size-12 rounded-xl object-cover border border-zinc-200 dark:border-zinc-700"
+                                            className="size-12 rounded-xl border border-zinc-200 object-cover dark:border-zinc-700"
                                         />
                                     )}
                                     <div className="space-y-0.5">
-                                        <h4 className="font-bold text-zinc-900 dark:text-white text-xs">
+                                        <h4 className="text-xs font-bold text-zinc-900 dark:text-white">
                                             {selectedRewardToClaim.name}
                                         </h4>
                                         <span className="font-mono text-[11px] text-zinc-500">
@@ -656,32 +721,51 @@ export default function CustomerRewardsPage({
                                     </div>
                                 </div>
 
-                                <div className="space-y-2 border-t border-zinc-200/70 dark:border-zinc-800 pt-2.5">
+                                <div className="space-y-2 border-t border-zinc-200/70 pt-2.5 dark:border-zinc-800">
                                     <div className="flex justify-between">
-                                        <span className="text-zinc-500">Saldo Poin Anda:</span>
+                                        <span className="text-zinc-500">
+                                            Saldo Poin Anda:
+                                        </span>
                                         <span className="font-mono font-bold text-zinc-800 dark:text-zinc-200">
-                                            {stats.currentPoints.toLocaleString('id-ID')} Poin
+                                            {stats.currentPoints.toLocaleString(
+                                                'id-ID',
+                                            )}{' '}
+                                            Poin
                                         </span>
                                     </div>
-                                    <div className="flex justify-between text-red-600 dark:text-red-400 font-bold">
+                                    <div className="flex justify-between font-bold text-red-600 dark:text-red-400">
                                         <span>Biaya Poin Reward:</span>
                                         <span className="font-mono">
-                                            -{selectedRewardToClaim.points_cost.toLocaleString('id-ID')} Poin
+                                            -
+                                            {selectedRewardToClaim.points_cost.toLocaleString(
+                                                'id-ID',
+                                            )}{' '}
+                                            Poin
                                         </span>
                                     </div>
-                                    <div className="flex justify-between border-t border-dashed border-zinc-200 dark:border-zinc-800 pt-1.5">
-                                        <span className="text-zinc-700 dark:text-zinc-300 font-semibold">Sisa Saldo Poin:</span>
+                                    <div className="flex justify-between border-t border-dashed border-zinc-200 pt-1.5 dark:border-zinc-800">
+                                        <span className="font-semibold text-zinc-700 dark:text-zinc-300">
+                                            Sisa Saldo Poin:
+                                        </span>
                                         <span className="font-mono font-black text-zinc-900 dark:text-white">
-                                            {(stats.currentPoints - selectedRewardToClaim.points_cost).toLocaleString('id-ID')} Poin
+                                            {(
+                                                stats.currentPoints -
+                                                selectedRewardToClaim.points_cost
+                                            ).toLocaleString('id-ID')}{' '}
+                                            Poin
                                         </span>
                                     </div>
                                 </div>
                             </div>
 
-                            <div className="rounded-xl bg-amber-50 dark:bg-amber-950/40 p-3 text-[11px] text-amber-800 dark:text-amber-300 border border-amber-200 dark:border-amber-900/50 flex gap-2">
-                                <AlertCircle className="size-4 shrink-0 text-amber-600 mt-0.5" />
+                            <div className="flex gap-2 rounded-xl border border-amber-200 bg-amber-50 p-3 text-[11px] text-amber-800 dark:border-amber-900/50 dark:bg-amber-950/40 dark:text-amber-300">
+                                <AlertCircle className="mt-0.5 size-4 shrink-0 text-amber-600" />
                                 <span>
-                                    Status klaim akan di-<strong>HOLD</strong>. Poin dipotong dan stok di-hold sementara menunggu konfirmasi admin. Anda dapat membatalkannya kapan saja jika berubah pikiran.
+                                    Status klaim akan di-<strong>HOLD</strong>.
+                                    Poin dipotong dan stok di-hold sementara
+                                    menunggu konfirmasi admin. Anda dapat
+                                    membatalkannya kapan saja jika berubah
+                                    pikiran.
                                 </span>
                             </div>
 
@@ -690,7 +774,9 @@ export default function CustomerRewardsPage({
                                     type="button"
                                     variant="outline"
                                     disabled={isSubmitting}
-                                    onClick={() => setSelectedRewardToClaim(null)}
+                                    onClick={() =>
+                                        setSelectedRewardToClaim(null)
+                                    }
                                     className="flex-1 rounded-xl text-xs font-semibold"
                                 >
                                     Batal
@@ -699,9 +785,11 @@ export default function CustomerRewardsPage({
                                     type="button"
                                     disabled={isSubmitting}
                                     onClick={handleConfirmClaim}
-                                    className="flex-1 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-bold"
+                                    className="flex-1 rounded-xl bg-red-600 text-xs font-bold text-white hover:bg-red-700"
                                 >
-                                    {isSubmitting ? 'Memproses...' : 'Ya, Tukar Sekarang'}
+                                    {isSubmitting
+                                        ? 'Memproses...'
+                                        : 'Ya, Tukar Sekarang'}
                                 </Button>
                             </DialogFooter>
                         </>
@@ -712,37 +800,50 @@ export default function CustomerRewardsPage({
             {/* ========================================================================= */}
             {/* MODAL KONFIRMASI BATALKAN KLAIM                                           */}
             {/* ========================================================================= */}
-            <Dialog open={!!selectedClaimToCancel} onOpenChange={(open) => !open && !isSubmitting && setSelectedClaimToCancel(null)}>
-                <DialogContent className="sm:max-w-md rounded-3xl border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-6 space-y-4">
+            <Dialog
+                open={!!selectedClaimToCancel}
+                onOpenChange={(open) =>
+                    !open && !isSubmitting && setSelectedClaimToCancel(null)
+                }
+            >
+                <DialogContent className="space-y-4 rounded-3xl border-zinc-200 bg-white p-6 sm:max-w-md dark:border-zinc-800 dark:bg-zinc-900">
                     {selectedClaimToCancel && (
                         <>
-                            <DialogHeader className="text-left space-y-1">
-                                <div className="flex size-11 items-center justify-center rounded-2xl bg-rose-100 dark:bg-rose-950/80 text-rose-600 mb-1">
+                            <DialogHeader className="space-y-1 text-left">
+                                <div className="mb-1 flex size-11 items-center justify-center rounded-2xl bg-rose-100 text-rose-600 dark:bg-rose-950/80">
                                     <RotateCcw className="size-6" />
                                 </div>
                                 <DialogTitle className="text-base font-bold text-zinc-900 dark:text-white">
                                     Batalkan Klaim Reward?
                                 </DialogTitle>
                                 <DialogDescription className="text-xs text-zinc-500">
-                                    Anda dapat membatalkan penukaran ini sebelum admin menyetujuinya.
+                                    Anda dapat membatalkan penukaran ini sebelum
+                                    admin menyetujuinya.
                                 </DialogDescription>
                             </DialogHeader>
 
-                            <div className="rounded-2xl border border-zinc-200/90 bg-zinc-50 p-4 dark:border-zinc-800 dark:bg-zinc-950 space-y-2 text-xs">
+                            <div className="space-y-2 rounded-2xl border border-zinc-200/90 bg-zinc-50 p-4 text-xs dark:border-zinc-800 dark:bg-zinc-950">
                                 <div className="flex justify-between">
-                                    <span className="text-zinc-500">Reward:</span>
+                                    <span className="text-zinc-500">
+                                        Reward:
+                                    </span>
                                     <span className="font-bold text-zinc-900 dark:text-white">
                                         {selectedClaimToCancel.reward_name}
                                     </span>
                                 </div>
                                 <div className="flex justify-between">
-                                    <span className="text-zinc-500">Poin Akan Dikembalikan:</span>
+                                    <span className="text-zinc-500">
+                                        Poin Akan Dikembalikan:
+                                    </span>
                                     <span className="font-mono font-bold text-emerald-600 dark:text-emerald-400">
-                                        +{selectedClaimToCancel.points_cost} Poin
+                                        +{selectedClaimToCancel.points_cost}{' '}
+                                        Poin
                                     </span>
                                 </div>
                                 <div className="flex justify-between">
-                                    <span className="text-zinc-500">Stok Reward:</span>
+                                    <span className="text-zinc-500">
+                                        Stok Reward:
+                                    </span>
                                     <span className="font-semibold text-zinc-700 dark:text-zinc-300">
                                         Dipulihkan (+1 unit)
                                     </span>
@@ -754,7 +855,9 @@ export default function CustomerRewardsPage({
                                     type="button"
                                     variant="outline"
                                     disabled={isSubmitting}
-                                    onClick={() => setSelectedClaimToCancel(null)}
+                                    onClick={() =>
+                                        setSelectedClaimToCancel(null)
+                                    }
                                     className="flex-1 rounded-xl text-xs font-semibold"
                                 >
                                     Tidak, Kembali
@@ -763,9 +866,11 @@ export default function CustomerRewardsPage({
                                     type="button"
                                     disabled={isSubmitting}
                                     onClick={handleConfirmCancel}
-                                    className="flex-1 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold"
+                                    className="flex-1 rounded-xl bg-rose-600 text-xs font-bold text-white hover:bg-rose-700"
                                 >
-                                    {isSubmitting ? 'Membatalkan...' : 'Ya, Batalkan Klaim'}
+                                    {isSubmitting
+                                        ? 'Membatalkan...'
+                                        : 'Ya, Batalkan Klaim'}
                                 </Button>
                             </DialogFooter>
                         </>

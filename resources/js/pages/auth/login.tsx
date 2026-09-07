@@ -17,16 +17,13 @@ type Props = {
     canResetPassword: boolean;
 };
 
-export default function Login({
-    status,
-    canResetPassword,
-}: Props) {
+export default function Login({ status, canResetPassword }: Props) {
     return (
         <>
             <Head title="Masuk - Honda Customer Rewards" />
 
             {status && (
-                <div className="mb-4 text-center text-sm font-medium text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-950/50 p-2.5 rounded-lg border border-green-200 dark:border-green-900">
+                <div className="mb-4 rounded-lg border border-green-200 bg-green-50 p-2.5 text-center text-sm font-medium text-green-600 dark:border-green-900 dark:bg-green-950/50 dark:text-green-400">
                     {status}
                 </div>
             )}
@@ -66,7 +63,7 @@ export default function Login({
                                     {canResetPassword && (
                                         <TextLink
                                             href={request()}
-                                            className="text-xs text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 font-medium"
+                                            className="text-xs font-medium text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
                                             tabIndex={5}
                                         >
                                             Lupa password?
@@ -90,14 +87,17 @@ export default function Login({
                                     name="remember"
                                     tabIndex={3}
                                 />
-                                <Label htmlFor="remember" className="text-xs text-zinc-600 dark:text-zinc-400 cursor-pointer">
+                                <Label
+                                    htmlFor="remember"
+                                    className="cursor-pointer text-xs text-zinc-600 dark:text-zinc-400"
+                                >
                                     Ingat saya di perangkat ini
                                 </Label>
                             </div>
 
                             <Button
                                 type="submit"
-                                className="mt-2 w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-2.5 shadow-md shadow-red-600/25 active:scale-[0.99] transition-all cursor-pointer"
+                                className="mt-2 w-full cursor-pointer bg-red-600 py-2.5 font-semibold text-white shadow-md shadow-red-600/25 transition-all hover:bg-red-700 active:scale-[0.99]"
                                 tabIndex={4}
                                 disabled={processing}
                                 data-test="login-button"
@@ -107,13 +107,13 @@ export default function Login({
                             </Button>
                         </div>
 
-                        <div className="text-muted-foreground text-center text-sm pt-1 border-t border-zinc-100 dark:border-zinc-800">
+                        <div className="text-muted-foreground border-t border-zinc-100 pt-1 text-center text-sm dark:border-zinc-800">
                             Belum memiliki ID MEMBER?{' '}
                             <TextLink
                                 href={register()}
                                 data-test="register-link"
                                 tabIndex={5}
-                                className="font-semibold text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300"
+                                className="font-semibold text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
                             >
                                 Daftar Sekarang
                             </TextLink>

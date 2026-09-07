@@ -9,7 +9,10 @@ interface ThemeToggleProps {
     showLabel?: boolean;
 }
 
-export default function ThemeToggle({ className, showLabel = false }: ThemeToggleProps) {
+export default function ThemeToggle({
+    className,
+    showLabel = false,
+}: ThemeToggleProps) {
     const [mounted, setMounted] = useState(false);
     const { resolvedAppearance, updateAppearance } = useAppearance();
 
@@ -31,7 +34,7 @@ export default function ThemeToggle({ className, showLabel = false }: ThemeToggl
             size={showLabel ? 'default' : 'icon'}
             onClick={toggleTheme}
             className={cn(
-                'relative text-muted-foreground hover:text-foreground hover:bg-black/5 dark:hover:bg-white/10 transition-colors cursor-pointer',
+                'text-muted-foreground hover:text-foreground relative cursor-pointer transition-colors hover:bg-black/5 dark:hover:bg-white/10',
                 className,
             )}
             title={isDark ? 'Beralih ke mode terang' : 'Beralih ke mode gelap'}
@@ -39,9 +42,9 @@ export default function ThemeToggle({ className, showLabel = false }: ThemeToggl
             suppressHydrationWarning
         >
             {isDark ? (
-                <Sun className="h-[1.2rem] w-[1.2rem] text-amber-400 transition-all rotate-0 scale-100" />
+                <Sun className="h-[1.2rem] w-[1.2rem] scale-100 rotate-0 text-amber-400 transition-all" />
             ) : (
-                <Moon className="h-[1.2rem] w-[1.2rem] text-zinc-700 transition-all rotate-0 scale-100" />
+                <Moon className="h-[1.2rem] w-[1.2rem] scale-100 rotate-0 text-zinc-700 transition-all" />
             )}
             {showLabel && (
                 <span className="ml-2 text-xs font-medium">

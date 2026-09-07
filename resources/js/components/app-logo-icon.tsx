@@ -1,7 +1,13 @@
 import type { ImgHTMLAttributes } from 'react';
 
-export default function AppLogoIcon(props: ImgHTMLAttributes<HTMLImageElement>) {
-    const { className = 'h-8 w-auto object-contain', alt = 'Anper Honda Logo', ...rest } = props;
+export default function AppLogoIcon(
+    props: ImgHTMLAttributes<HTMLImageElement>,
+) {
+    const {
+        className = 'h-8 w-auto object-contain',
+        alt = 'Anper Honda Logo',
+        ...rest
+    } = props;
     return (
         <>
             <img

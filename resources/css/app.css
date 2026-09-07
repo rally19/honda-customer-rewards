@@ -285,26 +285,26 @@ html {
 }
 
 /* Universal Dialog & Sheet Overlay Smooth Animations */
-[data-slot="dialog-overlay"],
-[data-slot="sheet-overlay"] {
+[data-slot='dialog-overlay'],
+[data-slot='sheet-overlay'] {
     position: fixed;
     inset: 0;
     z-index: 50;
     will-change: opacity, backdrop-filter;
 }
 
-[data-slot="dialog-overlay"][data-state="open"],
-[data-slot="sheet-overlay"][data-state="open"] {
+[data-slot='dialog-overlay'][data-state='open'],
+[data-slot='sheet-overlay'][data-state='open'] {
     animation: smooth-overlay-in 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
 }
 
-[data-slot="dialog-overlay"][data-state="closed"],
-[data-slot="sheet-overlay"][data-state="closed"] {
+[data-slot='dialog-overlay'][data-state='closed'],
+[data-slot='sheet-overlay'][data-state='closed'] {
     animation: smooth-overlay-out 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
 }
 
 /* Universal Dialog Content Smooth Animations (Auto-applied to 100% of modals across the app) */
-[data-slot="dialog-content"] {
+[data-slot='dialog-content'] {
     position: fixed;
     top: 50%;
     left: 50%;
@@ -312,11 +312,11 @@ html {
     will-change: transform, opacity;
 }
 
-[data-slot="dialog-content"][data-state="open"] {
+[data-slot='dialog-content'][data-state='open'] {
     animation: smooth-modal-in 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
 }
 
-[data-slot="dialog-content"][data-state="closed"] {
+[data-slot='dialog-content'][data-state='closed'] {
     animation: smooth-modal-out 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
 }
 
@@ -382,14 +382,30 @@ html {
 }
 
 /* Stagger Animation Delays */
-.stagger-1 { animation-delay: 50ms; }
-.stagger-2 { animation-delay: 100ms; }
-.stagger-3 { animation-delay: 150ms; }
-.stagger-4 { animation-delay: 200ms; }
-.stagger-5 { animation-delay: 250ms; }
-.stagger-6 { animation-delay: 300ms; }
-.stagger-7 { animation-delay: 350ms; }
-.stagger-8 { animation-delay: 400ms; }
+.stagger-1 {
+    animation-delay: 50ms;
+}
+.stagger-2 {
+    animation-delay: 100ms;
+}
+.stagger-3 {
+    animation-delay: 150ms;
+}
+.stagger-4 {
+    animation-delay: 200ms;
+}
+.stagger-5 {
+    animation-delay: 250ms;
+}
+.stagger-6 {
+    animation-delay: 300ms;
+}
+.stagger-7 {
+    animation-delay: 350ms;
+}
+.stagger-8 {
+    animation-delay: 400ms;
+}
 
 /* Accessibility */
 @media (prefers-reduced-motion: reduce) {
@@ -402,5 +418,3 @@ html {
         scroll-behavior: auto !important;
     }
 }
-
-

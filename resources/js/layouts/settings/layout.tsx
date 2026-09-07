@@ -18,7 +18,14 @@ import { edit } from '@/routes/profile';
 import { edit as editSecurity } from '@/routes/security';
 import { logout } from '@/routes';
 import type { NavItem, User as AuthUser } from '@/types';
-import { User, Shield, Palette, LogOut, LayoutDashboard, Download } from 'lucide-react';
+import {
+    User,
+    Shield,
+    Palette,
+    LogOut,
+    LayoutDashboard,
+    Download,
+} from 'lucide-react';
 
 const sidebarNavItems: NavItem[] = [
     {
@@ -40,7 +47,10 @@ const sidebarNavItems: NavItem[] = [
 
 export default function SettingsLayout({ children }: PropsWithChildren) {
     const { auth } = usePage<{ auth?: { user?: AuthUser } }>().props;
-    const role = typeof auth?.user?.role === 'string' ? auth?.user?.role : (auth?.user?.role as { value?: string } | undefined)?.value;
+    const role =
+        typeof auth?.user?.role === 'string'
+            ? auth?.user?.role
+            : (auth?.user?.role as { value?: string } | undefined)?.value;
     const isAdmin = role === 'admin';
     const { isCurrentOrParentUrl } = useCurrentUrl();
     const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
@@ -68,21 +78,26 @@ export default function SettingsLayout({ children }: PropsWithChildren) {
                                 size="sm"
                                 variant="ghost"
                                 asChild
-                                className={cn('w-full justify-start rounded-xl font-semibold whitespace-nowrap cursor-pointer', {
-                                    'bg-red-50 text-red-700 dark:bg-red-950/60 dark:text-red-400 font-bold': isCurrentOrParentUrl(item.href),
-                                    'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white': !isCurrentOrParentUrl(item.href),
-                                })}
+                                className={cn(
+                                    'w-full cursor-pointer justify-start rounded-xl font-semibold whitespace-nowrap',
+                                    {
+                                        'bg-red-50 font-bold text-red-700 dark:bg-red-950/60 dark:text-red-400':
+                                            isCurrentOrParentUrl(item.href),
+                                        'text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white':
+                                            !isCurrentOrParentUrl(item.href),
+                                    },
+                                )}
                             >
                                 <Link href={item.href}>
                                     {item.icon && (
-                                        <item.icon className="h-4 w-4 mr-2" />
+                                        <item.icon className="mr-2 h-4 w-4" />
                                     )}
                                     {item.title}
                                 </Link>
                             </Button>
                         ))}
 
-                        <div className="my-1.5 sm:my-2 border-t border-zinc-200 dark:border-zinc-800" />
+                        <div className="my-1.5 border-t border-zinc-200 sm:my-2 dark:border-zinc-800" />
 
                         {/* Tombol Logout */}
                         <Button
@@ -90,9 +105,9 @@ export default function SettingsLayout({ children }: PropsWithChildren) {
                             variant="ghost"
                             type="button"
                             onClick={() => setShowLogoutConfirm(true)}
-                            className="w-full justify-start rounded-xl font-semibold text-rose-600 hover:text-rose-700 hover:bg-rose-50 dark:text-rose-400 dark:hover:bg-rose-950/50 cursor-pointer whitespace-nowrap"
+                            className="w-full cursor-pointer justify-start rounded-xl font-semibold whitespace-nowrap text-rose-600 hover:bg-rose-50 hover:text-rose-700 dark:text-rose-400 dark:hover:bg-rose-950/50"
                         >
-                            <LogOut className="h-4 w-4 mr-2" />
+                            <LogOut className="mr-2 h-4 w-4" />
                             Keluar dari Akun
                         </Button>
 
@@ -101,10 +116,14 @@ export default function SettingsLayout({ children }: PropsWithChildren) {
                             size="sm"
                             variant="ghost"
                             type="button"
-                            onClick={() => window.dispatchEvent(new CustomEvent('pwa-install-requested'))}
-                            className="w-full justify-start rounded-xl font-semibold text-zinc-600 dark:text-zinc-400 hover:text-red-600 dark:hover:text-red-400 cursor-pointer whitespace-nowrap"
+                            onClick={() =>
+                                window.dispatchEvent(
+                                    new CustomEvent('pwa-install-requested'),
+                                )
+                            }
+                            className="w-full cursor-pointer justify-start rounded-xl font-semibold whitespace-nowrap text-zinc-600 hover:text-red-600 dark:text-zinc-400 dark:hover:text-red-400"
                         >
-                            <Download className="h-4 w-4 mr-2 text-red-500" />
+                            <Download className="mr-2 h-4 w-4 text-red-500" />
                             Pasang Aplikasi (PWA)
                         </Button>
 
@@ -115,14 +134,17 @@ export default function SettingsLayout({ children }: PropsWithChildren) {
                                 variant="ghost"
                                 asChild
                                 className={cn(
-                                    'w-full justify-start rounded-xl font-semibold whitespace-nowrap cursor-pointer text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white',
+                                    'w-full cursor-pointer justify-start rounded-xl font-semibold whitespace-nowrap text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white',
                                     {
-                                        'bg-red-50 text-red-700 dark:bg-red-950/60 dark:text-red-400 font-bold': isCurrentOrParentUrl('/admin/dashboard'),
-                                    }
+                                        'bg-red-50 font-bold text-red-700 dark:bg-red-950/60 dark:text-red-400':
+                                            isCurrentOrParentUrl(
+                                                '/admin/dashboard',
+                                            ),
+                                    },
                                 )}
                             >
                                 <Link href="/admin/dashboard">
-                                    <LayoutDashboard className="h-4 w-4 mr-2" />
+                                    <LayoutDashboard className="mr-2 h-4 w-4" />
                                     Admin Dashboard
                                 </Link>
                             </Button>
@@ -130,16 +152,22 @@ export default function SettingsLayout({ children }: PropsWithChildren) {
                     </nav>
                 </aside>
 
-                <div className="flex-1 md:max-w-2xl mt-6">
-                    <section key={usePage().url.split('?')[0]} className="max-w-xl space-y-8 rounded-2xl border border-zinc-200/90 dark:border-zinc-800 bg-white/90 dark:bg-zinc-900/90 p-5 sm:p-7 shadow-xs animate-smooth-in">
+                <div className="mt-6 flex-1 md:max-w-2xl">
+                    <section
+                        key={usePage().url.split('?')[0]}
+                        className="animate-smooth-in max-w-xl space-y-8 rounded-2xl border border-zinc-200/90 bg-white/90 p-5 shadow-xs sm:p-7 dark:border-zinc-800 dark:bg-zinc-900/90"
+                    >
                         {children}
                     </section>
                 </div>
             </div>
 
             {/* Modal Konfirmasi Logout */}
-            <Dialog open={showLogoutConfirm} onOpenChange={setShowLogoutConfirm}>
-                <DialogContent className="sm:max-w-md rounded-3xl border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-6">
+            <Dialog
+                open={showLogoutConfirm}
+                onOpenChange={setShowLogoutConfirm}
+            >
+                <DialogContent className="rounded-3xl border-zinc-200 bg-white p-6 sm:max-w-md dark:border-zinc-800 dark:bg-zinc-900">
                     <DialogHeader className="space-y-2">
                         <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-rose-100 text-rose-600 dark:bg-rose-950 dark:text-rose-400">
                             <LogOut className="size-6" />
@@ -148,11 +176,13 @@ export default function SettingsLayout({ children }: PropsWithChildren) {
                             Konfirmasi Keluar
                         </DialogTitle>
                         <DialogDescription className="text-center text-xs text-zinc-500 dark:text-zinc-400">
-                            Apakah Anda yakin ingin keluar dari akun Honda Customer Rewards? Anda perlu memasukkan kredensial Anda kembali untuk masuk.
+                            Apakah Anda yakin ingin keluar dari akun Honda
+                            Customer Rewards? Anda perlu memasukkan kredensial
+                            Anda kembali untuk masuk.
                         </DialogDescription>
                     </DialogHeader>
 
-                    <DialogFooter className="mt-4 flex flex-col sm:flex-row gap-2">
+                    <DialogFooter className="mt-4 flex flex-col gap-2 sm:flex-row">
                         <Button
                             type="button"
                             variant="outline"
@@ -164,7 +194,7 @@ export default function SettingsLayout({ children }: PropsWithChildren) {
                         <Button
                             type="button"
                             onClick={handleLogout}
-                            className="flex-1 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-semibold"
+                            className="flex-1 rounded-xl bg-rose-600 text-xs font-semibold text-white hover:bg-rose-700"
                         >
                             Ya, Keluar Sekarang
                         </Button>

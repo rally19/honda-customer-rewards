@@ -63,16 +63,19 @@ export default function TwoFactorChallenge({ maskedEmail, status }: Props) {
 
             <div className="space-y-6">
                 {status && (
-                    <div className="p-3 text-xs font-medium text-emerald-800 bg-emerald-50 dark:bg-emerald-950/40 dark:text-emerald-300 rounded-lg border border-emerald-200 dark:border-emerald-800 text-center">
+                    <div className="rounded-lg border border-emerald-200 bg-emerald-50 p-3 text-center text-xs font-medium text-emerald-800 dark:border-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-300">
                         {status}
                     </div>
                 )}
 
                 {maskedEmail && !showRecoveryInput && (
-                    <div className="flex items-center justify-between text-xs text-muted-foreground bg-zinc-50 dark:bg-zinc-900/50 p-3 rounded-lg border border-zinc-200/80 dark:border-zinc-800">
+                    <div className="text-muted-foreground flex items-center justify-between rounded-lg border border-zinc-200/80 bg-zinc-50 p-3 text-xs dark:border-zinc-800 dark:bg-zinc-900/50">
                         <span className="flex items-center gap-1.5">
                             <Mail className="size-3.5 text-red-600" />
-                            Email: <strong className="font-semibold text-foreground">{maskedEmail}</strong>
+                            Email:{' '}
+                            <strong className="text-foreground font-semibold">
+                                {maskedEmail}
+                            </strong>
                         </span>
                         <button
                             type="button"
@@ -85,12 +88,14 @@ export default function TwoFactorChallenge({ maskedEmail, status }: Props) {
                                     {
                                         preserveScroll: true,
                                         onFinish: () => setIsResending(false),
-                                    }
+                                    },
                                 );
                             }}
-                            className="text-red-600 dark:text-red-400 hover:underline flex items-center gap-1 font-medium disabled:opacity-50 cursor-pointer"
+                            className="flex cursor-pointer items-center gap-1 font-medium text-red-600 hover:underline disabled:opacity-50 dark:text-red-400"
                         >
-                            <RefreshCw className={`size-3 ${isResending ? 'animate-spin' : ''}`} />
+                            <RefreshCw
+                                className={`size-3 ${isResending ? 'animate-spin' : ''}`}
+                            />
                             {isResending ? 'Mengirim...' : 'Kirim Ulang'}
                         </button>
                     </div>

@@ -19,7 +19,13 @@ import {
 } from 'lucide-react';
 import QrCode, { type QrCodeHandle } from '@/components/qr-code';
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
+} from '@/components/ui/dialog';
 import { home } from '@/routes';
 import type { NotificationItem, User } from '@/types';
 
@@ -54,7 +60,9 @@ export default function CustomerLayout({
         }
     });
 
-    const unreadCount = notifications.filter((n) => !readIds.includes(n.id)).length;
+    const unreadCount = notifications.filter(
+        (n) => !readIds.includes(n.id),
+    ).length;
 
     const handleToggleNotif = () => {
         const nextState = !notifOpen;
@@ -64,7 +72,10 @@ export default function CustomerLayout({
             const updated = Array.from(new Set([...readIds, ...allIds]));
             setReadIds(updated);
             try {
-                localStorage.setItem('honda_read_notifs', JSON.stringify(updated));
+                localStorage.setItem(
+                    'honda_read_notifs',
+                    JSON.stringify(updated),
+                );
             } catch {
                 // ignore
             }
@@ -75,24 +86,32 @@ export default function CustomerLayout({
     useEffect(() => {
         if (!notifOpen) return;
         const handleClickOutside = (e: MouseEvent) => {
-            if (notifRef.current && !notifRef.current.contains(e.target as Node)) {
+            if (
+                notifRef.current &&
+                !notifRef.current.contains(e.target as Node)
+            ) {
                 setNotifOpen(false);
             }
         };
         document.addEventListener('mousedown', handleClickOutside);
-        return () => document.removeEventListener('mousedown', handleClickOutside);
+        return () =>
+            document.removeEventListener('mousedown', handleClickOutside);
     }, [notifOpen]);
 
     // Allow components anywhere in the app to open the QR modal
     useEffect(() => {
         const handleOpenQr = () => setQrModalOpen(true);
         window.addEventListener('open-customer-qr-modal', handleOpenQr);
-        return () => window.removeEventListener('open-customer-qr-modal', handleOpenQr);
+        return () =>
+            window.removeEventListener('open-customer-qr-modal', handleOpenQr);
     }, []);
 
     // Format 10 digit ID: 1234 5678 90
     const rawId = String(user?.id || '8492019482').padStart(10, '0');
-    const formattedMemberId = rawId.replace(/(\d{4})(\d{3})(\d{3})/, '$1 $2 $3');
+    const formattedMemberId = rawId.replace(
+        /(\d{4})(\d{3})(\d{3})/,
+        '$1 $2 $3',
+    );
 
     const handleCopyId = () => {
         navigator.clipboard.writeText(rawId);
@@ -111,9 +130,12 @@ export default function CustomerLayout({
             else if (user.lifetime_points >= 500) tierName = 'Silver';
             else tierName = 'Bronze';
         } else if (user?.tier) {
-            const raw = typeof user.tier === 'string'
-                ? user.tier
-                : (user.tier as { value?: string; name?: string })?.value || (user.tier as { value?: string; name?: string })?.name || '';
+            const raw =
+                typeof user.tier === 'string'
+                    ? user.tier
+                    : (user.tier as { value?: string; name?: string })?.value ||
+                      (user.tier as { value?: string; name?: string })?.name ||
+                      '';
             if (raw) {
                 const normalized = raw.trim().toLowerCase();
                 if (normalized === 'diamond') tierName = 'Diamond';
@@ -129,32 +151,37 @@ export default function CustomerLayout({
                 return {
                     name: 'Diamond',
                     badge: 'DIAMOND',
-                    badgeClass: 'bg-purple-100 text-purple-700 border-purple-300 dark:bg-purple-950/80 dark:text-purple-300 dark:border-purple-800',
+                    badgeClass:
+                        'bg-purple-100 text-purple-700 border-purple-300 dark:bg-purple-950/80 dark:text-purple-300 dark:border-purple-800',
                 };
             case 'Platinum':
                 return {
                     name: 'Platinum',
                     badge: 'PLATINUM',
-                    badgeClass: 'bg-cyan-100 text-cyan-700 border-cyan-300 dark:bg-cyan-950/80 dark:text-cyan-300 dark:border-cyan-800',
+                    badgeClass:
+                        'bg-cyan-100 text-cyan-700 border-cyan-300 dark:bg-cyan-950/80 dark:text-cyan-300 dark:border-cyan-800',
                 };
             case 'Gold':
                 return {
                     name: 'Gold',
                     badge: 'GOLD',
-                    badgeClass: 'bg-yellow-100 text-yellow-800 border-yellow-300 dark:bg-yellow-950/80 dark:text-yellow-300 dark:border-yellow-800',
+                    badgeClass:
+                        'bg-yellow-100 text-yellow-800 border-yellow-300 dark:bg-yellow-950/80 dark:text-yellow-300 dark:border-yellow-800',
                 };
             case 'Silver':
                 return {
                     name: 'Silver',
                     badge: 'SILVER',
-                    badgeClass: 'bg-slate-100 text-slate-700 border-slate-300 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700',
+                    badgeClass:
+                        'bg-slate-100 text-slate-700 border-slate-300 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700',
                 };
             case 'Bronze':
             default:
                 return {
                     name: 'Bronze',
                     badge: 'BRONZE',
-                    badgeClass: 'bg-amber-100 text-amber-800 border-amber-300 dark:bg-amber-950/80 dark:text-amber-300 dark:border-amber-800',
+                    badgeClass:
+                        'bg-amber-100 text-amber-800 border-amber-300 dark:bg-amber-950/80 dark:text-amber-300 dark:border-amber-800',
                 };
         }
     };
@@ -162,20 +189,24 @@ export default function CustomerLayout({
     const tierInfo = getTierInfo();
 
     return (
-        <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 flex flex-col antialiased selection:bg-red-600 selection:text-white pb-24 md:pb-28">
+        <div className="flex min-h-screen flex-col bg-zinc-50 pb-24 text-zinc-900 antialiased selection:bg-red-600 selection:text-white md:pb-28 dark:bg-zinc-950 dark:text-zinc-100">
             {/* Ambient Background Accent */}
-            <div className="pointer-events-none fixed inset-0 overflow-hidden z-0">
-                <div className="absolute -top-32 left-1/2 -translate-x-1/2 w-[650px] h-[350px] bg-red-600/10 dark:bg-red-600/15 blur-[130px] rounded-full" />
+            <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
+                <div className="absolute -top-32 left-1/2 h-[350px] w-[650px] -translate-x-1/2 rounded-full bg-red-600/10 blur-[130px] dark:bg-red-600/15" />
             </div>
 
             {/* ========================================================================= */}
             {/* TOP BAR (HEADER DIGITAL BANKING STYLE)                                    */}
             {/* ========================================================================= */}
-            <header className="sticky top-0 z-40 w-full border-b border-zinc-200/80 bg-white/95 backdrop-blur-md transition-colors dark:border-zinc-800/80 dark:bg-zinc-950/90 shadow-xs">
+            <header className="sticky top-0 z-40 w-full border-b border-zinc-200/80 bg-white/95 shadow-xs backdrop-blur-md transition-colors dark:border-zinc-800/80 dark:bg-zinc-950/90">
                 <div className="mx-auto flex h-16 max-w-5xl items-center justify-between px-4 sm:px-6">
                     {/* Left: Brand & User Greeting */}
                     <div className="flex items-center gap-3">
-                        <Link href={home()} className="flex items-center gap-2 group shrink-0" title="Ke Beranda">
+                        <Link
+                            href={home()}
+                            className="group flex shrink-0 items-center gap-2"
+                            title="Ke Beranda"
+                        >
                             <img
                                 src="/images/logo/anper_logo_red.png"
                                 alt="Honda Customer Rewards"
@@ -188,27 +219,29 @@ export default function CustomerLayout({
                             />
                         </Link>
 
-                        <div className="hidden sm:block h-6 w-px bg-zinc-200 dark:bg-zinc-800" />
+                        <div className="hidden h-6 w-px bg-zinc-200 sm:block dark:bg-zinc-800" />
 
                         {/* User Profile Pill */}
-                        <div className="flex items-center gap-2 sm:gap-2.5 min-w-0">
-                            <div className="flex size-8 sm:size-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-tr from-red-600 to-rose-500 text-white font-bold text-xs shadow-xs">
-                                {user?.name ? user.name.charAt(0).toUpperCase() : 'U'}
+                        <div className="flex min-w-0 items-center gap-2 sm:gap-2.5">
+                            <div className="flex size-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-tr from-red-600 to-rose-500 text-xs font-bold text-white shadow-xs sm:size-9">
+                                {user?.name
+                                    ? user.name.charAt(0).toUpperCase()
+                                    : 'U'}
                             </div>
-                            <div className="leading-tight min-w-0">
-                                <div className="flex items-center gap-1.5 min-w-0">
-                                    <span className="text-xs font-bold text-zinc-900 dark:text-zinc-100 truncate max-w-[90px] xs:max-w-[120px] sm:max-w-[180px]">
+                            <div className="min-w-0 leading-tight">
+                                <div className="flex min-w-0 items-center gap-1.5">
+                                    <span className="xs:max-w-[120px] max-w-[90px] truncate text-xs font-bold text-zinc-900 sm:max-w-[180px] dark:text-zinc-100">
                                         Halo, {user?.name?.split(' ')[0]} 👋
                                     </span>
                                     <span
-                                        className={`inline-flex items-center gap-1 rounded-full px-1.5 sm:px-2 py-0.5 text-[9px] sm:text-[10px] font-extrabold border shrink-0 ${tierInfo.badgeClass}`}
+                                        className={`inline-flex shrink-0 items-center gap-1 rounded-full border px-1.5 py-0.5 text-[9px] font-extrabold sm:px-2 sm:text-[10px] ${tierInfo.badgeClass}`}
                                         title={`Level Member: ${tierInfo.name}`}
                                     >
                                         <Award className="size-2.5 shrink-0" />
                                         {tierInfo.badge}
                                     </span>
                                 </div>
-                                <span className="text-[10px] text-zinc-500 dark:text-zinc-400 font-mono block truncate">
+                                <span className="block truncate font-mono text-[10px] text-zinc-500 dark:text-zinc-400">
                                     ID: {formattedMemberId}
                                 </span>
                             </div>
@@ -224,30 +257,30 @@ export default function CustomerLayout({
                                 variant="ghost"
                                 size="icon"
                                 onClick={handleToggleNotif}
-                                className="relative rounded-full text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100 cursor-pointer"
+                                className="relative cursor-pointer rounded-full text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100"
                                 aria-label="Notifikasi"
                                 title="Notifikasi"
                             >
                                 <Bell className="size-4.5" />
                                 {unreadCount > 0 && (
-                                    <span className="absolute top-2 right-2 size-2 rounded-full bg-red-600 ring-2 ring-white dark:ring-zinc-950 animate-pulse" />
+                                    <span className="absolute top-2 right-2 size-2 animate-pulse rounded-full bg-red-600 ring-2 ring-white dark:ring-zinc-950" />
                                 )}
                             </Button>
 
                             {/* Notification Dropdown Preview */}
                             {notifOpen && (
-                                <div className="absolute right-0 mt-2 w-84 sm:w-96 rounded-2xl border border-zinc-200/90 dark:border-zinc-800 bg-white/95 dark:bg-zinc-900/95 backdrop-blur-xl p-4 shadow-2xl z-50 animate-smooth-scale origin-top-right">
+                                <div className="animate-smooth-scale absolute right-0 z-50 mt-2 w-84 origin-top-right rounded-2xl border border-zinc-200/90 bg-white/95 p-4 shadow-2xl backdrop-blur-xl sm:w-96 dark:border-zinc-800 dark:bg-zinc-900/95">
                                     <div className="flex items-center justify-between border-b border-zinc-100 pb-2.5 dark:border-zinc-800">
                                         <div className="flex items-center gap-2">
-                                            <h4 className="text-xs font-bold uppercase tracking-wider text-zinc-900 dark:text-zinc-100">
+                                            <h4 className="text-xs font-bold tracking-wider text-zinc-900 uppercase dark:text-zinc-100">
                                                 Notifikasi
                                             </h4>
                                             {unreadCount > 0 ? (
-                                                <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-red-100 text-red-700 dark:bg-red-950/80 dark:text-red-400">
+                                                <span className="inline-flex items-center rounded-full bg-red-100 px-1.5 py-0.5 text-[10px] font-bold text-red-700 dark:bg-red-950/80 dark:text-red-400">
                                                     {unreadCount} Baru
                                                 </span>
                                             ) : (
-                                                <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-[10px] font-medium bg-zinc-100 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-400">
+                                                <span className="inline-flex items-center rounded-full bg-zinc-100 px-1.5 py-0.5 text-[10px] font-medium text-zinc-600 dark:bg-zinc-800 dark:text-zinc-400">
                                                     {notifications.length} Pesan
                                                 </span>
                                             )}
@@ -255,17 +288,19 @@ export default function CustomerLayout({
                                         <button
                                             type="button"
                                             onClick={() => setNotifOpen(false)}
-                                            className="text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 p-1 rounded-md transition-colors cursor-pointer"
+                                            className="cursor-pointer rounded-md p-1 text-zinc-400 transition-colors hover:text-zinc-600 dark:hover:text-zinc-200"
                                             title="Tutup"
                                         >
                                             <X className="size-3.5" />
                                         </button>
                                     </div>
 
-                                    <div className="mt-3 space-y-2.5 text-xs max-h-[380px] overflow-y-auto pr-0.5">
+                                    <div className="mt-3 max-h-[380px] space-y-2.5 overflow-y-auto pr-0.5 text-xs">
                                         {notifications.length === 0 ? (
                                             <div className="py-6 text-center text-zinc-400 dark:text-zinc-500">
-                                                <p className="text-xs">Belum ada notifikasi.</p>
+                                                <p className="text-xs">
+                                                    Belum ada notifikasi.
+                                                </p>
                                             </div>
                                         ) : (
                                             notifications.map((item) => {
@@ -273,20 +308,24 @@ export default function CustomerLayout({
                                                     return (
                                                         <div
                                                             key={item.id}
-                                                            className="rounded-xl bg-red-50/80 p-3 dark:bg-red-950/40 border border-red-200/80 dark:border-red-900/50 shadow-2xs"
+                                                            className="rounded-xl border border-red-200/80 bg-red-50/80 p-3 shadow-2xs dark:border-red-900/50 dark:bg-red-950/40"
                                                         >
                                                             <div className="flex items-center justify-between gap-2">
-                                                                <span className="font-bold text-red-700 dark:text-red-400 text-xs">
+                                                                <span className="text-xs font-bold text-red-700 dark:text-red-400">
                                                                     {item.title}
                                                                 </span>
                                                                 {item.time && (
-                                                                    <span className="text-[10px] text-zinc-400 dark:text-zinc-500 font-medium shrink-0">
-                                                                        {item.time}
+                                                                    <span className="shrink-0 text-[10px] font-medium text-zinc-400 dark:text-zinc-500">
+                                                                        {
+                                                                            item.time
+                                                                        }
                                                                     </span>
                                                                 )}
                                                             </div>
-                                                            <p className="text-[11px] text-zinc-600 dark:text-zinc-400 mt-1 leading-relaxed">
-                                                                {item.description}
+                                                            <p className="mt-1 text-[11px] leading-relaxed text-zinc-600 dark:text-zinc-400">
+                                                                {
+                                                                    item.description
+                                                                }
                                                             </p>
                                                         </div>
                                                     );
@@ -296,27 +335,40 @@ export default function CustomerLayout({
                                                     return (
                                                         <Link
                                                             key={item.id}
-                                                            href={item.link || '/history'}
-                                                            onClick={() => setNotifOpen(false)}
-                                                            className="block rounded-xl bg-zinc-50/80 hover:bg-emerald-50/50 dark:bg-zinc-800/40 dark:hover:bg-emerald-950/20 p-3 border border-zinc-200/70 hover:border-emerald-300 dark:border-zinc-700/60 dark:hover:border-emerald-800/60 transition-colors shadow-2xs group cursor-pointer"
+                                                            href={
+                                                                item.link ||
+                                                                '/history'
+                                                            }
+                                                            onClick={() =>
+                                                                setNotifOpen(
+                                                                    false,
+                                                                )
+                                                            }
+                                                            className="group block cursor-pointer rounded-xl border border-zinc-200/70 bg-zinc-50/80 p-3 shadow-2xs transition-colors hover:border-emerald-300 hover:bg-emerald-50/50 dark:border-zinc-700/60 dark:bg-zinc-800/40 dark:hover:border-emerald-800/60 dark:hover:bg-emerald-950/20"
                                                         >
                                                             <div className="flex items-start gap-2.5">
                                                                 <div className="mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-lg bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-400">
                                                                     <Coins className="size-3.5" />
                                                                 </div>
-                                                                <div className="flex-1 min-w-0">
+                                                                <div className="min-w-0 flex-1">
                                                                     <div className="flex items-center justify-between gap-1">
-                                                                        <span className="font-bold text-zinc-900 dark:text-zinc-100 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors truncate">
-                                                                            {item.title}
+                                                                        <span className="truncate font-bold text-zinc-900 transition-colors group-hover:text-emerald-600 dark:text-zinc-100 dark:group-hover:text-emerald-400">
+                                                                            {
+                                                                                item.title
+                                                                            }
                                                                         </span>
                                                                         {item.time && (
-                                                                            <span className="text-[10px] text-zinc-400 shrink-0">
-                                                                                {item.time}
+                                                                            <span className="shrink-0 text-[10px] text-zinc-400">
+                                                                                {
+                                                                                    item.time
+                                                                                }
                                                                             </span>
                                                                         )}
                                                                     </div>
-                                                                    <p className="text-[11px] text-zinc-500 dark:text-zinc-400 mt-0.5 line-clamp-2 leading-relaxed">
-                                                                        {item.description}
+                                                                    <p className="mt-0.5 line-clamp-2 text-[11px] leading-relaxed text-zinc-500 dark:text-zinc-400">
+                                                                        {
+                                                                            item.description
+                                                                        }
                                                                     </p>
                                                                 </div>
                                                             </div>
@@ -325,40 +377,63 @@ export default function CustomerLayout({
                                                 }
 
                                                 if (item.type === 'reward') {
-                                                    const isClaimed = item.status === 'claimed';
-                                                    const isRejected = item.status === 'rejected';
-                                                    const isCancelled = item.status === 'cancelled';
+                                                    const isClaimed =
+                                                        item.status ===
+                                                        'claimed';
+                                                    const isRejected =
+                                                        item.status ===
+                                                        'rejected';
+                                                    const isCancelled =
+                                                        item.status ===
+                                                        'cancelled';
 
-                                                    const statusColor = isClaimed
-                                                        ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-400 border-emerald-200'
-                                                        : isRejected || isCancelled
-                                                          ? 'bg-rose-100 text-rose-700 dark:bg-rose-950 dark:text-rose-400 border-rose-200'
-                                                          : 'bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-400 border-amber-200';
+                                                    const statusColor =
+                                                        isClaimed
+                                                            ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-400 border-emerald-200'
+                                                            : isRejected ||
+                                                                isCancelled
+                                                              ? 'bg-rose-100 text-rose-700 dark:bg-rose-950 dark:text-rose-400 border-rose-200'
+                                                              : 'bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-400 border-amber-200';
 
                                                     return (
                                                         <Link
                                                             key={item.id}
-                                                            href={item.link || '/rewards'}
-                                                            onClick={() => setNotifOpen(false)}
-                                                            className="block rounded-xl bg-zinc-50/80 hover:bg-red-50/50 dark:bg-zinc-800/40 dark:hover:bg-red-950/20 p-3 border border-zinc-200/70 hover:border-red-300 dark:border-zinc-700/60 dark:hover:border-red-900/60 transition-colors shadow-2xs group cursor-pointer"
+                                                            href={
+                                                                item.link ||
+                                                                '/rewards'
+                                                            }
+                                                            onClick={() =>
+                                                                setNotifOpen(
+                                                                    false,
+                                                                )
+                                                            }
+                                                            className="group block cursor-pointer rounded-xl border border-zinc-200/70 bg-zinc-50/80 p-3 shadow-2xs transition-colors hover:border-red-300 hover:bg-red-50/50 dark:border-zinc-700/60 dark:bg-zinc-800/40 dark:hover:border-red-900/60 dark:hover:bg-red-950/20"
                                                         >
                                                             <div className="flex items-start gap-2.5">
-                                                                <div className={`mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-lg ${statusColor}`}>
+                                                                <div
+                                                                    className={`mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-lg ${statusColor}`}
+                                                                >
                                                                     <Gift className="size-3.5" />
                                                                 </div>
-                                                                <div className="flex-1 min-w-0">
+                                                                <div className="min-w-0 flex-1">
                                                                     <div className="flex items-center justify-between gap-1">
-                                                                        <span className="font-bold text-zinc-900 dark:text-zinc-100 group-hover:text-red-600 dark:group-hover:text-red-400 transition-colors truncate">
-                                                                            {item.title}
+                                                                        <span className="truncate font-bold text-zinc-900 transition-colors group-hover:text-red-600 dark:text-zinc-100 dark:group-hover:text-red-400">
+                                                                            {
+                                                                                item.title
+                                                                            }
                                                                         </span>
                                                                         {item.time && (
-                                                                            <span className="text-[10px] text-zinc-400 shrink-0">
-                                                                                {item.time}
+                                                                            <span className="shrink-0 text-[10px] text-zinc-400">
+                                                                                {
+                                                                                    item.time
+                                                                                }
                                                                             </span>
                                                                         )}
                                                                     </div>
-                                                                    <p className="text-[11px] text-zinc-500 dark:text-zinc-400 mt-0.5 line-clamp-2 leading-relaxed">
-                                                                        {item.description}
+                                                                    <p className="mt-0.5 line-clamp-2 text-[11px] leading-relaxed text-zinc-500 dark:text-zinc-400">
+                                                                        {
+                                                                            item.description
+                                                                        }
                                                                     </p>
                                                                 </div>
                                                             </div>
@@ -371,19 +446,21 @@ export default function CustomerLayout({
                                         )}
                                     </div>
 
-                                    <div className="mt-3 pt-2.5 border-t border-zinc-100 dark:border-zinc-800 flex items-center justify-between text-[11px]">
+                                    <div className="mt-3 flex items-center justify-between border-t border-zinc-100 pt-2.5 text-[11px] dark:border-zinc-800">
                                         <Link
                                             href="/activities"
                                             onClick={() => setNotifOpen(false)}
-                                            className="text-red-600 dark:text-red-400 hover:underline font-semibold flex items-center gap-1 cursor-pointer"
+                                            className="flex cursor-pointer items-center gap-1 font-semibold text-red-600 hover:underline dark:text-red-400"
                                         >
-                                            <span>Aktivitas & Riwayat Poin</span>
+                                            <span>
+                                                Aktivitas & Riwayat Poin
+                                            </span>
                                             <ArrowRight className="size-3" />
                                         </Link>
                                         <Link
                                             href="/rewards"
                                             onClick={() => setNotifOpen(false)}
-                                            className="text-zinc-500 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-200 font-medium cursor-pointer"
+                                            className="cursor-pointer font-medium text-zinc-500 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-200"
                                         >
                                             Katalog Reward
                                         </Link>
@@ -398,7 +475,7 @@ export default function CustomerLayout({
             {/* ========================================================================= */}
             {/* MAIN CONTENT CONTAINER                                                    */}
             {/* ========================================================================= */}
-            <main className="relative z-10 flex-1 mx-auto w-full max-w-5xl px-4 sm:px-6 pt-5 animate-smooth-in">
+            <main className="animate-smooth-in relative z-10 mx-auto w-full max-w-5xl flex-1 px-4 pt-5 sm:px-6">
                 {children}
             </main>
 
@@ -406,17 +483,17 @@ export default function CustomerLayout({
             {/* BOTTOM NAVIGATION BAR (MODERN FLOATING DOCK - E-WALLET STYLE)             */}
             {/* ========================================================================= */}
             <nav
-                className="fixed bottom-3 inset-x-0 z-40 mx-auto w-[94%] max-w-md sm:max-w-lg md:max-w-xl rounded-3xl border border-zinc-200/90 dark:border-zinc-800 bg-white/95 dark:bg-zinc-900/95 backdrop-blur-xl shadow-2xl shadow-zinc-950/15 dark:shadow-black/60 px-3 py-2 transition-colors"
+                className="fixed inset-x-0 bottom-3 z-40 mx-auto w-[94%] max-w-md rounded-3xl border border-zinc-200/90 bg-white/95 px-3 py-2 shadow-2xl shadow-zinc-950/15 backdrop-blur-xl transition-colors sm:max-w-lg md:max-w-xl dark:border-zinc-800 dark:bg-zinc-900/95 dark:shadow-black/60"
                 aria-label="Navigasi Bawah"
             >
-                <div className="flex items-center justify-around relative">
+                <div className="relative flex items-center justify-around">
                     {/* Tab 1: Beranda */}
                     <Link
                         href="/dashboard"
-                        className={`flex flex-col items-center gap-1 py-1 px-3 transition-colors ${
+                        className={`flex flex-col items-center gap-1 px-3 py-1 transition-colors ${
                             activeTab === 'home'
-                                ? 'text-red-600 dark:text-red-500 font-bold'
-                                : 'text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-200 font-medium'
+                                ? 'font-bold text-red-600 dark:text-red-500'
+                                : 'font-medium text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-200'
                         }`}
                     >
                         <Home className="size-5" />
@@ -427,10 +504,11 @@ export default function CustomerLayout({
                     <Link
                         href="/activities"
                         prefetch
-                        className={`flex flex-col items-center gap-1 py-1 px-3 transition-colors ${
-                            activeTab === 'history' || activeTab === 'activities'
-                                ? 'text-red-600 dark:text-red-500 font-bold'
-                                : 'text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-200 font-medium'
+                        className={`flex flex-col items-center gap-1 px-3 py-1 transition-colors ${
+                            activeTab === 'history' ||
+                            activeTab === 'activities'
+                                ? 'font-bold text-red-600 dark:text-red-500'
+                                : 'font-medium text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-200'
                         }`}
                     >
                         <Clock className="size-5" />
@@ -442,7 +520,7 @@ export default function CustomerLayout({
                         <button
                             type="button"
                             onClick={() => setQrModalOpen(true)}
-                            className="group relative flex size-14 items-center justify-center rounded-full bg-gradient-to-tr from-red-600 via-red-500 to-rose-600 text-white shadow-xl shadow-red-600/40 ring-4 ring-white dark:ring-zinc-900 transition-all hover:scale-105 active:scale-95 cursor-pointer"
+                            className="group relative flex size-14 cursor-pointer items-center justify-center rounded-full bg-gradient-to-tr from-red-600 via-red-500 to-rose-600 text-white shadow-xl ring-4 shadow-red-600/40 ring-white transition-all hover:scale-105 active:scale-95 dark:ring-zinc-900"
                             aria-label="Tunjukkan QR ID Member"
                             title="Tunjukkan QR ID Member"
                         >
@@ -455,10 +533,10 @@ export default function CustomerLayout({
                     <Link
                         href="/rewards"
                         prefetch
-                        className={`flex flex-col items-center gap-1 py-1 px-3 transition-colors ${
+                        className={`flex flex-col items-center gap-1 px-3 py-1 transition-colors ${
                             activeTab === 'rewards'
-                                ? 'text-red-600 dark:text-red-500 font-bold'
-                                : 'text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-200 font-medium'
+                                ? 'font-bold text-red-600 dark:text-red-500'
+                                : 'font-medium text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-200'
                         }`}
                     >
                         <Gift className="size-5" />
@@ -468,10 +546,10 @@ export default function CustomerLayout({
                     {/* Tab 5: Akun / Pengaturan */}
                     <Link
                         href="/settings/profile"
-                        className={`flex flex-col items-center gap-1 py-1 px-3 transition-colors ${
+                        className={`flex flex-col items-center gap-1 px-3 py-1 transition-colors ${
                             activeTab === 'profile'
-                                ? 'text-red-600 dark:text-red-500 font-bold'
-                                : 'text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-200 font-medium'
+                                ? 'font-bold text-red-600 dark:text-red-500'
+                                : 'font-medium text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-200'
                         }`}
                     >
                         <UserIcon className="size-5" />
@@ -484,56 +562,61 @@ export default function CustomerLayout({
             {/* MODAL QR ID MEMBER DIGITAL (POPUP SAAT SCAN ID DIKLIK)                    */}
             {/* ========================================================================= */}
             <Dialog open={qrModalOpen} onOpenChange={setQrModalOpen}>
-                <DialogContent className="w-[92vw] max-w-sm sm:max-w-md max-h-[90vh] overflow-y-auto rounded-3xl border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-4 sm:p-5 gap-3 shadow-2xl">
-                    <DialogHeader className="text-center space-y-1 pb-1">
-                        <div className="inline-flex items-center justify-center gap-1.5 px-2.5 py-0.5 rounded-full bg-red-50 text-red-600 dark:bg-red-950/60 dark:text-red-400 text-[10px] font-bold mx-auto border border-red-200/80 dark:border-red-900/50">
+                <DialogContent className="max-h-[90vh] w-[92vw] max-w-sm gap-3 overflow-y-auto rounded-3xl border-zinc-200 bg-white p-4 shadow-2xl sm:max-w-md sm:p-5 dark:border-zinc-800 dark:bg-zinc-900">
+                    <DialogHeader className="space-y-1 pb-1 text-center">
+                        <div className="mx-auto inline-flex items-center justify-center gap-1.5 rounded-full border border-red-200/80 bg-red-50 px-2.5 py-0.5 text-[10px] font-bold text-red-600 dark:border-red-900/50 dark:bg-red-950/60 dark:text-red-400">
                             <QrCodeIcon className="size-3" />
                             <span>KARTU DIGITAL ID</span>
                         </div>
-                        <DialogTitle className="text-base sm:text-lg font-black text-zinc-900 dark:text-white tracking-tight">
+                        <DialogTitle className="text-base font-black tracking-tight text-zinc-900 sm:text-lg dark:text-white">
                             Digital ID Member
                         </DialogTitle>
-                        <DialogDescription className="text-[11px] text-zinc-500 max-w-xs mx-auto">
-                            Tunjukkan QR ini ke staf kasir AHASS atau dealer saat transaksi
+                        <DialogDescription className="mx-auto max-w-xs text-[11px] text-zinc-500">
+                            Tunjukkan QR ini ke staf kasir AHASS atau dealer
+                            saat transaksi
                         </DialogDescription>
                     </DialogHeader>
 
-                    <div className="flex flex-col items-center text-center space-y-3">
+                    <div className="flex flex-col items-center space-y-3 text-center">
                         {/* Member Identity Preview - Compact */}
-                        <div className="w-full rounded-2xl border border-zinc-200 bg-zinc-50/90 dark:border-zinc-800 dark:bg-zinc-950/60 p-2.5 sm:p-3 text-left">
+                        <div className="w-full rounded-2xl border border-zinc-200 bg-zinc-50/90 p-2.5 text-left sm:p-3 dark:border-zinc-800 dark:bg-zinc-950/60">
                             <div className="flex items-center justify-between gap-2">
                                 <div className="min-w-0">
-                                    <span className="text-[9px] uppercase font-bold text-zinc-400 dark:text-zinc-500 block leading-none mb-1">
+                                    <span className="mb-1 block text-[9px] leading-none font-bold text-zinc-400 uppercase dark:text-zinc-500">
                                         Nama Member
                                     </span>
-                                    <span className="text-xs font-bold text-zinc-900 dark:text-white truncate block">
+                                    <span className="block truncate text-xs font-bold text-zinc-900 dark:text-white">
                                         {user?.name}
                                     </span>
                                 </div>
-                                <span className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-extrabold border shrink-0 ${tierInfo.badgeClass}`}>
+                                <span
+                                    className={`inline-flex shrink-0 items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-extrabold ${tierInfo.badgeClass}`}
+                                >
                                     <Award className="size-2.5 shrink-0" />
                                     {tierInfo.name} Member
                                 </span>
                             </div>
                             <div className="mt-2 flex items-center justify-between border-t border-zinc-200/70 pt-2 dark:border-zinc-800/80">
                                 <div>
-                                    <span className="text-[9px] uppercase font-bold text-zinc-400 dark:text-zinc-500 block leading-none mb-0.5">
+                                    <span className="mb-0.5 block text-[9px] leading-none font-bold text-zinc-400 uppercase dark:text-zinc-500">
                                         10-Digit ID Member
                                     </span>
-                                    <span className="font-mono text-xs sm:text-sm font-black text-red-600 dark:text-red-500 tracking-wider">
+                                    <span className="font-mono text-xs font-black tracking-wider text-red-600 sm:text-sm dark:text-red-500">
                                         {formattedMemberId}
                                     </span>
                                 </div>
                                 <button
                                     type="button"
                                     onClick={handleCopyId}
-                                    className="inline-flex items-center gap-1 px-2 py-1 rounded-lg text-[10px] font-semibold text-zinc-600 dark:text-zinc-300 bg-zinc-200/60 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors"
+                                    className="inline-flex items-center gap-1 rounded-lg bg-zinc-200/60 px-2 py-1 text-[10px] font-semibold text-zinc-600 transition-colors hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-700"
                                     title="Salin ID"
                                 >
                                     {copiedId ? (
                                         <>
                                             <Check className="size-3 text-emerald-500" />
-                                            <span className="text-emerald-600 dark:text-emerald-400 font-bold">Disalin</span>
+                                            <span className="font-bold text-emerald-600 dark:text-emerald-400">
+                                                Disalin
+                                            </span>
                                         </>
                                     ) : (
                                         <>
@@ -546,14 +629,14 @@ export default function CustomerLayout({
                         </div>
 
                         {/* Interactive QR Code Visual (qr-code-styling) */}
-                        <div className="relative w-full max-w-[280px] sm:max-w-[320px] mx-auto p-3 sm:p-4 rounded-3xl bg-white border-2 border-red-500/20 shadow-xl shadow-red-500/10 flex flex-col items-center justify-center">
-                            <div className="w-full aspect-square flex items-center justify-center">
+                        <div className="relative mx-auto flex w-full max-w-[280px] flex-col items-center justify-center rounded-3xl border-2 border-red-500/20 bg-white p-3 shadow-xl shadow-red-500/10 sm:max-w-[320px] sm:p-4">
+                            <div className="flex aspect-square w-full items-center justify-center">
                                 <QrCode
                                     ref={qrCodeRef}
                                     data={`HND-MEMBER-${rawId}`}
                                     width={320}
                                     height={320}
-                                    className="w-full h-full flex items-center justify-center"
+                                    className="flex h-full w-full items-center justify-center"
                                     image="/images/logo/honda_logo_red.png"
                                     dotsColor="#DC2626"
                                     dotsType="rounded"
@@ -561,22 +644,27 @@ export default function CustomerLayout({
                                     cornersDotType="dot"
                                 />
                             </div>
-                            <div className="mt-2 text-[11px] sm:text-xs font-mono text-zinc-600 font-bold tracking-wider">
+                            <div className="mt-2 font-mono text-[11px] font-bold tracking-wider text-zinc-600 sm:text-xs">
                                 SCAN ID: HND-{rawId}
                             </div>
                         </div>
                     </div>
 
                     {/* Action Buttons: 2 cols on mobile, 1 flex row on sm+ */}
-                    <div className="grid grid-cols-2 sm:flex sm:items-center gap-2 pt-1">
+                    <div className="grid grid-cols-2 gap-2 pt-1 sm:flex sm:items-center">
                         <Button
                             type="button"
-                            onClick={() => qrCodeRef.current?.download(`honda-member-${rawId}`, 'png')}
+                            onClick={() =>
+                                qrCodeRef.current?.download(
+                                    `honda-member-${rawId}`,
+                                    'png',
+                                )
+                            }
                             variant="outline"
                             size="sm"
-                            className="h-9 rounded-xl text-xs font-semibold border-zinc-300 dark:border-zinc-700 hover:border-red-500 hover:text-red-600 dark:hover:border-red-500 dark:hover:text-red-400"
+                            className="h-9 rounded-xl border-zinc-300 text-xs font-semibold hover:border-red-500 hover:text-red-600 dark:border-zinc-700 dark:hover:border-red-500 dark:hover:text-red-400"
                         >
-                            <Download className="size-3.5 mr-1" />
+                            <Download className="mr-1 size-3.5" />
                             Unduh QR
                         </Button>
                         <Button
@@ -584,16 +672,16 @@ export default function CustomerLayout({
                             onClick={handleCopyId}
                             variant="outline"
                             size="sm"
-                            className="h-9 rounded-xl text-xs font-semibold border-zinc-300 dark:border-zinc-700"
+                            className="h-9 rounded-xl border-zinc-300 text-xs font-semibold dark:border-zinc-700"
                         >
                             {copiedId ? (
                                 <>
-                                    <Check className="size-3.5 text-emerald-500 mr-1" />
+                                    <Check className="mr-1 size-3.5 text-emerald-500" />
                                     Tersalin!
                                 </>
                             ) : (
                                 <>
-                                    <Copy className="size-3.5 mr-1" />
+                                    <Copy className="mr-1 size-3.5" />
                                     Salin ID
                                 </>
                             )}
@@ -602,7 +690,7 @@ export default function CustomerLayout({
                             type="button"
                             onClick={() => setQrModalOpen(false)}
                             size="sm"
-                            className="col-span-2 sm:col-span-1 h-9 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-bold px-4 shadow-sm shadow-red-600/20"
+                            className="col-span-2 h-9 rounded-xl bg-red-600 px-4 text-xs font-bold text-white shadow-sm shadow-red-600/20 hover:bg-red-700 sm:col-span-1"
                         >
                             Tutup
                         </Button>

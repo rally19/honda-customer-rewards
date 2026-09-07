@@ -31,4 +31,3 @@ export type NotificationItem = {
     points?: number | null;
     status?: string | null;
 };
-

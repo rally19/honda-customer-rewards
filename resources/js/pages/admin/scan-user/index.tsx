@@ -129,10 +129,14 @@ export default function AdminScanUserIndex({
     const [inputMode, setInputMode] = useState<'scanner' | 'manual'>('scanner');
     const [scannerError, setScannerError] = useState<string | null>(null);
     const [isCameraActive, setIsCameraActive] = useState(false);
-    const [facingMode, setFacingMode] = useState<'environment' | 'user'>('environment');
+    const [facingMode, setFacingMode] = useState<'environment' | 'user'>(
+        'environment',
+    );
 
     const toggleFacingMode = () => {
-        setFacingMode((prev) => (prev === 'environment' ? 'user' : 'environment'));
+        setFacingMode((prev) =>
+            prev === 'environment' ? 'user' : 'environment',
+        );
     };
 
     // 2. Manual Input Query
@@ -141,16 +145,24 @@ export default function AdminScanUserIndex({
     // 3. Looked-up Member state
     const [isSearching, setIsSearching] = useState(false);
     const [member, setMember] = useState<MemberData | null>(initialMember);
-    const [memberClaims, setMemberClaims] = useState<ClaimItem[]>(initialClaims);
-    const [memberStats, setMemberStats] = useState<MemberStats | null>(initialMemberStats);
+    const [memberClaims, setMemberClaims] =
+        useState<ClaimItem[]>(initialClaims);
+    const [memberStats, setMemberStats] = useState<MemberStats | null>(
+        initialMemberStats,
+    );
     const [searchError, setSearchError] = useState<string | null>(null);
 
     // 4. Filter status for claims
-    const [claimFilter, setClaimFilter] = useState<'all' | 'hold' | 'claimed' | 'rejected'>('all');
+    const [claimFilter, setClaimFilter] = useState<
+        'all' | 'hold' | 'claimed' | 'rejected'
+    >('all');
 
     // 5. Modals (Detail, Approve, Reject)
-    const [selectedClaimDetail, setSelectedClaimDetail] = useState<ClaimItem | null>(null);
-    const [claimToApprove, setClaimToApprove] = useState<ClaimItem | null>(null);
+    const [selectedClaimDetail, setSelectedClaimDetail] =
+        useState<ClaimItem | null>(null);
+    const [claimToApprove, setClaimToApprove] = useState<ClaimItem | null>(
+        null,
+    );
     const [claimToReject, setClaimToReject] = useState<ClaimItem | null>(null);
     const [actionNotes, setActionNotes] = useState('');
     const [isActionProcessing, setIsActionProcessing] = useState(false);
@@ -169,7 +181,9 @@ export default function AdminScanUserIndex({
     // Get CSRF token
     const getCsrfToken = (): string => {
         if (typeof document === 'undefined') return '';
-        const meta = document.querySelector('meta[name="csrf-token"]') as HTMLMetaElement | null;
+        const meta = document.querySelector(
+            'meta[name="csrf-token"]',
+        ) as HTMLMetaElement | null;
         if (meta?.content) return meta.content;
         const match = document.cookie.match(/XSRF-TOKEN=([^;]+)/);
         return match ? decodeURIComponent(match[1]) : '';
@@ -207,11 +221,17 @@ export default function AdminScanUserIndex({
 
                 if (typeof window !== 'undefined' && window.innerWidth < 1024) {
                     setTimeout(() => {
-                        memberCardRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                        memberCardRef.current?.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'nearest',
+                        });
                     }, 100);
                 }
             } else {
-                setSearchError(data.message || 'Member tidak ditemukan. Pastikan ID atau QR sesuai.');
+                setSearchError(
+                    data.message ||
+                        'Member tidak ditemukan. Pastikan ID atau QR sesuai.',
+                );
                 toast.error(data.message || 'Member tidak ditemukan');
             }
         } catch {
@@ -227,7 +247,11 @@ export default function AdminScanUserIndex({
         try {
             const AudioCtx =
                 window.AudioContext ||
-                (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+                (
+                    window as unknown as {
+                        webkitAudioContext: typeof AudioContext;
+                    }
+                ).webkitAudioContext;
             if (!AudioCtx) return;
             const ctx = new AudioCtx();
             const osc = ctx.createOscillator();
@@ -236,7 +260,10 @@ export default function AdminScanUserIndex({
             gain.connect(ctx.destination);
             osc.frequency.value = 880; // A5
             gain.gain.setValueAtTime(0.1, ctx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.15);
+            gain.gain.exponentialRampToValueAtTime(
+                0.001,
+                ctx.currentTime + 0.15,
+            );
             osc.start();
             osc.stop(ctx.currentTime + 0.15);
 
@@ -256,7 +283,10 @@ export default function AdminScanUserIndex({
         const rawVal = detectedCodes[0].rawValue?.trim();
         if (!rawVal) return;
 
-        if (member && (member.id === rawVal || `HND-MEMBER-${member.id}` === rawVal)) {
+        if (
+            member &&
+            (member.id === rawVal || `HND-MEMBER-${member.id}` === rawVal)
+        ) {
             return;
         }
 
@@ -292,11 +322,17 @@ export default function AdminScanUserIndex({
 
         router.post(
             `/admin/rewards/exchanges/${claimToApprove.id}/approve`,
-            { admin_notes: actionNotes.trim() || 'Disetujui melalui Scan / Input User AHASS.' },
+            {
+                admin_notes:
+                    actionNotes.trim() ||
+                    'Disetujui melalui Scan / Input User AHASS.',
+            },
             {
                 preserveScroll: true,
                 onSuccess: () => {
-                    toast.success(`Klaim #${claimToApprove.id} berhasil disetujui! Hadiah dapat diserahkan.`);
+                    toast.success(
+                        `Klaim #${claimToApprove.id} berhasil disetujui! Hadiah dapat diserahkan.`,
+                    );
                     setClaimToApprove(null);
                     setActionNotes('');
                     // Re-lookup member to update claims & stats
@@ -310,7 +346,7 @@ export default function AdminScanUserIndex({
                 onFinish: () => {
                     setIsActionProcessing(false);
                 },
-            }
+            },
         );
     };
 
@@ -321,11 +357,17 @@ export default function AdminScanUserIndex({
 
         router.post(
             `/admin/rewards/exchanges/${claimToReject.id}/reject`,
-            { admin_notes: actionNotes.trim() || 'Ditolak melalui Scan / Input User AHASS.' },
+            {
+                admin_notes:
+                    actionNotes.trim() ||
+                    'Ditolak melalui Scan / Input User AHASS.',
+            },
             {
                 preserveScroll: true,
                 onSuccess: () => {
-                    toast.success(`Klaim #${claimToReject.id} ditolak. Poin & stok dikembalikan.`);
+                    toast.success(
+                        `Klaim #${claimToReject.id} ditolak. Poin & stok dikembalikan.`,
+                    );
                     setClaimToReject(null);
                     setActionNotes('');
                     // Re-lookup member to update claims & stats
@@ -339,7 +381,7 @@ export default function AdminScanUserIndex({
                 onFinish: () => {
                     setIsActionProcessing(false);
                 },
-            }
+            },
         );
     };
 
@@ -365,29 +407,29 @@ export default function AdminScanUserIndex({
         switch (status) {
             case 'hold':
                 return (
-                    <Badge className="bg-amber-100 text-amber-800 dark:bg-amber-950/80 dark:text-amber-300 border border-amber-300 dark:border-amber-700 font-bold text-[11px] px-2.5 py-0.5">
-                        <Clock className="size-3 mr-1" />
+                    <Badge className="border border-amber-300 bg-amber-100 px-2.5 py-0.5 text-[11px] font-bold text-amber-800 dark:border-amber-700 dark:bg-amber-950/80 dark:text-amber-300">
+                        <Clock className="mr-1 size-3" />
                         Menunggu Verifikasi
                     </Badge>
                 );
             case 'claimed':
                 return (
-                    <Badge className="bg-emerald-100 text-emerald-800 dark:bg-emerald-950/80 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-700 font-bold text-[11px] px-2.5 py-0.5">
-                        <CheckCircle2 className="size-3 mr-1" />
+                    <Badge className="border border-emerald-300 bg-emerald-100 px-2.5 py-0.5 text-[11px] font-bold text-emerald-800 dark:border-emerald-700 dark:bg-emerald-950/80 dark:text-emerald-300">
+                        <CheckCircle2 className="mr-1 size-3" />
                         Disetujui / Diserahkan
                     </Badge>
                 );
             case 'rejected':
                 return (
-                    <Badge className="bg-rose-100 text-rose-800 dark:bg-rose-950/80 dark:text-rose-300 border border-rose-300 dark:border-rose-700 font-bold text-[11px] px-2.5 py-0.5">
-                        <XCircle className="size-3 mr-1" />
+                    <Badge className="border border-rose-300 bg-rose-100 px-2.5 py-0.5 text-[11px] font-bold text-rose-800 dark:border-rose-700 dark:bg-rose-950/80 dark:text-rose-300">
+                        <XCircle className="mr-1 size-3" />
                         Ditolak
                     </Badge>
                 );
             case 'cancelled':
                 return (
-                    <Badge className="bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-400 border border-zinc-300 dark:border-zinc-700 font-medium text-[11px] px-2.5 py-0.5">
-                        <AlertCircle className="size-3 mr-1" />
+                    <Badge className="border border-zinc-300 bg-zinc-100 px-2.5 py-0.5 text-[11px] font-medium text-zinc-700 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-400">
+                        <AlertCircle className="mr-1 size-3" />
                         Dibatalkan
                     </Badge>
                 );
@@ -400,10 +442,14 @@ export default function AdminScanUserIndex({
     const filteredClaims = useMemo(() => {
         if (!memberClaims) return [];
         if (claimFilter === 'all') return memberClaims;
-        if (claimFilter === 'hold') return memberClaims.filter((c) => c.status === 'hold');
-        if (claimFilter === 'claimed') return memberClaims.filter((c) => c.status === 'claimed');
+        if (claimFilter === 'hold')
+            return memberClaims.filter((c) => c.status === 'hold');
+        if (claimFilter === 'claimed')
+            return memberClaims.filter((c) => c.status === 'claimed');
         if (claimFilter === 'rejected')
-            return memberClaims.filter((c) => c.status === 'rejected' || c.status === 'cancelled');
+            return memberClaims.filter(
+                (c) => c.status === 'rejected' || c.status === 'cancelled',
+            );
         return memberClaims;
     }, [memberClaims, claimFilter]);
 
@@ -411,48 +457,51 @@ export default function AdminScanUserIndex({
         <>
             <Head title="Scan & Verifikasi Klaim Reward Member - Admin AHASS" />
 
-            <div className="space-y-6 md:space-y-8 p-3 sm:p-5 md:p-6 max-w-7xl mx-auto">
+            <div className="mx-auto max-w-7xl space-y-6 p-3 sm:p-5 md:space-y-8 md:p-6">
                 {/* Header Title Banner */}
-                <div className="relative overflow-hidden rounded-3xl bg-linear-to-r from-red-600 via-red-700 to-zinc-900 p-5 sm:p-6 md:p-8 text-white shadow-xl shadow-red-600/15">
-                    <div className="absolute right-0 top-0 -mr-16 -mt-16 size-64 rounded-full bg-white/5 blur-2xl pointer-events-none" />
-                    <div className="relative z-10 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                <div className="relative overflow-hidden rounded-3xl bg-linear-to-r from-red-600 via-red-700 to-zinc-900 p-5 text-white shadow-xl shadow-red-600/15 sm:p-6 md:p-8">
+                    <div className="pointer-events-none absolute top-0 right-0 -mt-16 -mr-16 size-64 rounded-full bg-white/5 blur-2xl" />
+                    <div className="relative z-10 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                         <div className="space-y-2">
-                            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/15 backdrop-blur-md text-[11px] sm:text-xs font-semibold tracking-wider uppercase text-red-100 border border-white/20">
+                            <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/15 px-3 py-1 text-[11px] font-semibold tracking-wider text-red-100 uppercase backdrop-blur-md sm:text-xs">
                                 <UserCheck className="size-3.5" />
                                 Official AHASS Reward Verification
                             </div>
-                            <h1 className="text-xl sm:text-2xl md:text-3xl font-black tracking-tight">
+                            <h1 className="text-xl font-black tracking-tight sm:text-2xl md:text-3xl">
                                 Scan QR & Input User (Klaim Reward)
                             </h1>
-                            <p className="text-red-100/80 text-xs sm:text-sm max-w-2xl leading-relaxed">
-                                Identifikasi profil member pelanggan secara detail dan verifikasi serah terima hadiah reward Honda & AHASS dengan memindai QR Member atau mengetik 10 digit ID.
+                            <p className="max-w-2xl text-xs leading-relaxed text-red-100/80 sm:text-sm">
+                                Identifikasi profil member pelanggan secara
+                                detail dan verifikasi serah terima hadiah reward
+                                Honda & AHASS dengan memindai QR Member atau
+                                mengetik 10 digit ID.
                             </p>
                         </div>
 
-                        <div className="grid grid-cols-3 sm:flex sm:items-center gap-2.5 shrink-0 bg-black/20 backdrop-blur-md p-3 rounded-2xl border border-white/15">
+                        <div className="grid shrink-0 grid-cols-3 gap-2.5 rounded-2xl border border-white/15 bg-black/20 p-3 backdrop-blur-md sm:flex sm:items-center">
                             <div className="px-3 py-1 text-center">
                                 <div className="text-lg font-black text-amber-300">
                                     {stats.holdClaims}
                                 </div>
-                                <div className="text-[10px] uppercase font-bold text-red-200">
+                                <div className="text-[10px] font-bold text-red-200 uppercase">
                                     Menunggu Hold
                                 </div>
                             </div>
-                            <div className="w-px h-8 bg-white/20 hidden sm:block" />
+                            <div className="hidden h-8 w-px bg-white/20 sm:block" />
                             <div className="px-3 py-1 text-center">
                                 <div className="text-lg font-black text-white">
                                     {stats.totalClaims}
                                 </div>
-                                <div className="text-[10px] uppercase font-bold text-red-200">
+                                <div className="text-[10px] font-bold text-red-200 uppercase">
                                     Total Klaim
                                 </div>
                             </div>
-                            <div className="w-px h-8 bg-white/20 hidden sm:block" />
+                            <div className="hidden h-8 w-px bg-white/20 sm:block" />
                             <div className="px-3 py-1 text-center">
                                 <div className="text-lg font-black text-emerald-300">
                                     {stats.claimedCount}
                                 </div>
-                                <div className="text-[10px] uppercase font-bold text-red-200">
+                                <div className="text-[10px] font-bold text-red-200 uppercase">
                                     Diserahkan
                                 </div>
                             </div>
@@ -461,35 +510,36 @@ export default function AdminScanUserIndex({
                 </div>
 
                 {/* Main 2-Column Content Layout */}
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-12">
                     {/* Left Column: Scanner & Identifikasi Member (5 Cols) */}
-                    <div className="lg:col-span-5 space-y-6 lg:sticky lg:top-6 self-start">
+                    <div className="space-y-6 self-start lg:sticky lg:top-6 lg:col-span-5">
                         {/* Box 1: Mode Identifikasi (Scan Kamera / Ketik Manual) */}
-                        <div className="rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-4 sm:p-5 md:p-6 shadow-xs space-y-4">
-                            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                        <div className="space-y-4 rounded-3xl border border-zinc-200 bg-white p-4 shadow-xs sm:p-5 md:p-6 dark:border-zinc-800 dark:bg-zinc-900">
+                            <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-center">
                                 <div className="flex items-center gap-2.5">
                                     <span className="flex size-7 items-center justify-center rounded-xl bg-red-600 text-xs font-bold text-white shadow-xs">
                                         1
                                     </span>
                                     <div>
-                                        <h2 className="font-bold text-zinc-900 dark:text-zinc-100 text-sm sm:text-base">
+                                        <h2 className="text-sm font-bold text-zinc-900 sm:text-base dark:text-zinc-100">
                                             Identifikasi Member
                                         </h2>
                                         <p className="text-xs text-zinc-500">
-                                            Pindai QR kamera ponsel member atau ketik 10 digit ID
+                                            Pindai QR kamera ponsel member atau
+                                            ketik 10 digit ID
                                         </p>
                                     </div>
                                 </div>
 
                                 {/* Mode Switcher Tabs */}
-                                <div className="grid grid-cols-2 p-1 rounded-xl bg-zinc-100 dark:bg-zinc-800 gap-1 sm:flex sm:w-auto">
+                                <div className="grid grid-cols-2 gap-1 rounded-xl bg-zinc-100 p-1 sm:flex sm:w-auto dark:bg-zinc-800">
                                     <button
                                         type="button"
                                         onClick={() => setInputMode('scanner')}
-                                        className={`flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-semibold transition-all h-9 sm:h-auto cursor-pointer ${
+                                        className={`flex h-9 cursor-pointer items-center justify-center gap-1.5 rounded-lg px-3 py-2 text-xs font-semibold transition-all sm:h-auto ${
                                             inputMode === 'scanner'
-                                                ? 'bg-white dark:bg-zinc-900 text-red-600 dark:text-red-400 shadow-xs'
-                                                : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900'
+                                                ? 'bg-white text-red-600 shadow-xs dark:bg-zinc-900 dark:text-red-400'
+                                                : 'text-zinc-600 hover:text-zinc-900 dark:text-zinc-400'
                                         }`}
                                     >
                                         <Camera className="size-3.5" />
@@ -498,10 +548,10 @@ export default function AdminScanUserIndex({
                                     <button
                                         type="button"
                                         onClick={() => setInputMode('manual')}
-                                        className={`flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-semibold transition-all h-9 sm:h-auto cursor-pointer ${
+                                        className={`flex h-9 cursor-pointer items-center justify-center gap-1.5 rounded-lg px-3 py-2 text-xs font-semibold transition-all sm:h-auto ${
                                             inputMode === 'manual'
-                                                ? 'bg-white dark:bg-zinc-900 text-red-600 dark:text-red-400 shadow-xs'
-                                                : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900'
+                                                ? 'bg-white text-red-600 shadow-xs dark:bg-zinc-900 dark:text-red-400'
+                                                : 'text-zinc-600 hover:text-zinc-900 dark:text-zinc-400'
                                         }`}
                                     >
                                         <Keyboard className="size-3.5" />
@@ -513,7 +563,7 @@ export default function AdminScanUserIndex({
                             {/* TAB 1: SCANNER KAMERA (@yudiel/react-qr-scanner) */}
                             {inputMode === 'scanner' ? (
                                 <div className="space-y-3">
-                                    <div className="relative w-full max-w-xl mx-auto overflow-hidden rounded-2xl sm:rounded-3xl bg-zinc-950 aspect-square sm:aspect-[4/3] flex flex-col items-center justify-center border-2 border-dashed border-red-500/30 shadow-inner">
+                                    <div className="relative mx-auto flex aspect-square w-full max-w-xl flex-col items-center justify-center overflow-hidden rounded-2xl border-2 border-dashed border-red-500/30 bg-zinc-950 shadow-inner sm:aspect-[4/3] sm:rounded-3xl">
                                         <ErrorBoundary
                                             name="Kamera Scanner QR Member"
                                             onReset={() => {
@@ -521,29 +571,37 @@ export default function AdminScanUserIndex({
                                                 setIsCameraActive(true);
                                             }}
                                             fallback={(err, reset) => (
-                                                <div className="text-center p-6 space-y-3 text-zinc-300 max-w-sm">
-                                                    <CameraOff className="size-10 mx-auto text-amber-500 opacity-80" />
+                                                <div className="max-w-sm space-y-3 p-6 text-center text-zinc-300">
+                                                    <CameraOff className="mx-auto size-10 text-amber-500 opacity-80" />
                                                     <div className="space-y-1">
-                                                        <h4 className="font-bold text-sm text-white">
-                                                            Kamera Tidak Dapat Dimuat
+                                                        <h4 className="text-sm font-bold text-white">
+                                                            Kamera Tidak Dapat
+                                                            Dimuat
                                                         </h4>
                                                         <p className="text-xs text-zinc-400">
-                                                            Izin akses kamera belum diberikan atau browser membatasi media stream.
+                                                            Izin akses kamera
+                                                            belum diberikan atau
+                                                            browser membatasi
+                                                            media stream.
                                                         </p>
                                                     </div>
-                                                    <div className="flex gap-2 justify-center pt-2">
+                                                    <div className="flex justify-center gap-2 pt-2">
                                                         <Button
                                                             size="sm"
                                                             variant="outline"
                                                             onClick={reset}
-                                                            className="text-xs rounded-xl"
+                                                            className="rounded-xl text-xs"
                                                         >
                                                             Coba Lagi
                                                         </Button>
                                                         <Button
                                                             size="sm"
-                                                            onClick={() => setInputMode('manual')}
-                                                            className="text-xs rounded-xl bg-red-600 text-white hover:bg-red-700"
+                                                            onClick={() =>
+                                                                setInputMode(
+                                                                    'manual',
+                                                                )
+                                                            }
+                                                            className="rounded-xl bg-red-600 text-xs text-white hover:bg-red-700"
                                                         >
                                                             Ketik Manual
                                                         </Button>
@@ -552,22 +610,31 @@ export default function AdminScanUserIndex({
                                             )}
                                         >
                                             {isCameraActive && isMounted ? (
-                                                <div className="w-full h-full relative">
+                                                <div className="relative h-full w-full">
                                                     <Scanner
                                                         key={facingMode}
                                                         onScan={handleQrScan}
-                                                        constraints={{ facingMode }}
+                                                        constraints={{
+                                                            facingMode,
+                                                        }}
                                                         onError={(error) => {
                                                             setScannerError(
-                                                                error instanceof Error
+                                                                error instanceof
+                                                                    Error
                                                                     ? error.message
-                                                                    : 'Gagal membuka video stream kamera'
+                                                                    : 'Gagal membuka video stream kamera',
                                                             );
                                                         }}
                                                         formats={['qr_code']}
                                                         styles={{
-                                                            container: { width: '100%', height: '100%' },
-                                                            video: { objectFit: 'cover' },
+                                                            container: {
+                                                                width: '100%',
+                                                                height: '100%',
+                                                            },
+                                                            video: {
+                                                                objectFit:
+                                                                    'cover',
+                                                            },
                                                         }}
                                                     />
 
@@ -575,48 +642,73 @@ export default function AdminScanUserIndex({
                                                     <div className="absolute top-3 right-3 z-20">
                                                         <button
                                                             type="button"
-                                                            onClick={toggleFacingMode}
-                                                            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full bg-black/65 hover:bg-black/85 text-white backdrop-blur-md border border-white/20 text-[11px] font-semibold shadow-lg transition-all active:scale-95 cursor-pointer"
+                                                            onClick={
+                                                                toggleFacingMode
+                                                            }
+                                                            className="flex cursor-pointer items-center gap-1.5 rounded-full border border-white/20 bg-black/65 px-2.5 py-1.5 text-[11px] font-semibold text-white shadow-lg backdrop-blur-md transition-all hover:bg-black/85 active:scale-95"
                                                             title={`Beralih ke Kamera ${facingMode === 'environment' ? 'Depan' : 'Belakang'}`}
                                                         >
                                                             <SwitchCamera className="size-3.5 text-amber-400" />
-                                                            <span>{facingMode === 'environment' ? 'Kamera Belakang' : 'Kamera Depan'}</span>
+                                                            <span>
+                                                                {facingMode ===
+                                                                'environment'
+                                                                    ? 'Kamera Belakang'
+                                                                    : 'Kamera Depan'}
+                                                            </span>
                                                         </button>
                                                     </div>
 
                                                     {/* Scanner Target Guide Overlay */}
                                                     <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-                                                        <div className="relative size-48 sm:size-60 md:size-64 rounded-2xl sm:rounded-3xl border-2 border-red-500/70 shadow-2xl">
-                                                            <div className="absolute -top-1 -left-1 size-5 border-t-4 border-l-4 border-red-500 rounded-tl-md" />
-                                                            <div className="absolute -top-1 -right-1 size-5 border-t-4 border-r-4 border-red-500 rounded-tr-md" />
-                                                            <div className="absolute -bottom-1 -left-1 size-5 border-b-4 border-l-4 border-red-500 rounded-bl-md" />
-                                                            <div className="absolute -bottom-1 -right-1 size-5 border-b-4 border-r-4 border-red-500 rounded-br-md" />
-                                                            <div className="absolute inset-x-2 top-1/2 h-0.5 bg-red-500/80 animate-pulse" />
+                                                        <div className="relative size-48 rounded-2xl border-2 border-red-500/70 shadow-2xl sm:size-60 sm:rounded-3xl md:size-64">
+                                                            <div className="absolute -top-1 -left-1 size-5 rounded-tl-md border-t-4 border-l-4 border-red-500" />
+                                                            <div className="absolute -top-1 -right-1 size-5 rounded-tr-md border-t-4 border-r-4 border-red-500" />
+                                                            <div className="absolute -bottom-1 -left-1 size-5 rounded-bl-md border-b-4 border-l-4 border-red-500" />
+                                                            <div className="absolute -right-1 -bottom-1 size-5 rounded-br-md border-r-4 border-b-4 border-red-500" />
+                                                            <div className="absolute inset-x-2 top-1/2 h-0.5 animate-pulse bg-red-500/80" />
                                                         </div>
                                                     </div>
 
                                                     {/* Scanning status banner with Switch & Pause actions */}
-                                                    <div className="absolute bottom-3 inset-x-4 flex items-center justify-between rounded-xl bg-black/75 px-3 py-1.5 text-xs text-white backdrop-blur-md border border-white/10 shadow-lg z-20">
+                                                    <div className="absolute inset-x-4 bottom-3 z-20 flex items-center justify-between rounded-xl border border-white/10 bg-black/75 px-3 py-1.5 text-xs text-white shadow-lg backdrop-blur-md">
                                                         <div className="flex items-center gap-2">
-                                                            <span className="size-2 rounded-full bg-emerald-400 animate-ping" />
-                                                            <span className="text-[11px] font-medium">Mencari QR ID Member...</span>
+                                                            <span className="size-2 animate-ping rounded-full bg-emerald-400" />
+                                                            <span className="text-[11px] font-medium">
+                                                                Mencari QR ID
+                                                                Member...
+                                                            </span>
                                                         </div>
                                                         <div className="flex items-center gap-2.5">
                                                             <button
                                                                 type="button"
-                                                                onClick={toggleFacingMode}
-                                                                className="text-zinc-300 hover:text-white text-[11px] flex items-center gap-1 cursor-pointer"
+                                                                onClick={
+                                                                    toggleFacingMode
+                                                                }
+                                                                className="flex cursor-pointer items-center gap-1 text-[11px] text-zinc-300 hover:text-white"
                                                                 title={`Beralih ke Kamera ${facingMode === 'environment' ? 'Depan' : 'Belakang'}`}
                                                             >
                                                                 <SwitchCamera className="size-3 text-amber-400" />
-                                                                <span className="hidden sm:inline">Kamera:</span>
-                                                                <span>{facingMode === 'environment' ? 'Belakang' : 'Depan'}</span>
+                                                                <span className="hidden sm:inline">
+                                                                    Kamera:
+                                                                </span>
+                                                                <span>
+                                                                    {facingMode ===
+                                                                    'environment'
+                                                                        ? 'Belakang'
+                                                                        : 'Depan'}
+                                                                </span>
                                                             </button>
-                                                            <span className="text-zinc-600">|</span>
+                                                            <span className="text-zinc-600">
+                                                                |
+                                                            </span>
                                                             <button
                                                                 type="button"
-                                                                onClick={() => setIsCameraActive(false)}
-                                                                className="text-zinc-300 hover:text-white text-[11px] underline cursor-pointer"
+                                                                onClick={() =>
+                                                                    setIsCameraActive(
+                                                                        false,
+                                                                    )
+                                                                }
+                                                                className="cursor-pointer text-[11px] text-zinc-300 underline hover:text-white"
                                                             >
                                                                 Pause
                                                             </button>
@@ -624,20 +716,28 @@ export default function AdminScanUserIndex({
                                                     </div>
                                                 </div>
                                             ) : (
-                                                <div className="text-center p-6 space-y-3">
-                                                    <CameraOff className="size-10 mx-auto text-zinc-500 opacity-80" />
+                                                <div className="space-y-3 p-6 text-center">
+                                                    <CameraOff className="mx-auto size-10 text-zinc-500 opacity-80" />
                                                     <div className="space-y-1">
                                                         <p className="text-xs font-semibold text-zinc-300">
-                                                            Kamera sedang dijeda.
+                                                            Kamera sedang
+                                                            dijeda.
                                                         </p>
                                                         <p className="text-[11px] text-zinc-500">
-                                                            Klik tombol di bawah untuk mengaktifkan pemindaian QR kamera.
+                                                            Klik tombol di bawah
+                                                            untuk mengaktifkan
+                                                            pemindaian QR
+                                                            kamera.
                                                         </p>
                                                     </div>
                                                     <Button
                                                         size="sm"
-                                                        onClick={() => setIsCameraActive(true)}
-                                                        className="rounded-xl text-xs bg-red-600 text-white hover:bg-red-700 font-semibold cursor-pointer"
+                                                        onClick={() =>
+                                                            setIsCameraActive(
+                                                                true,
+                                                            )
+                                                        }
+                                                        className="cursor-pointer rounded-xl bg-red-600 text-xs font-semibold text-white hover:bg-red-700"
                                                     >
                                                         Aktifkan Kamera
                                                     </Button>
@@ -647,16 +747,19 @@ export default function AdminScanUserIndex({
                                     </div>
 
                                     {scannerError && (
-                                        <div className="p-3 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 text-xs text-amber-800 dark:text-amber-300 flex items-start gap-2">
-                                            <AlertCircle className="size-4 shrink-0 mt-0.5" />
+                                        <div className="flex items-start gap-2 rounded-xl border border-amber-200 bg-amber-50 p-3 text-xs text-amber-800 dark:border-amber-800 dark:bg-amber-950/40 dark:text-amber-300">
+                                            <AlertCircle className="mt-0.5 size-4 shrink-0" />
                                             <div className="flex-1">
                                                 <span>{scannerError}</span>
                                                 <button
                                                     type="button"
-                                                    onClick={() => setInputMode('manual')}
-                                                    className="block font-bold underline mt-1 text-red-600 hover:text-red-700"
+                                                    onClick={() =>
+                                                        setInputMode('manual')
+                                                    }
+                                                    className="mt-1 block font-bold text-red-600 underline hover:text-red-700"
                                                 >
-                                                    Beralih ke Input Ketik Manual
+                                                    Beralih ke Input Ketik
+                                                    Manual
                                                 </button>
                                             </div>
                                         </div>
@@ -664,49 +767,62 @@ export default function AdminScanUserIndex({
                                 </div>
                             ) : (
                                 /* TAB 2: INPUT KETIK MANUAL */
-                                <form onSubmit={handleManualSearch} className="space-y-3">
+                                <form
+                                    onSubmit={handleManualSearch}
+                                    className="space-y-3"
+                                >
                                     <div>
                                         <Label
                                             htmlFor="manualId"
                                             className="text-xs font-semibold text-zinc-700 dark:text-zinc-300"
                                         >
-                                            Masukkan 10 Digit ID Member Honda / Email / No. HP
+                                            Masukkan 10 Digit ID Member Honda /
+                                            Email / No. HP
                                         </Label>
-                                        <div className="flex flex-col sm:flex-row gap-2 mt-1.5">
+                                        <div className="mt-1.5 flex flex-col gap-2 sm:flex-row">
                                             <div className="relative flex-1">
-                                                <User className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-zinc-400" />
+                                                <User className="absolute top-1/2 left-3.5 size-4 -translate-y-1/2 text-zinc-400" />
                                                 <Input
                                                     id="manualId"
                                                     type="text"
                                                     placeholder="Contoh: 8844766994 atau email member"
                                                     value={manualIdInput}
-                                                    onChange={(e) => setManualIdInput(e.target.value)}
-                                                    className="pl-10 font-mono tracking-wider rounded-xl text-sm h-11"
+                                                    onChange={(e) =>
+                                                        setManualIdInput(
+                                                            e.target.value,
+                                                        )
+                                                    }
+                                                    className="h-11 rounded-xl pl-10 font-mono text-sm tracking-wider"
                                                     autoFocus
                                                 />
                                             </div>
                                             <Button
                                                 type="submit"
-                                                disabled={isSearching || !manualIdInput.trim()}
-                                                className="bg-red-600 hover:bg-red-700 text-white rounded-xl px-5 font-semibold text-xs h-11 shrink-0 cursor-pointer shadow-md shadow-red-600/20 active:scale-95 transition-all"
+                                                disabled={
+                                                    isSearching ||
+                                                    !manualIdInput.trim()
+                                                }
+                                                className="h-11 shrink-0 cursor-pointer rounded-xl bg-red-600 px-5 text-xs font-semibold text-white shadow-md shadow-red-600/20 transition-all hover:bg-red-700 active:scale-95"
                                             >
                                                 {isSearching ? (
-                                                    <RefreshCw className="size-3.5 animate-spin mr-1.5" />
+                                                    <RefreshCw className="mr-1.5 size-3.5 animate-spin" />
                                                 ) : (
-                                                    <Search className="size-3.5 mr-1.5" />
+                                                    <Search className="mr-1.5 size-3.5" />
                                                 )}
                                                 Cari Member
                                             </Button>
                                         </div>
-                                        <p className="text-[11px] text-zinc-500 dark:text-zinc-400 mt-1.5">
-                                            Mendukung ID angka 10-digit (misal: <code>8844766994</code>), email, atau nomor HP terdaftar.
+                                        <p className="mt-1.5 text-[11px] text-zinc-500 dark:text-zinc-400">
+                                            Mendukung ID angka 10-digit (misal:{' '}
+                                            <code>8844766994</code>), email,
+                                            atau nomor HP terdaftar.
                                         </p>
                                     </div>
                                 </form>
                             )}
 
                             {searchError && (
-                                <div className="p-3 rounded-xl bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900/60 text-xs text-red-700 dark:text-red-400 flex items-center justify-between gap-2">
+                                <div className="flex items-center justify-between gap-2 rounded-xl border border-red-200 bg-red-50 p-3 text-xs text-red-700 dark:border-red-900/60 dark:bg-red-950/40 dark:text-red-400">
                                     <div className="flex items-center gap-2">
                                         <AlertCircle className="size-4 shrink-0" />
                                         <span>{searchError}</span>
@@ -723,38 +839,41 @@ export default function AdminScanUserIndex({
                         </div>
 
                         {/* Live Feed: Klaim Reward Terbaru Sistem */}
-                        <div className="rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-4 sm:p-5 shadow-xs space-y-3">
+                        <div className="space-y-3 rounded-3xl border border-zinc-200 bg-white p-4 shadow-xs sm:p-5 dark:border-zinc-800 dark:bg-zinc-900">
                             <div className="flex items-center justify-between">
                                 <div className="flex items-center gap-2">
                                     <Gift className="size-4 text-red-600" />
-                                    <h3 className="font-bold text-xs sm:text-sm text-zinc-900 dark:text-zinc-100">
+                                    <h3 className="text-xs font-bold text-zinc-900 sm:text-sm dark:text-zinc-100">
                                         Klaim Reward Terbaru di AHASS
                                     </h3>
                                 </div>
-                                <span className="text-[10px] text-zinc-400 font-mono">Live Stream</span>
+                                <span className="font-mono text-[10px] text-zinc-400">
+                                    Live Stream
+                                </span>
                             </div>
 
-                            <div className="space-y-2 max-h-80 overflow-y-auto pr-1">
+                            <div className="max-h-80 space-y-2 overflow-y-auto pr-1">
                                 {recentClaims.length === 0 ? (
-                                    <div className="text-center py-6 text-xs text-zinc-400">
-                                        Belum ada riwayat klaim reward terbaru di sistem.
+                                    <div className="py-6 text-center text-xs text-zinc-400">
+                                        Belum ada riwayat klaim reward terbaru
+                                        di sistem.
                                     </div>
                                 ) : (
                                     recentClaims.map((claim) => (
                                         <div
                                             key={claim.id}
-                                            className="p-3 rounded-2xl bg-zinc-50 hover:bg-zinc-100/80 dark:bg-zinc-800/50 dark:hover:bg-zinc-800 transition-colors border border-zinc-200/60 dark:border-zinc-800 flex items-center justify-between gap-3 text-xs"
+                                            className="flex items-center justify-between gap-3 rounded-2xl border border-zinc-200/60 bg-zinc-50 p-3 text-xs transition-colors hover:bg-zinc-100/80 dark:border-zinc-800 dark:bg-zinc-800/50 dark:hover:bg-zinc-800"
                                         >
                                             <div className="min-w-0 flex-1">
-                                                <div className="flex items-center gap-1.5 flex-wrap">
-                                                    <span className="font-bold text-zinc-900 dark:text-white truncate">
+                                                <div className="flex flex-wrap items-center gap-1.5">
+                                                    <span className="truncate font-bold text-zinc-900 dark:text-white">
                                                         {claim.reward_name}
                                                     </span>
-                                                    <span className="text-[10px] font-mono text-zinc-400">
+                                                    <span className="font-mono text-[10px] text-zinc-400">
                                                         #{claim.id}
                                                     </span>
                                                 </div>
-                                                <div className="flex items-center gap-2 text-[11px] text-zinc-500 mt-0.5">
+                                                <div className="mt-0.5 flex items-center gap-2 text-[11px] text-zinc-500">
                                                     <span className="font-medium text-zinc-700 dark:text-zinc-300">
                                                         {claim.user_name}
                                                     </span>
@@ -763,21 +882,27 @@ export default function AdminScanUserIndex({
                                                         {claim.points_cost} Pts
                                                     </span>
                                                     <span>•</span>
-                                                    <span>{claim.time_ago}</span>
+                                                    <span>
+                                                        {claim.time_ago}
+                                                    </span>
                                                 </div>
                                             </div>
 
-                                            <div className="flex items-center gap-2 shrink-0">
+                                            <div className="flex shrink-0 items-center gap-2">
                                                 {claim.status === 'hold' ? (
-                                                    <Badge className="bg-amber-100 text-amber-800 dark:bg-amber-950/80 dark:text-amber-300 text-[10px] font-bold px-2 py-0.5">
+                                                    <Badge className="bg-amber-100 px-2 py-0.5 text-[10px] font-bold text-amber-800 dark:bg-amber-950/80 dark:text-amber-300">
                                                         Hold
                                                     </Badge>
-                                                ) : claim.status === 'claimed' ? (
-                                                    <Badge className="bg-emerald-100 text-emerald-800 dark:bg-emerald-950/80 dark:text-emerald-300 text-[10px] font-bold px-2 py-0.5">
+                                                ) : claim.status ===
+                                                  'claimed' ? (
+                                                    <Badge className="bg-emerald-100 px-2 py-0.5 text-[10px] font-bold text-emerald-800 dark:bg-emerald-950/80 dark:text-emerald-300">
                                                         Claimed
                                                     </Badge>
                                                 ) : (
-                                                    <Badge variant="outline" className="text-[10px] px-2 py-0.5">
+                                                    <Badge
+                                                        variant="outline"
+                                                        className="px-2 py-0.5 text-[10px]"
+                                                    >
                                                         {claim.status}
                                                     </Badge>
                                                 )}
@@ -785,8 +910,12 @@ export default function AdminScanUserIndex({
                                                 <Button
                                                     size="sm"
                                                     variant="ghost"
-                                                    onClick={() => lookupMember(claim.user_id)}
-                                                    className="h-7 px-2 text-[11px] font-semibold text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950/40 rounded-lg cursor-pointer"
+                                                    onClick={() =>
+                                                        lookupMember(
+                                                            claim.user_id,
+                                                        )
+                                                    }
+                                                    className="h-7 cursor-pointer rounded-lg px-2 text-[11px] font-semibold text-red-600 hover:bg-red-50 hover:text-red-700 dark:hover:bg-red-950/40"
                                                     title="Lihat Member ini"
                                                 >
                                                     Lihat
@@ -800,22 +929,23 @@ export default function AdminScanUserIndex({
                     </div>
 
                     {/* Right Column: Detail Informasi Member & Riwayat Klaim Reward (7 Cols) */}
-                    <div className="lg:col-span-7 space-y-6 lg:sticky lg:top-6 self-start">
+                    <div className="space-y-6 self-start lg:sticky lg:top-6 lg:col-span-7">
                         <div
                             ref={memberCardRef}
-                            className="rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-4 sm:p-5 md:p-6 shadow-xs space-y-5"
+                            className="space-y-5 rounded-3xl border border-zinc-200 bg-white p-4 shadow-xs sm:p-5 md:p-6 dark:border-zinc-800 dark:bg-zinc-900"
                         >
-                            <div className="flex items-center justify-between pb-3 border-b border-zinc-100 dark:border-zinc-800">
+                            <div className="flex items-center justify-between border-b border-zinc-100 pb-3 dark:border-zinc-800">
                                 <div className="flex items-center gap-2.5">
                                     <span className="flex size-7 items-center justify-center rounded-xl bg-red-600 text-xs font-bold text-white shadow-xs">
                                         2
                                     </span>
                                     <div>
-                                        <h2 className="font-bold text-zinc-900 dark:text-zinc-100 text-sm sm:text-base">
+                                        <h2 className="text-sm font-bold text-zinc-900 sm:text-base dark:text-zinc-100">
                                             Informasi Member & Klaim Reward
                                         </h2>
                                         <p className="text-xs text-zinc-500">
-                                            Tinjau identitas lengkap dan kelola serah terima reward member
+                                            Tinjau identitas lengkap dan kelola
+                                            serah terima reward member
                                         </p>
                                     </div>
                                 </div>
@@ -830,7 +960,7 @@ export default function AdminScanUserIndex({
                                             setMemberStats(null);
                                             setManualIdInput('');
                                         }}
-                                        className="text-xs text-zinc-400 hover:text-red-600 h-8 px-2 cursor-pointer"
+                                        className="h-8 cursor-pointer px-2 text-xs text-zinc-400 hover:text-red-600"
                                     >
                                         Ganti Member
                                     </Button>
@@ -838,33 +968,39 @@ export default function AdminScanUserIndex({
                             </div>
 
                             {member ? (
-                                <div className="space-y-6 animate-smooth-in">
+                                <div className="animate-smooth-in space-y-6">
                                     {/* Member Identity Card */}
-                                    <div className="p-4 sm:p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200/90 dark:border-zinc-700/60 space-y-4">
-                                        <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
+                                    <div className="space-y-4 rounded-2xl border border-zinc-200/90 bg-zinc-50 p-4 sm:p-5 dark:border-zinc-700/60 dark:bg-zinc-800/60">
+                                        <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-start">
                                             <div className="flex items-start gap-3">
-                                                <div className="size-12 rounded-2xl bg-red-600 text-white flex items-center justify-center text-lg font-black shrink-0 shadow-md shadow-red-600/20">
-                                                    {member.name.charAt(0).toUpperCase()}
+                                                <div className="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-red-600 text-lg font-black text-white shadow-md shadow-red-600/20">
+                                                    {member.name
+                                                        .charAt(0)
+                                                        .toUpperCase()}
                                                 </div>
                                                 <div className="min-w-0">
-                                                    <div className="flex items-center gap-2 flex-wrap">
-                                                        <h3 className="font-bold text-zinc-900 dark:text-zinc-100 text-base sm:text-lg truncate">
+                                                    <div className="flex flex-wrap items-center gap-2">
+                                                        <h3 className="truncate text-base font-bold text-zinc-900 sm:text-lg dark:text-zinc-100">
                                                             {member.name}
                                                         </h3>
                                                         <Badge
-                                                            className={`font-black text-[10px] tracking-wider uppercase border px-2 py-0.5 rounded-lg shrink-0 ${getTierBadgeStyle(
-                                                                member.tier
+                                                            className={`shrink-0 rounded-lg border px-2 py-0.5 text-[10px] font-black tracking-wider uppercase ${getTierBadgeStyle(
+                                                                member.tier,
                                                             )}`}
                                                         >
                                                             {member.tier}
                                                         </Badge>
                                                     </div>
 
-                                                    <div className="flex items-center gap-2 mt-1 flex-wrap text-xs">
+                                                    <div className="mt-1 flex flex-wrap items-center gap-2 text-xs">
                                                         <button
                                                             type="button"
-                                                            onClick={() => copyMemberId(member.id)}
-                                                            className="inline-flex items-center gap-1 font-mono font-bold text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/50 px-2 py-0.5 rounded-md hover:bg-red-100 dark:hover:bg-red-900/60 transition-colors cursor-pointer"
+                                                            onClick={() =>
+                                                                copyMemberId(
+                                                                    member.id,
+                                                                )
+                                                            }
+                                                            className="inline-flex cursor-pointer items-center gap-1 rounded-md bg-red-50 px-2 py-0.5 font-mono font-bold text-red-600 transition-colors hover:bg-red-100 dark:bg-red-950/50 dark:text-red-400 dark:hover:bg-red-900/60"
                                                             title="Klik untuk menyalin ID"
                                                         >
                                                             ID: {member.id}
@@ -874,8 +1010,10 @@ export default function AdminScanUserIndex({
                                                                 <Copy className="size-3" />
                                                             )}
                                                         </button>
-                                                        <span className="text-zinc-400">•</span>
-                                                        <span className="text-zinc-500 dark:text-zinc-400 truncate">
+                                                        <span className="text-zinc-400">
+                                                            •
+                                                        </span>
+                                                        <span className="truncate text-zinc-500 dark:text-zinc-400">
                                                             {member.email}
                                                         </span>
                                                     </div>
@@ -883,16 +1021,24 @@ export default function AdminScanUserIndex({
                                             </div>
 
                                             {/* Saldo Poin Pill */}
-                                            <div className="sm:text-right bg-white dark:bg-zinc-900 sm:bg-transparent sm:dark:bg-transparent p-3 sm:p-0 rounded-xl border sm:border-0 border-zinc-200 dark:border-zinc-800">
-                                                <div className="text-[10px] font-bold uppercase tracking-wider text-zinc-500">
+                                            <div className="rounded-xl border border-zinc-200 bg-white p-3 sm:border-0 sm:bg-transparent sm:p-0 sm:text-right dark:border-zinc-800 dark:bg-zinc-900 sm:dark:bg-transparent">
+                                                <div className="text-[10px] font-bold tracking-wider text-zinc-500 uppercase">
                                                     Saldo Poin Aktif
                                                 </div>
                                                 <div className="text-2xl font-black text-red-600 dark:text-red-400">
-                                                    {member.points.toLocaleString('id-ID')}{' '}
-                                                    <span className="text-xs font-bold text-zinc-500">PTS</span>
+                                                    {member.points.toLocaleString(
+                                                        'id-ID',
+                                                    )}{' '}
+                                                    <span className="text-xs font-bold text-zinc-500">
+                                                        PTS
+                                                    </span>
                                                 </div>
                                                 <div className="text-[11px] text-zinc-400">
-                                                    Akumulasi: {member.lifetime_points.toLocaleString('id-ID')} Pts
+                                                    Akumulasi:{' '}
+                                                    {member.lifetime_points.toLocaleString(
+                                                        'id-ID',
+                                                    )}{' '}
+                                                    Pts
                                                 </div>
                                             </div>
                                         </div>
@@ -901,7 +1047,10 @@ export default function AdminScanUserIndex({
                                         <div className="space-y-1.5 pt-1">
                                             <div className="flex items-center justify-between text-xs">
                                                 <span className="font-semibold text-zinc-600 dark:text-zinc-400">
-                                                    Tingkat Loyalitas: <strong className="text-zinc-900 dark:text-zinc-100">{member.tier}</strong>
+                                                    Tingkat Loyalitas:{' '}
+                                                    <strong className="text-zinc-900 dark:text-zinc-100">
+                                                        {member.tier}
+                                                    </strong>
                                                 </span>
                                                 <span className="text-[11px] font-bold text-zinc-500">
                                                     {member.next_tier
@@ -909,44 +1058,61 @@ export default function AdminScanUserIndex({
                                                         : 'Tingkat Tertinggi (Diamond)'}
                                                 </span>
                                             </div>
-                                            <div className="h-2 w-full rounded-full bg-zinc-200 dark:bg-zinc-700 overflow-hidden">
+                                            <div className="h-2 w-full overflow-hidden rounded-full bg-zinc-200 dark:bg-zinc-700">
                                                 <div
-                                                    className="h-full bg-linear-to-r from-red-600 to-amber-500 rounded-full transition-all duration-500"
-                                                    style={{ width: `${Math.min(100, Math.max(0, member.tier_progress))}%` }}
+                                                    className="h-full rounded-full bg-linear-to-r from-red-600 to-amber-500 transition-all duration-500"
+                                                    style={{
+                                                        width: `${Math.min(100, Math.max(0, member.tier_progress))}%`,
+                                                    }}
                                                 />
                                             </div>
                                         </div>
 
                                         {/* Contact & Detail Grid */}
-                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-3 border-t border-zinc-200/60 dark:border-zinc-700/60 text-xs">
+                                        <div className="grid grid-cols-1 gap-2.5 border-t border-zinc-200/60 pt-3 text-xs sm:grid-cols-2 dark:border-zinc-700/60">
                                             <div className="flex items-center gap-2 text-zinc-600 dark:text-zinc-400">
-                                                <Phone className="size-3.5 text-zinc-400 shrink-0" />
-                                                <span className="truncate">{member.phone_number}</span>
+                                                <Phone className="size-3.5 shrink-0 text-zinc-400" />
+                                                <span className="truncate">
+                                                    {member.phone_number}
+                                                </span>
                                             </div>
                                             <div className="flex items-center gap-2 text-zinc-600 dark:text-zinc-400">
-                                                <MapPin className="size-3.5 text-zinc-400 shrink-0" />
-                                                <span className="truncate">{member.address}</span>
+                                                <MapPin className="size-3.5 shrink-0 text-zinc-400" />
+                                                <span className="truncate">
+                                                    {member.address}
+                                                </span>
                                             </div>
                                             <div className="flex items-center gap-2 text-zinc-600 dark:text-zinc-400">
-                                                <Clock className="size-3.5 text-zinc-400 shrink-0" />
-                                                <span>Member sejak {member.created_at}</span>
+                                                <Clock className="size-3.5 shrink-0 text-zinc-400" />
+                                                <span>
+                                                    Member sejak{' '}
+                                                    {member.created_at}
+                                                </span>
                                             </div>
                                             <div className="flex items-center gap-2 text-zinc-600 dark:text-zinc-400">
-                                                <ShieldCheck className="size-3.5 text-emerald-500 shrink-0" />
-                                                <span>{member.email_verified ? 'Email Terverifikasi' : 'Belum Verifikasi Email'}</span>
+                                                <ShieldCheck className="size-3.5 shrink-0 text-emerald-500" />
+                                                <span>
+                                                    {member.email_verified
+                                                        ? 'Email Terverifikasi'
+                                                        : 'Belum Verifikasi Email'}
+                                                </span>
                                             </div>
                                         </div>
 
                                         {/* Personal Claim Stats Summary */}
                                         {memberStats && (
-                                            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-2 text-center">
-                                                <div className="p-2 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200/80 dark:border-zinc-800">
+                                            <div className="grid grid-cols-2 gap-2 pt-2 text-center sm:grid-cols-4">
+                                                <div className="rounded-xl border border-zinc-200/80 bg-white p-2 dark:border-zinc-800 dark:bg-zinc-900">
                                                     <div className="text-sm font-bold text-zinc-900 dark:text-zinc-100">
-                                                        {memberStats.totalClaims}
+                                                        {
+                                                            memberStats.totalClaims
+                                                        }
                                                     </div>
-                                                    <div className="text-[10px] text-zinc-500">Total Klaim</div>
+                                                    <div className="text-[10px] text-zinc-500">
+                                                        Total Klaim
+                                                    </div>
                                                 </div>
-                                                <div className="p-2 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200/80 dark:border-amber-900/40">
+                                                <div className="rounded-xl border border-amber-200/80 bg-amber-50 p-2 dark:border-amber-900/40 dark:bg-amber-950/40">
                                                     <div className="text-sm font-bold text-amber-700 dark:text-amber-400">
                                                         {memberStats.holdClaims}
                                                     </div>
@@ -954,29 +1120,38 @@ export default function AdminScanUserIndex({
                                                         Menunggu Hold
                                                     </div>
                                                 </div>
-                                                <div className="p-2 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200/80 dark:border-emerald-900/40">
+                                                <div className="rounded-xl border border-emerald-200/80 bg-emerald-50 p-2 dark:border-emerald-900/40 dark:bg-emerald-950/40">
                                                     <div className="text-sm font-bold text-emerald-700 dark:text-emerald-400">
-                                                        {memberStats.claimedCount}
+                                                        {
+                                                            memberStats.claimedCount
+                                                        }
                                                     </div>
                                                     <div className="text-[10px] text-emerald-800 dark:text-emerald-300">
                                                         Disetujui
                                                     </div>
                                                 </div>
-                                                <div className="p-2 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200/80 dark:border-zinc-800">
+                                                <div className="rounded-xl border border-zinc-200/80 bg-white p-2 dark:border-zinc-800 dark:bg-zinc-900">
                                                     <div className="text-sm font-bold text-red-600 dark:text-red-400">
-                                                        {memberStats.totalPointsSpent.toLocaleString('id-ID')}
+                                                        {memberStats.totalPointsSpent.toLocaleString(
+                                                            'id-ID',
+                                                        )}
                                                     </div>
-                                                    <div className="text-[10px] text-zinc-500">Poin Ditukar</div>
+                                                    <div className="text-[10px] text-zinc-500">
+                                                        Poin Ditukar
+                                                    </div>
                                                 </div>
                                             </div>
                                         )}
 
                                         {/* Cross-Link: Shortcut to Scan Poin / Tambah Poin Member */}
-                                        <div className="pt-2.5 border-t border-zinc-200/60 dark:border-zinc-700/60 flex items-center justify-between gap-2">
-                                            <span className="text-[11px] text-zinc-500">Pelanggan baru saja servis atau transaksi?</span>
+                                        <div className="flex items-center justify-between gap-2 border-t border-zinc-200/60 pt-2.5 dark:border-zinc-700/60">
+                                            <span className="text-[11px] text-zinc-500">
+                                                Pelanggan baru saja servis atau
+                                                transaksi?
+                                            </span>
                                             <Link
                                                 href={`/admin/scan?user_id=${member.id}`}
-                                                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-red-50 hover:bg-red-100 dark:bg-red-950/50 dark:hover:bg-red-900/60 text-red-600 dark:text-red-400 text-xs font-bold transition-colors border border-red-200/80 dark:border-red-900/60 cursor-pointer"
+                                                className="inline-flex cursor-pointer items-center gap-1.5 rounded-xl border border-red-200/80 bg-red-50 px-3 py-1.5 text-xs font-bold text-red-600 transition-colors hover:bg-red-100 dark:border-red-900/60 dark:bg-red-950/50 dark:text-red-400 dark:hover:bg-red-900/60"
                                             >
                                                 <Zap className="size-3.5" />
                                                 Beri Poin Member
@@ -986,64 +1161,95 @@ export default function AdminScanUserIndex({
 
                                     {/* Reward Claims Section */}
                                     <div className="space-y-4">
-                                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                                        <div className="flex flex-col justify-between gap-2 sm:flex-row sm:items-center">
                                             <div>
-                                                <h3 className="font-bold text-zinc-900 dark:text-zinc-100 text-sm sm:text-base flex items-center gap-2">
+                                                <h3 className="flex items-center gap-2 text-sm font-bold text-zinc-900 sm:text-base dark:text-zinc-100">
                                                     <Gift className="size-4 text-red-600" />
                                                     Daftar Klaim Reward Member
                                                 </h3>
                                                 <p className="text-xs text-zinc-500">
-                                                    Kelola dan verifikasi penyerahan hadiah voucher/produk kepada pelanggan
+                                                    Kelola dan verifikasi
+                                                    penyerahan hadiah
+                                                    voucher/produk kepada
+                                                    pelanggan
                                                 </p>
                                             </div>
 
                                             {/* Status Filter Tabs */}
-                                            <div className="flex items-center gap-1 p-1 bg-zinc-100 dark:bg-zinc-800 rounded-xl overflow-x-auto text-xs">
+                                            <div className="flex items-center gap-1 overflow-x-auto rounded-xl bg-zinc-100 p-1 text-xs dark:bg-zinc-800">
                                                 <button
                                                     type="button"
-                                                    onClick={() => setClaimFilter('all')}
-                                                    className={`px-2.5 py-1 rounded-lg font-semibold cursor-pointer whitespace-nowrap ${
+                                                    onClick={() =>
+                                                        setClaimFilter('all')
+                                                    }
+                                                    className={`cursor-pointer rounded-lg px-2.5 py-1 font-semibold whitespace-nowrap ${
                                                         claimFilter === 'all'
-                                                            ? 'bg-white dark:bg-zinc-900 text-red-600 shadow-xs'
-                                                            : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900'
+                                                            ? 'bg-white text-red-600 shadow-xs dark:bg-zinc-900'
+                                                            : 'text-zinc-600 hover:text-zinc-900 dark:text-zinc-400'
                                                     }`}
                                                 >
-                                                    Semua ({memberClaims.length})
+                                                    Semua ({memberClaims.length}
+                                                    )
                                                 </button>
                                                 <button
                                                     type="button"
-                                                    onClick={() => setClaimFilter('hold')}
-                                                    className={`px-2.5 py-1 rounded-lg font-semibold cursor-pointer whitespace-nowrap ${
+                                                    onClick={() =>
+                                                        setClaimFilter('hold')
+                                                    }
+                                                    className={`cursor-pointer rounded-lg px-2.5 py-1 font-semibold whitespace-nowrap ${
                                                         claimFilter === 'hold'
-                                                            ? 'bg-white dark:bg-zinc-900 text-amber-600 shadow-xs'
-                                                            : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900'
+                                                            ? 'bg-white text-amber-600 shadow-xs dark:bg-zinc-900'
+                                                            : 'text-zinc-600 hover:text-zinc-900 dark:text-zinc-400'
                                                     }`}
                                                 >
-                                                    Hold ({memberClaims.filter((c) => c.status === 'hold').length})
+                                                    Hold (
+                                                    {
+                                                        memberClaims.filter(
+                                                            (c) =>
+                                                                c.status ===
+                                                                'hold',
+                                                        ).length
+                                                    }
+                                                    )
                                                 </button>
                                                 <button
                                                     type="button"
-                                                    onClick={() => setClaimFilter('claimed')}
-                                                    className={`px-2.5 py-1 rounded-lg font-semibold cursor-pointer whitespace-nowrap ${
-                                                        claimFilter === 'claimed'
-                                                            ? 'bg-white dark:bg-zinc-900 text-emerald-600 shadow-xs'
-                                                            : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900'
+                                                    onClick={() =>
+                                                        setClaimFilter(
+                                                            'claimed',
+                                                        )
+                                                    }
+                                                    className={`cursor-pointer rounded-lg px-2.5 py-1 font-semibold whitespace-nowrap ${
+                                                        claimFilter ===
+                                                        'claimed'
+                                                            ? 'bg-white text-emerald-600 shadow-xs dark:bg-zinc-900'
+                                                            : 'text-zinc-600 hover:text-zinc-900 dark:text-zinc-400'
                                                     }`}
                                                 >
-                                                    Selesai ({memberClaims.filter((c) => c.status === 'claimed').length})
+                                                    Selesai (
+                                                    {
+                                                        memberClaims.filter(
+                                                            (c) =>
+                                                                c.status ===
+                                                                'claimed',
+                                                        ).length
+                                                    }
+                                                    )
                                                 </button>
                                             </div>
                                         </div>
 
                                         {/* Claims List */}
                                         {filteredClaims.length === 0 ? (
-                                            <div className="p-8 text-center rounded-2xl border border-dashed border-zinc-200 dark:border-zinc-800 space-y-2">
-                                                <Gift className="size-10 mx-auto text-zinc-300 dark:text-zinc-700" />
-                                                <div className="font-bold text-sm text-zinc-700 dark:text-zinc-300">
+                                            <div className="space-y-2 rounded-2xl border border-dashed border-zinc-200 p-8 text-center dark:border-zinc-800">
+                                                <Gift className="mx-auto size-10 text-zinc-300 dark:text-zinc-700" />
+                                                <div className="text-sm font-bold text-zinc-700 dark:text-zinc-300">
                                                     Tidak Ada Klaim Reward
                                                 </div>
-                                                <p className="text-xs text-zinc-400 max-w-sm mx-auto">
-                                                    Member ini belum memiliki catatan penukaran reward pada kategori yang dipilih.
+                                                <p className="mx-auto max-w-sm text-xs text-zinc-400">
+                                                    Member ini belum memiliki
+                                                    catatan penukaran reward
+                                                    pada kategori yang dipilih.
                                                 </p>
                                             </div>
                                         ) : (
@@ -1051,23 +1257,32 @@ export default function AdminScanUserIndex({
                                                 {filteredClaims.map((claim) => (
                                                     <div
                                                         key={claim.id}
-                                                        className={`p-4 rounded-2xl border transition-all ${
-                                                            claim.status === 'hold'
-                                                                ? 'bg-amber-50/40 dark:bg-amber-950/20 border-amber-300 dark:border-amber-800/80 shadow-xs'
-                                                                : 'bg-white dark:bg-zinc-900 border-zinc-200 dark:border-zinc-800'
+                                                        className={`rounded-2xl border p-4 transition-all ${
+                                                            claim.status ===
+                                                            'hold'
+                                                                ? 'border-amber-300 bg-amber-50/40 shadow-xs dark:border-amber-800/80 dark:bg-amber-950/20'
+                                                                : 'border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900'
                                                         }`}
                                                     >
-                                                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                                                            <div className="flex items-start gap-3.5 min-w-0">
+                                                        <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
+                                                            <div className="flex min-w-0 items-start gap-3.5">
                                                                 {/* Reward Thumbnail Image */}
-                                                                <div className="size-14 rounded-xl overflow-hidden bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 shrink-0 flex items-center justify-center">
+                                                                <div className="flex size-14 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-zinc-200 bg-zinc-100 dark:border-zinc-700 dark:bg-zinc-800">
                                                                     {claim.reward_image ? (
                                                                         <img
-                                                                            src={claim.reward_image}
-                                                                            alt={claim.reward_name}
+                                                                            src={
+                                                                                claim.reward_image
+                                                                            }
+                                                                            alt={
+                                                                                claim.reward_name
+                                                                            }
                                                                             className="size-full object-cover"
-                                                                            onError={(e) => {
-                                                                                (e.target as HTMLImageElement).src =
+                                                                            onError={(
+                                                                                e,
+                                                                            ) => {
+                                                                                (
+                                                                                    e.target as HTMLImageElement
+                                                                                ).src =
                                                                                     '/images/pictures/voucher_service_img.jpg';
                                                                             }}
                                                                         />
@@ -1077,68 +1292,107 @@ export default function AdminScanUserIndex({
                                                                 </div>
 
                                                                 <div className="min-w-0 space-y-1">
-                                                                    <div className="flex items-center gap-2 flex-wrap">
-                                                                        <h4 className="font-bold text-zinc-900 dark:text-zinc-100 text-sm truncate">
-                                                                            {claim.reward_name}
+                                                                    <div className="flex flex-wrap items-center gap-2">
+                                                                        <h4 className="truncate text-sm font-bold text-zinc-900 dark:text-zinc-100">
+                                                                            {
+                                                                                claim.reward_name
+                                                                            }
                                                                         </h4>
-                                                                        {getClaimStatusBadge(claim.status)}
+                                                                        {getClaimStatusBadge(
+                                                                            claim.status,
+                                                                        )}
                                                                     </div>
 
-                                                                    <div className="flex items-center gap-2 text-xs text-zinc-500 flex-wrap">
+                                                                    <div className="flex flex-wrap items-center gap-2 text-xs text-zinc-500">
                                                                         <span className="font-mono font-bold text-red-600 dark:text-red-400">
-                                                                            Kode #{claim.id}
+                                                                            Kode
+                                                                            #
+                                                                            {
+                                                                                claim.id
+                                                                            }
                                                                         </span>
-                                                                        <span>•</span>
+                                                                        <span>
+                                                                            •
+                                                                        </span>
                                                                         <span className="font-semibold text-zinc-700 dark:text-zinc-300">
-                                                                            -{claim.points_cost} Pts
+                                                                            -
+                                                                            {
+                                                                                claim.points_cost
+                                                                            }{' '}
+                                                                            Pts
                                                                         </span>
-                                                                        <span>•</span>
-                                                                        <span>{claim.created_at}</span>
+                                                                        <span>
+                                                                            •
+                                                                        </span>
+                                                                        <span>
+                                                                            {
+                                                                                claim.created_at
+                                                                            }
+                                                                        </span>
                                                                     </div>
 
                                                                     {claim.admin_notes && (
-                                                                        <div className="text-[11px] text-zinc-500 dark:text-zinc-400 bg-zinc-100/80 dark:bg-zinc-800/80 px-2.5 py-1 rounded-lg mt-1 inline-block">
-                                                                            <strong>Catatan:</strong> {claim.admin_notes}
+                                                                        <div className="mt-1 inline-block rounded-lg bg-zinc-100/80 px-2.5 py-1 text-[11px] text-zinc-500 dark:bg-zinc-800/80 dark:text-zinc-400">
+                                                                            <strong>
+                                                                                Catatan:
+                                                                            </strong>{' '}
+                                                                            {
+                                                                                claim.admin_notes
+                                                                            }
                                                                         </div>
                                                                     )}
                                                                 </div>
                                                             </div>
 
                                                             {/* Actions for this Claim */}
-                                                            <div className="flex items-center gap-2 shrink-0 self-end sm:self-center">
+                                                            <div className="flex shrink-0 items-center gap-2 self-end sm:self-center">
                                                                 <Button
                                                                     size="sm"
                                                                     variant="outline"
-                                                                    onClick={() => setSelectedClaimDetail(claim)}
-                                                                    className="h-8 rounded-xl text-xs font-semibold cursor-pointer"
+                                                                    onClick={() =>
+                                                                        setSelectedClaimDetail(
+                                                                            claim,
+                                                                        )
+                                                                    }
+                                                                    className="h-8 cursor-pointer rounded-xl text-xs font-semibold"
                                                                 >
-                                                                    <Eye className="size-3.5 mr-1" />
+                                                                    <Eye className="mr-1 size-3.5" />
                                                                     Detail
                                                                 </Button>
 
-                                                                {claim.status === 'hold' && (
+                                                                {claim.status ===
+                                                                    'hold' && (
                                                                     <>
                                                                         <Button
                                                                             size="sm"
                                                                             onClick={() => {
-                                                                                setClaimToApprove(claim);
-                                                                                setActionNotes('Hadiah diserahkan langsung kepada member di AHASS.');
+                                                                                setClaimToApprove(
+                                                                                    claim,
+                                                                                );
+                                                                                setActionNotes(
+                                                                                    'Hadiah diserahkan langsung kepada member di AHASS.',
+                                                                                );
                                                                             }}
-                                                                            className="h-8 rounded-xl text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white shadow-xs cursor-pointer"
+                                                                            className="h-8 cursor-pointer rounded-xl bg-emerald-600 text-xs font-semibold text-white shadow-xs hover:bg-emerald-700"
                                                                         >
-                                                                            <Check className="size-3.5 mr-1" />
-                                                                            Serahkan Hadiah
+                                                                            <Check className="mr-1 size-3.5" />
+                                                                            Serahkan
+                                                                            Hadiah
                                                                         </Button>
                                                                         <Button
                                                                             size="sm"
                                                                             variant="ghost"
                                                                             onClick={() => {
-                                                                                setClaimToReject(claim);
-                                                                                setActionNotes('Stok habis atau verifikasi tidak sesuai.');
+                                                                                setClaimToReject(
+                                                                                    claim,
+                                                                                );
+                                                                                setActionNotes(
+                                                                                    'Stok habis atau verifikasi tidak sesuai.',
+                                                                                );
                                                                             }}
-                                                                            className="h-8 rounded-xl text-xs font-semibold text-rose-600 hover:text-rose-700 hover:bg-rose-50 dark:hover:bg-rose-950/40 cursor-pointer"
+                                                                            className="h-8 cursor-pointer rounded-xl text-xs font-semibold text-rose-600 hover:bg-rose-50 hover:text-rose-700 dark:hover:bg-rose-950/40"
                                                                         >
-                                                                            <X className="size-3.5 mr-1" />
+                                                                            <X className="mr-1 size-3.5" />
                                                                             Tolak
                                                                         </Button>
                                                                     </>
@@ -1153,16 +1407,20 @@ export default function AdminScanUserIndex({
                                 </div>
                             ) : (
                                 /* Empty / Waiting State */
-                                <div className="py-16 px-4 text-center space-y-4">
-                                    <div className="size-20 rounded-3xl bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900/50 flex items-center justify-center mx-auto text-red-600 dark:text-red-400 shadow-inner">
+                                <div className="space-y-4 px-4 py-16 text-center">
+                                    <div className="mx-auto flex size-20 items-center justify-center rounded-3xl border border-red-200 bg-red-50 text-red-600 shadow-inner dark:border-red-900/50 dark:bg-red-950/40 dark:text-red-400">
                                         <QrCode className="size-10" />
                                     </div>
-                                    <div className="space-y-1 max-w-sm mx-auto">
-                                        <h3 className="font-bold text-zinc-900 dark:text-zinc-100 text-base">
+                                    <div className="mx-auto max-w-sm space-y-1">
+                                        <h3 className="text-base font-bold text-zinc-900 dark:text-zinc-100">
                                             Belum Ada Member yang Dipindai
                                         </h3>
-                                        <p className="text-xs text-zinc-500 leading-relaxed">
-                                            Arahkan kamera ke QR Member pelanggan atau masukkan 10 digit ID di sebelah kiri untuk melihat rincian akun dan status klaim reward secara spesifik.
+                                        <p className="text-xs leading-relaxed text-zinc-500">
+                                            Arahkan kamera ke QR Member
+                                            pelanggan atau masukkan 10 digit ID
+                                            di sebelah kiri untuk melihat
+                                            rincian akun dan status klaim reward
+                                            secara spesifik.
                                         </p>
                                     </div>
                                 </div>
@@ -1173,8 +1431,11 @@ export default function AdminScanUserIndex({
             </div>
 
             {/* Modal 1: Detail Lengkap Klaim Reward */}
-            <Dialog open={!!selectedClaimDetail} onOpenChange={() => setSelectedClaimDetail(null)}>
-                <DialogContent className="sm:max-w-md rounded-3xl border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-6">
+            <Dialog
+                open={!!selectedClaimDetail}
+                onOpenChange={() => setSelectedClaimDetail(null)}
+            >
+                <DialogContent className="rounded-3xl border-zinc-200 bg-white p-6 sm:max-w-md dark:border-zinc-800 dark:bg-zinc-900">
                     <DialogHeader className="space-y-2">
                         <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-red-100 text-red-600 dark:bg-red-950 dark:text-red-400">
                             <Gift className="size-6" />
@@ -1188,46 +1449,62 @@ export default function AdminScanUserIndex({
                     </DialogHeader>
 
                     {selectedClaimDetail && (
-                        <div className="space-y-4 text-xs py-2">
-                            <div className="p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/60 space-y-3">
+                        <div className="space-y-4 py-2 text-xs">
+                            <div className="space-y-3 rounded-2xl border border-zinc-200 bg-zinc-50 p-4 dark:border-zinc-700/60 dark:bg-zinc-800/60">
                                 <div className="flex items-center justify-between">
-                                    <span className="text-zinc-500">Status Klaim</span>
-                                    {getClaimStatusBadge(selectedClaimDetail.status)}
+                                    <span className="text-zinc-500">
+                                        Status Klaim
+                                    </span>
+                                    {getClaimStatusBadge(
+                                        selectedClaimDetail.status,
+                                    )}
                                 </div>
                                 <div className="flex items-center justify-between">
-                                    <span className="text-zinc-500">Kode Transaksi</span>
+                                    <span className="text-zinc-500">
+                                        Kode Transaksi
+                                    </span>
                                     <span className="font-mono font-bold text-zinc-900 dark:text-white">
                                         #{selectedClaimDetail.id}
                                     </span>
                                 </div>
                                 <div className="flex items-center justify-between">
-                                    <span className="text-zinc-500">Nama Hadiah</span>
+                                    <span className="text-zinc-500">
+                                        Nama Hadiah
+                                    </span>
                                     <span className="font-bold text-zinc-900 dark:text-white">
                                         {selectedClaimDetail.reward_name}
                                     </span>
                                 </div>
                                 <div className="flex items-center justify-between">
-                                    <span className="text-zinc-500">Poin Ditukar</span>
+                                    <span className="text-zinc-500">
+                                        Poin Ditukar
+                                    </span>
                                     <span className="font-bold text-red-600 dark:text-red-400">
                                         -{selectedClaimDetail.points_cost} Poin
                                     </span>
                                 </div>
                                 <div className="flex items-center justify-between">
-                                    <span className="text-zinc-500">Waktu Pengajuan</span>
+                                    <span className="text-zinc-500">
+                                        Waktu Pengajuan
+                                    </span>
                                     <span className="text-zinc-700 dark:text-zinc-300">
                                         {selectedClaimDetail.created_at}
                                     </span>
                                 </div>
                                 <div className="flex items-center justify-between">
-                                    <span className="text-zinc-500">Pemeriksa</span>
+                                    <span className="text-zinc-500">
+                                        Pemeriksa
+                                    </span>
                                     <span className="text-zinc-700 dark:text-zinc-300">
                                         {selectedClaimDetail.admin_name}
                                     </span>
                                 </div>
                                 {selectedClaimDetail.admin_notes && (
-                                    <div className="pt-2 border-t border-zinc-200/60 dark:border-zinc-700/60 space-y-1">
-                                        <span className="text-zinc-500 font-semibold">Catatan Pemeriksa:</span>
-                                        <p className="text-zinc-700 dark:text-zinc-300 bg-white dark:bg-zinc-900 p-2 rounded-xl border border-zinc-200 dark:border-zinc-800">
+                                    <div className="space-y-1 border-t border-zinc-200/60 pt-2 dark:border-zinc-700/60">
+                                        <span className="font-semibold text-zinc-500">
+                                            Catatan Pemeriksa:
+                                        </span>
+                                        <p className="rounded-xl border border-zinc-200 bg-white p-2 text-zinc-700 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300">
                                             {selectedClaimDetail.admin_notes}
                                         </p>
                                     </div>
@@ -1250,8 +1527,11 @@ export default function AdminScanUserIndex({
             </Dialog>
 
             {/* Modal 2: Konfirmasi Serah Terima / Persetujuan Hadiah */}
-            <Dialog open={!!claimToApprove} onOpenChange={() => setClaimToApprove(null)}>
-                <DialogContent className="sm:max-w-md rounded-3xl border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-6">
+            <Dialog
+                open={!!claimToApprove}
+                onOpenChange={() => setClaimToApprove(null)}
+            >
+                <DialogContent className="rounded-3xl border-zinc-200 bg-white p-6 sm:max-w-md dark:border-zinc-800 dark:bg-zinc-900">
                     <DialogHeader className="space-y-2">
                         <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-100 text-emerald-600 dark:bg-emerald-950 dark:text-emerald-400">
                             <Check className="size-6" />
@@ -1260,26 +1540,32 @@ export default function AdminScanUserIndex({
                             Konfirmasi Serah Terima Hadiah
                         </DialogTitle>
                         <DialogDescription className="text-center text-xs text-zinc-500">
-                            Pastikan voucher atau fisik hadiah telah diserahkan langsung kepada member yang bersangkutan.
+                            Pastikan voucher atau fisik hadiah telah diserahkan
+                            langsung kepada member yang bersangkutan.
                         </DialogDescription>
                     </DialogHeader>
 
                     {claimToApprove && (
                         <div className="space-y-3 py-2 text-xs">
-                            <div className="p-3 rounded-2xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/60 space-y-1.5">
+                            <div className="space-y-1.5 rounded-2xl border border-zinc-200 bg-zinc-50 p-3 dark:border-zinc-700/60 dark:bg-zinc-800/60">
                                 <div className="font-bold text-zinc-900 dark:text-white">
                                     {claimToApprove.reward_name}
                                 </div>
                                 <div className="text-zinc-500">
-                                    Member: <strong>{claimToApprove.user_name}</strong> (ID: {claimToApprove.user_id})
+                                    Member:{' '}
+                                    <strong>{claimToApprove.user_name}</strong>{' '}
+                                    (ID: {claimToApprove.user_id})
                                 </div>
-                                <div className="text-emerald-600 font-semibold">
+                                <div className="font-semibold text-emerald-600">
                                     Biaya Poin: {claimToApprove.points_cost} Pts
                                 </div>
                             </div>
 
                             <div className="space-y-1.5">
-                                <Label htmlFor="approveNotes" className="font-semibold text-zinc-700 dark:text-zinc-300 text-xs">
+                                <Label
+                                    htmlFor="approveNotes"
+                                    className="text-xs font-semibold text-zinc-700 dark:text-zinc-300"
+                                >
                                     Catatan Serah Terima (Opsional)
                                 </Label>
                                 <Input
@@ -1287,14 +1573,16 @@ export default function AdminScanUserIndex({
                                     type="text"
                                     placeholder="Contoh: Diserahkan di kasir AHASS nomor 2"
                                     value={actionNotes}
-                                    onChange={(e) => setActionNotes(e.target.value)}
-                                    className="rounded-xl text-xs h-10"
+                                    onChange={(e) =>
+                                        setActionNotes(e.target.value)
+                                    }
+                                    className="h-10 rounded-xl text-xs"
                                 />
                             </div>
                         </div>
                     )}
 
-                    <DialogFooter className="mt-4 flex flex-col sm:flex-row gap-2">
+                    <DialogFooter className="mt-4 flex flex-col gap-2 sm:flex-row">
                         <Button
                             type="button"
                             variant="outline"
@@ -1308,17 +1596,22 @@ export default function AdminScanUserIndex({
                             type="button"
                             onClick={handleApproveClaim}
                             disabled={isActionProcessing}
-                            className="flex-1 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold"
+                            className="flex-1 rounded-xl bg-emerald-600 text-xs font-semibold text-white hover:bg-emerald-700"
                         >
-                            {isActionProcessing ? 'Memproses...' : 'Ya, Setujui & Serahkan'}
+                            {isActionProcessing
+                                ? 'Memproses...'
+                                : 'Ya, Setujui & Serahkan'}
                         </Button>
                     </DialogFooter>
                 </DialogContent>
             </Dialog>
 
             {/* Modal 3: Konfirmasi Penolakan Klaim (Refund Poin & Stok) */}
-            <Dialog open={!!claimToReject} onOpenChange={() => setClaimToReject(null)}>
-                <DialogContent className="sm:max-w-md rounded-3xl border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-6">
+            <Dialog
+                open={!!claimToReject}
+                onOpenChange={() => setClaimToReject(null)}
+            >
+                <DialogContent className="rounded-3xl border-zinc-200 bg-white p-6 sm:max-w-md dark:border-zinc-800 dark:bg-zinc-900">
                     <DialogHeader className="space-y-2">
                         <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-rose-100 text-rose-600 dark:bg-rose-950 dark:text-rose-400">
                             <X className="size-6" />
@@ -1327,38 +1620,47 @@ export default function AdminScanUserIndex({
                             Tolak Klaim Reward
                         </DialogTitle>
                         <DialogDescription className="text-center text-xs text-zinc-500">
-                            Saldo <strong>{claimToReject?.points_cost} Poin</strong> dan <strong>1 Stok Hadiah</strong> akan dikembalikan secara otomatis ke akun member.
+                            Saldo{' '}
+                            <strong>{claimToReject?.points_cost} Poin</strong>{' '}
+                            dan <strong>1 Stok Hadiah</strong> akan dikembalikan
+                            secara otomatis ke akun member.
                         </DialogDescription>
                     </DialogHeader>
 
                     {claimToReject && (
                         <div className="space-y-3 py-2 text-xs">
-                            <div className="p-3 rounded-2xl bg-rose-50/50 dark:bg-rose-950/20 border border-rose-200 dark:border-rose-900/60 space-y-1.5">
+                            <div className="space-y-1.5 rounded-2xl border border-rose-200 bg-rose-50/50 p-3 dark:border-rose-900/60 dark:bg-rose-950/20">
                                 <div className="font-bold text-zinc-900 dark:text-white">
                                     {claimToReject.reward_name}
                                 </div>
                                 <div className="text-zinc-500">
-                                    Member: <strong>{claimToReject.user_name}</strong>
+                                    Member:{' '}
+                                    <strong>{claimToReject.user_name}</strong>
                                 </div>
                             </div>
 
                             <div className="space-y-1.5">
-                                <Label htmlFor="rejectNotes" className="font-semibold text-zinc-700 dark:text-zinc-300 text-xs">
+                                <Label
+                                    htmlFor="rejectNotes"
+                                    className="text-xs font-semibold text-zinc-700 dark:text-zinc-300"
+                                >
                                     Alasan Penolakan
                                 </Label>
                                 <textarea
                                     id="rejectNotes"
                                     placeholder="Contoh: Stok merchandise di dealer habis atau masa penukaran lewat batas"
                                     value={actionNotes}
-                                    onChange={(e) => setActionNotes(e.target.value)}
-                                    className="w-full rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-2.5 text-xs shadow-xs placeholder:text-zinc-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500"
+                                    onChange={(e) =>
+                                        setActionNotes(e.target.value)
+                                    }
+                                    className="w-full rounded-xl border border-zinc-200 bg-white p-2.5 text-xs shadow-xs placeholder:text-zinc-400 focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:outline-none dark:border-zinc-800 dark:bg-zinc-900"
                                     rows={3}
                                 />
                             </div>
                         </div>
                     )}
 
-                    <DialogFooter className="mt-4 flex flex-col sm:flex-row gap-2">
+                    <DialogFooter className="mt-4 flex flex-col gap-2 sm:flex-row">
                         <Button
                             type="button"
                             variant="outline"
@@ -1372,9 +1674,11 @@ export default function AdminScanUserIndex({
                             type="button"
                             onClick={handleRejectClaim}
                             disabled={isActionProcessing}
-                            className="flex-1 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-semibold"
+                            className="flex-1 rounded-xl bg-rose-600 text-xs font-semibold text-white hover:bg-rose-700"
                         >
-                            {isActionProcessing ? 'Memproses...' : 'Tolak & Kembalikan Poin'}
+                            {isActionProcessing
+                                ? 'Memproses...'
+                                : 'Tolak & Kembalikan Poin'}
                         </Button>
                     </DialogFooter>
                 </DialogContent>
@@ -1382,25 +1686,28 @@ export default function AdminScanUserIndex({
 
             {/* FLOATING MOBILE STICKY ACTION BAR: Pops up when member is selected on phone screens */}
             {member && (
-                <div className="fixed bottom-4 inset-x-3 sm:inset-x-6 z-30 lg:hidden">
-                    <div className="rounded-2xl bg-zinc-950/95 dark:bg-zinc-900/95 backdrop-blur-xl border border-white/10 p-3 shadow-2xl shadow-black/50 flex items-center justify-between gap-3 text-white">
+                <div className="fixed inset-x-3 bottom-4 z-30 sm:inset-x-6 lg:hidden">
+                    <div className="flex items-center justify-between gap-3 rounded-2xl border border-white/10 bg-zinc-950/95 p-3 text-white shadow-2xl shadow-black/50 backdrop-blur-xl dark:bg-zinc-900/95">
                         <div className="min-w-0 flex-1">
                             <div className="flex items-center gap-1.5">
-                                <span className="text-xs font-bold truncate text-white">{member.name}</span>
-                                <Badge className="bg-red-600 text-white font-mono text-[10px] px-1.5 py-0 border-0">
+                                <span className="truncate text-xs font-bold text-white">
+                                    {member.name}
+                                </span>
+                                <Badge className="border-0 bg-red-600 px-1.5 py-0 font-mono text-[10px] text-white">
                                     {member.points.toLocaleString('id-ID')} PTS
                                 </Badge>
                             </div>
-                            <p className="text-[10px] text-zinc-400 truncate">
-                                {memberClaims.filter((c) => c.status === 'hold').length > 0
+                            <p className="truncate text-[10px] text-zinc-400">
+                                {memberClaims.filter((c) => c.status === 'hold')
+                                    .length > 0
                                     ? `${memberClaims.filter((c) => c.status === 'hold').length} klaim menunggu verifikasi`
                                     : 'Semua klaim reward terselesaikan'}
                             </p>
                         </div>
-                        <div className="flex items-center gap-1.5 shrink-0">
+                        <div className="flex shrink-0 items-center gap-1.5">
                             <Link
                                 href={`/admin/scan?user_id=${member.id}`}
-                                className="bg-zinc-800 hover:bg-zinc-700 text-white font-bold text-xs px-3 h-9 rounded-xl flex items-center gap-1 border border-zinc-700 transition-all cursor-pointer"
+                                className="flex h-9 cursor-pointer items-center gap-1 rounded-xl border border-zinc-700 bg-zinc-800 px-3 text-xs font-bold text-white transition-all hover:bg-zinc-700"
                             >
                                 <Zap className="size-3 text-amber-400" />
                                 Poin
@@ -1408,9 +1715,12 @@ export default function AdminScanUserIndex({
                             <Button
                                 type="button"
                                 onClick={() => {
-                                    memberCardRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                                    memberCardRef.current?.scrollIntoView({
+                                        behavior: 'smooth',
+                                        block: 'start',
+                                    });
                                 }}
-                                className="bg-red-600 hover:bg-red-700 text-white font-bold text-xs px-3.5 h-9 rounded-xl shadow-lg shadow-red-600/30 transition-all cursor-pointer"
+                                className="h-9 cursor-pointer rounded-xl bg-red-600 px-3.5 text-xs font-bold text-white shadow-lg shadow-red-600/30 transition-all hover:bg-red-700"
                             >
                                 Klaim
                             </Button>
@@ -1432,4 +1742,3 @@ AdminScanUserIndex.layout = (page: React.ReactNode) => (
         {page}
     </AppLayout>
 );
-

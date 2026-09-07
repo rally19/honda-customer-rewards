@@ -24,24 +24,30 @@ const PRECACHE_ASSETS = [
 // 1. INSTALL: Precache offline fallback shell and key assets
 self.addEventListener('install', (event) => {
     event.waitUntil(
-        caches.open(CACHE_NAME).then((cache) => {
-            return cache.addAll(PRECACHE_ASSETS);
-        }).then(() => self.skipWaiting())
+        caches
+            .open(CACHE_NAME)
+            .then((cache) => {
+                return cache.addAll(PRECACHE_ASSETS);
+            })
+            .then(() => self.skipWaiting()),
     );
 });
 
 // 2. ACTIVATE: Cleanup stale caches and take immediate control
 self.addEventListener('activate', (event) => {
     event.waitUntil(
-        caches.keys().then((cacheNames) => {
-            return Promise.all(
-                cacheNames.map((cacheName) => {
-                    if (cacheName !== CACHE_NAME) {
-                        return caches.delete(cacheName);
-                    }
-                })
-            );
-        }).then(() => self.clients.claim())
+        caches
+            .keys()
+            .then((cacheNames) => {
+                return Promise.all(
+                    cacheNames.map((cacheName) => {
+                        if (cacheName !== CACHE_NAME) {
+                            return caches.delete(cacheName);
+                        }
+                    }),
+                );
+            })
+            .then(() => self.clients.claim()),
     );
 });
 
@@ -75,17 +81,16 @@ self.addEventListener('fetch', (event) => {
     // Strategy: Network-first, fallback to /offline.html
     if (request.mode === 'navigate') {
         event.respondWith(
-            fetch(request)
-                .catch(() => {
-                    return caches.match(OFFLINE_URL);
-                })
+            fetch(request).catch(() => {
+                return caches.match(OFFLINE_URL);
+            }),
         );
         return;
     }
 
     // B. Static Assets: Build JS/CSS, images, fonts, icons
     // Strategy: Stale-While-Revalidate
-    const isStaticAsset = (
+    const isStaticAsset =
         url.pathname.startsWith('/build/') ||
         url.pathname.startsWith('/icons/') ||
         url.pathname.startsWith('/images/') ||
@@ -94,32 +99,31 @@ self.addEventListener('fetch', (event) => {
         url.pathname.endsWith('.woff2') ||
         url.pathname.endsWith('.png') ||
         url.pathname.endsWith('.svg') ||
-        url.pathname.endsWith('.ico')
-    );
+        url.pathname.endsWith('.ico');
 
     if (isStaticAsset) {
         event.respondWith(
             caches.match(request).then((cachedResponse) => {
-                const fetchPromise = fetch(request).then((networkResponse) => {
-                    if (networkResponse && networkResponse.status === 200) {
-                        const responseToCache = networkResponse.clone();
-                        caches.open(CACHE_NAME).then((cache) => {
-                            cache.put(request, responseToCache);
-                        });
-                    }
-                    return networkResponse;
-                }).catch(() => cachedResponse);
+                const fetchPromise = fetch(request)
+                    .then((networkResponse) => {
+                        if (networkResponse && networkResponse.status === 200) {
+                            const responseToCache = networkResponse.clone();
+                            caches.open(CACHE_NAME).then((cache) => {
+                                cache.put(request, responseToCache);
+                            });
+                        }
+                        return networkResponse;
+                    })
+                    .catch(() => cachedResponse);
 
                 return cachedResponse || fetchPromise;
-            })
+            }),
         );
         return;
     }
 
     // Default: Network with cache fallback
-    event.respondWith(
-        fetch(request).catch(() => caches.match(request))
-    );
+    event.respondWith(fetch(request).catch(() => caches.match(request)));
 });
 
 // 4. MESSAGE: Support manual update triggers from client UI

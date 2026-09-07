@@ -124,7 +124,7 @@ export default function Register({ passwordRules }: Props) {
 
                             <Button
                                 type="submit"
-                                className="mt-2 w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-2.5 shadow-md shadow-red-600/25 active:scale-[0.99] transition-all cursor-pointer"
+                                className="mt-2 w-full cursor-pointer bg-red-600 py-2.5 font-semibold text-white shadow-md shadow-red-600/25 transition-all hover:bg-red-700 active:scale-[0.99]"
                                 tabIndex={7}
                                 data-test="register-user-button"
                             >
@@ -133,13 +133,13 @@ export default function Register({ passwordRules }: Props) {
                             </Button>
                         </div>
 
-                        <div className="text-muted-foreground text-center text-sm pt-1 border-t border-zinc-100 dark:border-zinc-800">
+                        <div className="text-muted-foreground border-t border-zinc-100 pt-1 text-center text-sm dark:border-zinc-800">
                             Sudah memiliki akun?{' '}
                             <TextLink
                                 href={login()}
                                 data-test="login-link"
                                 tabIndex={8}
-                                className="font-semibold text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300"
+                                className="font-semibold text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
                             >
                                 Masuk ke Akun
                             </TextLink>
@@ -153,5 +153,6 @@ export default function Register({ passwordRules }: Props) {
 
 Register.layout = {
     title: 'Daftar ID MEMBER',
-    description: 'Buat akun Anda sekarang untuk mendapatkan ID MEMBER dan nikmati keuntungan eksklusif',
+    description:
+        'Buat akun Anda sekarang untuk mendapatkan ID MEMBER dan nikmati keuntungan eksklusif',
 };

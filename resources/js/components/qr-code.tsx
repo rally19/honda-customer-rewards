@@ -1,9 +1,4 @@
-import {
-    forwardRef,
-    useEffect,
-    useImperativeHandle,
-    useRef,
-} from 'react';
+import { forwardRef, useEffect, useImperativeHandle, useRef } from 'react';
 import QRCodeStyling, {
     type CornerDotType,
     type CornerSquareType,
@@ -48,7 +43,10 @@ const QrCode = forwardRef<QrCodeHandle, QrCodeProps>(function QrCode(
     const qrCodeRef = useRef<QRCodeStyling | null>(null);
 
     useImperativeHandle(ref, () => ({
-        download: (name = 'honda-member-qr', extension: FileExtension = 'png') => {
+        download: (
+            name = 'honda-member-qr',
+            extension: FileExtension = 'png',
+        ) => {
             if (qrCodeRef.current) {
                 qrCodeRef.current.download({ name, extension });
             }
@@ -119,7 +117,7 @@ const QrCode = forwardRef<QrCodeHandle, QrCodeProps>(function QrCode(
     return (
         <div
             ref={containerRef}
-            className={`flex items-center justify-center overflow-hidden [&_svg]:w-full [&_svg]:h-full [&_svg]:max-w-full [&_svg]:aspect-square ${className}`}
+            className={`flex items-center justify-center overflow-hidden [&_svg]:aspect-square [&_svg]:h-full [&_svg]:w-full [&_svg]:max-w-full ${className}`}
         />
     );
 });
