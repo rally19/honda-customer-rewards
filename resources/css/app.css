@@ -142,10 +142,10 @@
     }
 }
 
-/* Global Mobile Scale 0.8x */
+/* Global Mobile Scale 0.9x */
 @media (max-width: 767.98px) {
     html {
-        zoom: 0.8;
+        zoom: 0.9;
     }
 }
 

@@ -795,8 +795,8 @@ export default function Welcome({
                             Cara Mudah Mengumpulkan Poin
                         </h2>
                         <p className="text-base text-zinc-600 dark:text-zinc-400 leading-relaxed">
-                            Kumpulkan poin dari setiap perawatan kendaraan dan aktivitas resmi Anda bersama bengkel resmi AHASS.
-                            Berikut adalah 6 aktivitas terpopuler yang langsung menghasilkan poin reward:
+                            Kumpulkan poin dari setiap perawatan kendaraan dan transaksi resmi Anda di bengkel AHASS.
+                            Cukup tunjukkan QR ID Member Anda ke kasir saat servis untuk mendapatkan poin reward:
                         </p>
                     </div>
 
@@ -835,9 +835,9 @@ export default function Welcome({
 
                                     <div className="mt-5 pt-4 border-t border-zinc-100 dark:border-zinc-800 flex items-center justify-between text-xs text-zinc-500">
                                         <span className="flex items-center gap-1 text-emerald-600 dark:text-emerald-400 font-semibold">
-                                            <CheckCircle2 className="size-3.5" /> Poin Otomatis Masuk
+                                            <QrCode className="size-3.5" /> Scan QR di Kasir AHASS
                                         </span>
-                                        <span className="font-mono text-[11px] text-zinc-400">ID: #{act.id.slice(-4)}</span>
+                                        <span className="font-mono text-[11px] text-zinc-400">ID: {act.id}</span>
                                     </div>
                                 </div>
                             );
@@ -973,7 +973,7 @@ export default function Welcome({
                                                 >
                                                     {reward.stock > 0 ? `Tersedia (${reward.stock} Unit)` : 'Stok Habis'}
                                                 </Badge>
-                                                <span className="text-[11px] text-zinc-400 font-mono">Kode: #{reward.id.slice(-4)}</span>
+                                                <span className="text-[11px] text-zinc-400 font-mono">Kode: {reward.id}</span>
                                             </div>
                                             <h3 className="text-xl font-bold text-zinc-900 dark:text-white group-hover:text-red-600 dark:group-hover:text-red-400 transition-colors">
                                                 {reward.name}

@@ -32,7 +32,7 @@
 
             @media (max-width: 767.98px) {
                 html {
-                    zoom: 0.8;
+                    zoom: 0.9;
                 }
             }
         </style>
