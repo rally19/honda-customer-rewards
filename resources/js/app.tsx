@@ -1,6 +1,7 @@
 import { createInertiaApp } from '@inertiajs/react';
 import type { ReactNode } from 'react';
 import { createRoot, hydrateRoot, type Root } from 'react-dom/client';
+import { PwaPrompt } from '@/components/pwa-prompt';
 import { Toaster } from '@/components/ui/sonner';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { initializeTheme } from '@/hooks/use-appearance';
@@ -38,6 +39,7 @@ void createInertiaApp({
             <TooltipProvider delayDuration={0}>
                 <App {...props} />
                 <Toaster />
+                <PwaPrompt />
             </TooltipProvider>
         );
 

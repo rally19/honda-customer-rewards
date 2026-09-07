@@ -18,7 +18,7 @@ import { edit } from '@/routes/profile';
 import { edit as editSecurity } from '@/routes/security';
 import { logout } from '@/routes';
 import type { NavItem, User as AuthUser } from '@/types';
-import { User, Shield, Palette, LogOut, LayoutDashboard } from 'lucide-react';
+import { User, Shield, Palette, LogOut, LayoutDashboard, Download } from 'lucide-react';
 
 const sidebarNavItems: NavItem[] = [
     {
@@ -84,7 +84,7 @@ export default function SettingsLayout({ children }: PropsWithChildren) {
 
                         <div className="my-1.5 sm:my-2 border-t border-zinc-200 dark:border-zinc-800" />
 
-                        {/* Tombol Logout di bawah Tampilan Tema */}
+                        {/* Tombol Logout */}
                         <Button
                             size="sm"
                             variant="ghost"
@@ -94,6 +94,18 @@ export default function SettingsLayout({ children }: PropsWithChildren) {
                         >
                             <LogOut className="h-4 w-4 mr-2" />
                             Keluar dari Akun
+                        </Button>
+
+                        {/* Tombol Install PWA */}
+                        <Button
+                            size="sm"
+                            variant="ghost"
+                            type="button"
+                            onClick={() => window.dispatchEvent(new CustomEvent('pwa-install-requested'))}
+                            className="w-full justify-start rounded-xl font-semibold text-zinc-600 dark:text-zinc-400 hover:text-red-600 dark:hover:text-red-400 cursor-pointer whitespace-nowrap"
+                        >
+                            <Download className="h-4 w-4 mr-2 text-red-500" />
+                            Pasang Aplikasi (PWA)
                         </Button>
 
                         {/* Tombol ke Admin Dashboard jika role admin (di bawah tombol keluar akun) */}

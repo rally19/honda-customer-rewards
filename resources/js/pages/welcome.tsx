@@ -12,6 +12,7 @@ import {
     Coins,
     Crown,
     Database,
+    Download,
     Flame,
     Gift,
     HeartHandshake,
@@ -1519,6 +1520,16 @@ export default function Welcome({
                                     <a href="#cara-kerja" className="hover:text-red-400 transition-colors">
                                         Panduan Klaim Reward AHASS
                                     </a>
+                                </li>
+                                <li>
+                                    <button
+                                        type="button"
+                                        onClick={() => window.dispatchEvent(new CustomEvent('pwa-install-requested'))}
+                                        className="hover:text-red-400 transition-colors flex items-center gap-1.5 cursor-pointer text-left text-zinc-400"
+                                    >
+                                        <Download className="size-3.5 text-red-500 shrink-0" />
+                                        <span>Pasang Aplikasi (PWA)</span>
+                                    </button>
                                 </li>
                             </ul>
                         </div>

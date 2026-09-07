@@ -37,9 +37,48 @@
             }
         </style>
 
+        {{-- PWA Manifest & App Identity --}}
+        <link rel="manifest" href="/site.webmanifest">
+        <meta name="theme-color" content="#DC2626" media="(prefers-color-scheme: light)">
+        <meta name="theme-color" content="#09090b" media="(prefers-color-scheme: dark)">
+        <meta name="mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+        <meta name="apple-mobile-web-app-title" content="Honda Rewards">
+        <meta name="application-name" content="Honda Rewards">
+        <meta name="msapplication-TileColor" content="#DC2626">
+
+        <link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/icons/favicon-16x16.png">
         <link rel="icon" type="image/png" href="/images/logo/anper_logo_white.png">
         <link rel="shortcut icon" type="image/png" href="/images/logo/anper_logo_white.png">
-        <link rel="apple-touch-icon" href="/images/logo/anper_logo_white.png">
+        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+
+        {{-- PWA Service Worker Registration --}}
+        <script>
+            if ('serviceWorker' in navigator) {
+                window.addEventListener('load', function() {
+                    navigator.serviceWorker.register('/sw.js', { scope: '/' })
+                        .then(function(registration) {
+                            registration.onupdatefound = function() {
+                                var installingWorker = registration.installing;
+                                if (installingWorker) {
+                                    installingWorker.onstatechange = function() {
+                                        if (installingWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                            window.dispatchEvent(new CustomEvent('pwa-update-available', {
+                                                detail: { registration: registration }
+                                            }));
+                                        }
+                                    };
+                                }
+                            };
+                        })
+                        .catch(function(err) {
+                            console.debug('PWA ServiceWorker registration notice:', err);
+                        });
+                });
+            }
+        </script>
 
         @fonts
 
