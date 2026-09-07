@@ -22,7 +22,7 @@
 3. [Arsitektur & Tech Stack](#-arsitektur--tech-stack)
 4. [Struktur Direktori Proyek](#-struktur-direktori-proyek)
 5. [Panduan Instalasi Lokal (Development)](#-panduan-instalasi-lokal-development)
-6. [Panduan Menuju Production (Production Deployment Guide)](#-panduan-menuju-production-production-deployment-guide)
+6. [Panduan Menuju Production (Production Deployment Guide - VPS)](#-panduan-menuju-production-production-deployment-guide)
    - [1. Spesifikasi & Kebutuhan Server](#1-spesifikasi--kebutuhan-server)
    - [2. Konfigurasi Environment (`.env.production`)](#2-konfigurasi-environment-envproduction)
    - [3. Instalasi Dependensi & Build Asset](#3-instalasi-dependensi--build-asset)
@@ -33,9 +33,18 @@
    - [8. Konfigurasi Task Scheduler (Cron Job)](#8-konfigurasi-task-scheduler-cron-job)
    - [9. Konfigurasi Web Server (Nginx)](#9-konfigurasi-web-server-nginx)
    - [10. Setup SSL / HTTPS (Let's Encrypt Certbot)](#10-setup-ssl--https-lets-encrypt-certbot)
-7. [Automasi Deployment & Pemeliharaan (CI/CD / Script)](#-automasi-deployment--pemeliharaan)
-8. [Troubleshooting & Solusi Kendala Umum](#-troubleshooting--solusi-kendala-umum)
-9. [Kontribusi & Lisensi](#-kontribusi--lisensi)
+7. [Panduan Deployment Khusus cPanel (Shared Hosting)](#-panduan-deployment-khusus-cpanel-shared-hosting)
+   - [1. Persiapan File di Komputer Lokal](#1-persiapan-file-di-komputer-lokal-sebelum-upload)
+   - [2. Konfigurasi PHP di cPanel (MultiPHP)](#2-konfigurasi-php-di-cpanel-multiphp)
+   - [3. Membuat Database MySQL di cPanel](#3-membuat-database-mysql-di-cpanel)
+   - [4. Upload & Struktur Direktori cPanel](#4-upload--struktur-direktori-cpanel)
+   - [5. Konfigurasi .env di cPanel](#5-konfigurasi-env-di-cpanel)
+   - [6. Migrasi Database & Storage Link](#6-migrasi-database--storage-link-di-cpanel)
+   - [7. Setup Cron Job Scheduler di cPanel](#7-setup-cron-job-scheduler-di-cpanel)
+   - [8. Aktivasi SSL / HTTPS di cPanel](#8-aktivasi-ssl--https-di-cpanel)
+8. [Automasi Deployment & Pemeliharaan (CI/CD / Script)](#-automasi-deployment--pemeliharaan)
+9. [Troubleshooting & Solusi Kendala Umum](#-troubleshooting--solusi-kendala-umum)
+10. [Kontribusi & Lisensi](#-kontribusi--lisensi)
 
 ---
 
@@ -530,7 +539,193 @@ sudo certbot renew --dry-run
 
 ---
 
-## 🔄 Automasi Deployment & Pemeliharaan
+## 🌐 Panduan Deployment Khusus cPanel (Shared Hosting)
+
+Panduan ini ditujukan bagi Anda yang ingin mendeploy sistem **Honda Customer Rewards** ke shared hosting berbasis **cPanel**.
+
+### 1. Persiapan File di Komputer Lokal (Sebelum Upload)
+
+Di cPanel, kita tidak perlu menginstall Node.js karena asset dapat kita build di komputer lokal:
+
+```bash
+# 1. Kompilasi asset frontend React & CSS untuk production
+npm run build
+
+# 2. Pastikan dependensi vendor PHP bersih dan teroptimasi
+composer install --no-dev --prefer-dist --optimize-autoloader
+
+# 3. Arsipkan (ZIP) seluruh folder proyek
+# PERHATIAN: JANGAN sertakan folder 'node_modules/' dan '.git/' untuk menghemat ukuran zip!
+```
+
+> [!TIP]
+> Folder yang wajib ikut ke dalam zip: `app/`, `bootstrap/`, `config/`, `database/`, `public/` (termasuk `public/build/`), `resources/`, `routes/`, `storage/`, `vendor/`, `artisan`, `composer.json`, dan `.env.example`.
+
+---
+
+### 2. Konfigurasi PHP di cPanel (MultiPHP)
+
+1. Buka cPanel, cari menu **MultiPHP Manager**:
+   - Pilih domain atau subdomain Anda.
+   - Ubah versi PHP ke **PHP 8.3** (misal: `ea-php83` atau `alt-php83`). Klik **Apply**.
+2. Buka menu **Select PHP Version** (jika ada CloudLinux) atau **PHP Extensions**:
+   - Pastikan ekstensi berikut aktif: `fileinfo`, `pdo_mysql`, `mbstring`, `curl`, `zip`, `bcmath`, `intl`, `openssl`.
+3. Buka menu **MultiPHP INI Editor**:
+   - Pilih domain Anda, lalu atur direktif:
+     - `memory_limit` = `512M`
+     - `max_execution_time` = `300`
+     - `upload_max_filesize` = `25M`
+     - `post_max_size` = `32M`
+     - `display_errors` = `Off` (Disabled)
+     - `log_errors` = `On` (Enabled)
+
+---
+
+### 3. Membuat Database MySQL di cPanel
+
+1. Buka menu **MySQL Database Wizard** di cPanel:
+   - **Langkah 1**: Buat nama database, contoh: `username_hondarewards`.
+   - **Langkah 2**: Buat user database, contoh: `username_dbuser` beserta password yang aman.
+   - **Langkah 3**: Centang **ALL PRIVILEGES** untuk menghubungkan user ke database.
+2. Catat nama database, user, dan password tersebut.
+
+---
+
+### 4. Upload & Struktur Direktori cPanel
+
+Ada 2 cara penempatan file tergantung apakah Anda menggunakan Subdomain atau Domain Utama:
+
+#### Opsi A: Menggunakan Subdomain (Paling Rapi & Direkomendasikan) ⭐
+Contoh: `rewards.dealerhonda.co.id`
+1. Di cPanel, buka menu **Domains** / **Subdomains**.
+2. Buat subdomain baru, dan atur **Document Root** langsung mengarah ke subfolder `public`:
+   ```text
+   Document Root: /home/username/honda-rewards/public
+   ```
+3. Buka **File Manager**, buat folder `/home/username/honda-rewards/`.
+4. Upload file `.zip` proyek Anda ke folder tersebut, lalu klik **Extract**.
+5. Struktur file langsung rapi tanpa perlu memindahkan folder apapun!
+
+#### Opsi B: Menggunakan Domain Utama (`public_html`)
+1. Buka **File Manager**, di root `/home/username/` buat folder baru bernama `honda-core`.
+2. Upload dan ekstrak file zip proyek Anda ke dalam folder `/home/username/honda-core/`.
+3. Masuk ke `/home/username/honda-core/public/`, pilih **Select All**, lalu **Move (Pindahkan)** semua isinya langsung ke dalam folder `/home/username/public_html/`.
+4. Buka file `/home/username/public_html/index.php` menggunakan **Code Editor** cPanel, lalu sesuaikan 2 baris path berikut:
+   ```php
+   // Ganti baris autoload:
+   require __DIR__.'/../honda-core/vendor/autoload.php';
+
+   // Ganti baris bootstrap app:
+   $app = require_once __DIR__.'/../honda-core/bootstrap/app.php';
+   ```
+
+---
+
+### 5. Konfigurasi `.env` di cPanel
+
+1. Di File Manager, aktifkan opsi **Show Hidden Files (dotfiles)** pada menu Settings di pojok kanan atas.
+2. Temukan file `.env.example` lalu rename menjadi `.env` (atau edit file `.env` yang ada).
+3. Sesuaikan parameter berikut:
+   ```env
+   APP_NAME="Honda Customer Rewards"
+   APP_ENV=production
+   APP_KEY=base64:... # Jika kosong, generate via Terminal cPanel: php artisan key:generate
+   APP_DEBUG=false
+   APP_URL=https://rewards.dealerhonda.co.id
+
+   # Database cPanel
+   DB_CONNECTION=mysql
+   DB_HOST=127.0.0.1
+   DB_PORT=3306
+   DB_DATABASE=username_hondarewards
+   DB_USERNAME=username_dbuser
+   DB_PASSWORD=password_database_anda
+
+   # Driver untuk Shared Hosting (Gunakan file atau database jika Redis tidak tersedia)
+   SESSION_DRIVER=file
+   CACHE_STORE=file
+   QUEUE_CONNECTION=database
+
+   # Email SMTP (Wajib untuk 2FA Email & Verifikasi)
+   MAIL_MAILER=smtp
+   MAIL_HOST=mail.dealerhonda.co.id
+   MAIL_PORT=465
+   MAIL_USERNAME=no-reply@dealerhonda.co.id
+   MAIL_PASSWORD=password_email_anda
+   MAIL_ENCRYPTION=ssl
+   MAIL_FROM_ADDRESS="no-reply@dealerhonda.co.id"
+   MAIL_FROM_NAME="Honda Customer Rewards"
+   ```
+
+---
+
+### 6. Migrasi Database & Storage Link di cPanel
+
+#### Jika Hosting Anda Menyediakan Menu "Terminal":
+Buka menu **Terminal** di cPanel:
+```bash
+# Masuk ke folder proyek Anda
+cd /home/username/honda-rewards  # (atau honda-core)
+
+# Generate App Key (jika belum ada)
+php artisan key:generate
+
+# Jalankan migrasi tabel database
+php artisan migrate --force
+
+# Jalankan seeder aktivitas & reward default
+php artisan db:seed --class=ActivitySeeder --force
+php artisan db:seed --class=RewardSeeder --force
+
+# Hubungkan symbolic link storage gambar
+php artisan storage:link
+
+# Optimasi cache konfigurasi
+php artisan config:cache
+php artisan route:cache
+php artisan view:cache
+```
+
+#### Jika Hosting Anda TIDAK Menyediakan Menu Terminal:
+1. **Migrasi Database**: Export database dari komputer lokal Anda melalui phpMyAdmin/HeidiSQL, lalu Import file `.sql` tersebut ke phpMyAdmin di cPanel.
+2. **Storage Link**: Tambahkan rute sementara di `routes/web.php`:
+   ```php
+   Route::get('/artisan-storage-link', function () {
+       \Illuminate\Support\Facades\Artisan::call('storage:link');
+       return 'Storage Link Berhasil Dibuat!';
+   });
+   ```
+   Buka URL `https://domainanda.com/artisan-storage-link` di browser sekali saja, lalu hapus kembali baris rute tersebut.
+
+---
+
+### 7. Setup Cron Job Scheduler di cPanel
+
+Agar pembersihan data kedaluwarsa dan antrean email berjalan otomatis:
+1. Buka menu **Cron Jobs** di cPanel.
+2. Pada bagian **Common Settings**, pilih **Once Per Minute** (`* * * * *`).
+3. Pada kolom **Command**, masukkan perintah:
+   ```bash
+   /usr/local/bin/php /home/username/honda-rewards/artisan schedule:run >> /dev/null 2>&1
+   ```
+   *(Sesuaikan `/home/username/honda-rewards` dengan path folder proyek Anda).*
+4. Klik **Add New Cron Job**.
+
+---
+
+### 8. Aktivasi SSL / HTTPS di cPanel
+
+> [!IMPORTANT]
+> Fitur **Kamera Scanner QR**, **Passkeys Biometrik**, dan **PWA** wajib menggunakan HTTPS!
+
+1. Buka menu **SSL/TLS Status** di cPanel.
+2. Centang nama domain/subdomain Anda.
+3. Klik tombol **Run AutoSSL**. Tunggu beberapa menit hingga sertifikat SSL terpasang dan icon gembok hijau muncul.
+4. Buka menu **Domains**, aktifkan opsi **Force HTTPS Redirect**.
+
+---
+
+## 🔄 Automasi Deployment & Pemeliharaan (CI/CD / Script)
 
 Untuk memudahkan proses rilis versi baru tanpa downtime (*zero-downtime deployment*), buat skrip bash bernama `deploy.sh` di server:
 
