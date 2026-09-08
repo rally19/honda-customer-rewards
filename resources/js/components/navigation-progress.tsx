@@ -73,10 +73,14 @@ export function NavigationProgress() {
                 <span className="absolute right-0 top-1/2 h-4 w-4 -translate-y-1/2 translate-x-1/2 rounded-full bg-red-500 shadow-[0_0_12px_4px_rgba(220,38,38,0.6)]" />
             </div>
 
-            {/* ── Full-page blur overlay ────────────────────────────────── */}
+            {/* ── Full-page blur overlay (blocks all clicks on blurred elements underneath) ── */}
             <div
-                className="pointer-events-none fixed inset-0 z-[55] bg-white/10 backdrop-blur-[3px] transition-opacity duration-200 dark:bg-zinc-950/10"
+                className="fixed inset-0 z-[55] select-none bg-white/10 backdrop-blur-[3px] transition-opacity duration-200 dark:bg-zinc-950/10"
                 aria-hidden="true"
+                onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                }}
             />
 
             {/* ── Centred spinner ───────────────────────────────────────── */}
