@@ -6,9 +6,13 @@
     "start_url": "/?source=pwa",
     "scope": "/",
     "display": "standalone",
-    "display_override": ["window-controls-overlay", "standalone", "minimal-ui"],
+    "display_override": [
+        "window-controls-overlay",
+        "standalone",
+        "minimal-ui"
+    ],
     "background_color": "#09090b",
-    "theme_color": "#ffffff",
+    "theme_color": "#DC2626",
     "orientation": "portrait-primary",
     "lang": "id",
     "dir": "ltr",
@@ -75,6 +79,10 @@
             ]
         }
     ],
-    "categories": ["lifestyle", "utilities", "business"],
+    "categories": [
+        "lifestyle",
+        "utilities",
+        "business"
+    ],
     "prefer_related_applications": false
 }
