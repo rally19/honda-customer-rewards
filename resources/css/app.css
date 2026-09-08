@@ -442,3 +442,9 @@ html {
     z-index: 200 !important;
 }
 
+/* Settings layout navigation sidebar (z-[60] above blur overlay z-55) */
+.settings-sidebar-nav {
+    position: relative;
+    z-index: 60;
+}
+

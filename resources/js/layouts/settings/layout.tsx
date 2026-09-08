@@ -55,7 +55,7 @@ export default function SettingsLayout({ children }: PropsWithChildren) {
             />
 
             <div className="mt-6 flex flex-col lg:flex-row lg:space-x-10">
-                <aside className="w-full max-w-xl lg:w-56">
+                <aside className="settings-sidebar-nav relative z-[60] w-full max-w-xl lg:w-56">
                     <nav
                         className="flex flex-col gap-1.5"
                         aria-label="Pengaturan"

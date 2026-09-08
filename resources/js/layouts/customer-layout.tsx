@@ -475,7 +475,7 @@ export default function CustomerLayout({
             {/* ========================================================================= */}
             {/* MAIN CONTENT CONTAINER                                                    */}
             {/* ========================================================================= */}
-            <main className="animate-smooth-in relative z-10 mx-auto w-full max-w-5xl flex-1 px-4 pt-5 sm:px-6">
+            <main className="relative mx-auto w-full max-w-5xl flex-1 px-4 pt-5 sm:px-6">
                 {children}
             </main>
 
