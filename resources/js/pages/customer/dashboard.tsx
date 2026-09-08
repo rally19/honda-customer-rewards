@@ -1196,53 +1196,67 @@ export default function CustomerDashboard({
                         </Link>
                     </div>
 
-                    <div className="divide-y divide-zinc-100 dark:divide-zinc-800/80">
-                        {loyalty.transactions.slice(0, 3).map((tx) => (
-                            <div
-                                key={tx.id}
-                                className="flex items-center justify-between py-3.5"
-                            >
-                                <div className="flex items-center gap-3">
-                                    <div
-                                        className={`flex size-9 items-center justify-center rounded-xl ${
-                                            tx.type === 'credit'
-                                                ? 'bg-emerald-50 text-emerald-600 dark:bg-emerald-950/60 dark:text-emerald-400'
-                                                : 'bg-rose-50 text-rose-600 dark:bg-rose-950/60 dark:text-rose-400'
-                                        }`}
-                                    >
-                                        {tx.type === 'credit' ? (
-                                            <ArrowUpRight className="size-4.5" />
-                                        ) : (
-                                            <ArrowDownRight className="size-4.5" />
-                                        )}
+                    {loyalty.transactions && loyalty.transactions.length > 0 ? (
+                        <div className="divide-y divide-zinc-100 dark:divide-zinc-800/80">
+                            {loyalty.transactions.slice(0, 3).map((tx) => (
+                                <div
+                                    key={tx.id}
+                                    className="flex items-center justify-between py-3.5"
+                                >
+                                    <div className="flex items-center gap-3">
+                                        <div
+                                            className={`flex size-9 items-center justify-center rounded-xl ${
+                                                tx.type === 'credit'
+                                                    ? 'bg-emerald-50 text-emerald-600 dark:bg-emerald-950/60 dark:text-emerald-400'
+                                                    : 'bg-rose-50 text-rose-600 dark:bg-rose-950/60 dark:text-rose-400'
+                                            }`}
+                                        >
+                                            {tx.type === 'credit' ? (
+                                                <ArrowUpRight className="size-4.5" />
+                                            ) : (
+                                                <ArrowDownRight className="size-4.5" />
+                                            )}
+                                        </div>
+                                        <div>
+                                            <h4 className="text-xs font-semibold text-zinc-900 sm:text-sm dark:text-white">
+                                                {tx.title}
+                                            </h4>
+                                            <p className="text-[11px] text-zinc-400">
+                                                {tx.dealer} &bull; {tx.date}
+                                            </p>
+                                        </div>
                                     </div>
-                                    <div>
-                                        <h4 className="text-xs font-semibold text-zinc-900 sm:text-sm dark:text-white">
-                                            {tx.title}
-                                        </h4>
-                                        <p className="text-[11px] text-zinc-400">
-                                            {tx.dealer} &bull; {tx.date}
-                                        </p>
-                                    </div>
-                                </div>
 
-                                <div className="text-right">
-                                    <span
-                                        className={`font-mono text-sm font-bold ${
-                                            tx.type === 'credit'
-                                                ? 'text-emerald-600 dark:text-emerald-400'
-                                                : 'text-rose-600 dark:text-rose-400'
-                                        }`}
-                                    >
-                                        {tx.points > 0
-                                            ? `+${tx.points}`
-                                            : tx.points}{' '}
-                                        Poin
-                                    </span>
+                                    <div className="text-right">
+                                        <span
+                                            className={`font-mono text-sm font-bold ${
+                                                tx.type === 'credit'
+                                                    ? 'text-emerald-600 dark:text-emerald-400'
+                                                    : 'text-rose-600 dark:text-rose-400'
+                                            }`}
+                                        >
+                                            {tx.points > 0
+                                                ? `+${tx.points}`
+                                                : tx.points}{' '}
+                                            Poin
+                                        </span>
+                                    </div>
                                 </div>
+                            ))}
+                        </div>
+                    ) : (
+                        <div className="flex flex-col items-center justify-center py-7 text-center">
+                            <div className="mb-2 flex size-10 items-center justify-center rounded-xl bg-zinc-100 text-zinc-400 dark:bg-zinc-800 dark:text-zinc-500">
+                                <Clock className="size-5" />
                             </div>
-                        ))}
-                    </div>
+                            <h4 className="text-xs font-semibold text-zinc-800 dark:text-zinc-200">
+                                Belum Ada Riwayat Poin
+                            </h4>
+                            <p className="mt-0.5 max-w-xs text-[11px] text-zinc-500 dark:text-zinc-400">
+                                Lakukan transaksi atau servis di bengkel resmi Honda untuk mulai mengumpulkan poin
+                            </p>
+                        </div>
+                    )}
 
                     <div className="mt-4 border-t border-zinc-100 pt-3 dark:border-zinc-800/60">
                         <Link

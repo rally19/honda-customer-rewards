@@ -43,18 +43,7 @@ class CustomerDashboardController extends Controller
                 'date' => $h->created_at?->format('d M Y, H:i') ?? '-',
             ])->toArray();
 
-        $dummyFallbackTransactions = [
-            [
-                'id' => 'tx-welcome',
-                'title' => 'Bonus Selamat Datang Member Honda',
-                'dealer' => 'Sistem Honda Customer Rewards',
-                'points' => 50,
-                'type' => 'credit',
-                'date' => $user->created_at?->format('d M Y, H:i') ?? 'Baru saja',
-            ],
-        ];
-
-        $transactions = ! empty($realHistories) ? $realHistories : $dummyFallbackTransactions;
+        $transactions = $realHistories;
 
         $today = now()->startOfDay();
         $rewards = Reward::where('is_active', true)
