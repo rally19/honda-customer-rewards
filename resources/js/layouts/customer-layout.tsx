@@ -478,9 +478,13 @@ export default function CustomerLayout({
             {/* MAIN CONTENT CONTAINER                                                    */}
             {/* ========================================================================= */}
             <main className="relative mx-auto w-full max-w-5xl flex-1 px-4 pt-5 sm:px-6">
-                <div key={pathname} className="animate-smooth-in">
-                    {children}
-                </div>
+                {pathname.startsWith('/settings') ? (
+                    children
+                ) : (
+                    <div key={pathname} className="animate-smooth-in">
+                        {children}
+                    </div>
+                )}
             </main>
 
             {/* ========================================================================= */}
