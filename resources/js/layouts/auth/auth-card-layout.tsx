@@ -1,4 +1,4 @@
-import { Link } from '@inertiajs/react';
+import { Link, usePage } from '@inertiajs/react';
 import type { PropsWithChildren } from 'react';
 import { ArrowLeft } from 'lucide-react';
 import ThemeToggle from '@/components/theme-toggle';
@@ -10,6 +10,7 @@ import {
     CardTitle,
 } from '@/components/ui/card';
 import { home } from '@/routes';
+import type { User } from '@/types';
 
 export default function AuthCardLayout({
     children,
@@ -20,6 +21,14 @@ export default function AuthCardLayout({
     title?: string;
     description?: string;
 }>) {
+    const page = usePage<{ auth?: { user?: User | null } }>();
+    const user = page.props.auth?.user;
+    const backUrl = user
+        ? user.role === 'admin'
+            ? '/admin/dashboard'
+            : '/dashboard'
+        : home();
+
     return (
         <div className="relative flex min-h-svh flex-col items-center justify-center bg-zinc-50 p-4 transition-colors sm:p-6 md:p-10 dark:bg-zinc-950">
             {/* Ambient Red Glow */}
@@ -30,11 +39,13 @@ export default function AuthCardLayout({
             {/* Top Navigation */}
             <header className="pointer-events-auto relative top-0 right-0 left-0 z-30 mx-auto flex w-full max-w-6xl shrink-0 items-center justify-between px-4 py-3 sm:absolute sm:px-6 sm:py-5">
                 <Link
-                    href={home()}
+                    href={backUrl}
                     className="-ml-2 inline-flex items-center gap-2 rounded-lg px-2 py-1.5 text-sm font-medium text-zinc-600 transition-colors hover:bg-zinc-100 hover:text-red-600 dark:text-zinc-400 dark:hover:bg-zinc-900 dark:hover:text-red-400"
                 >
                     <ArrowLeft className="size-4" />
-                    <span>Kembali ke Beranda</span>
+                    <span>
+                        {user ? 'Kembali ke Dashboard' : 'Kembali ke Beranda'}
+                    </span>
                 </Link>
 
                 <div className="flex items-center gap-3">
@@ -45,8 +56,11 @@ export default function AuthCardLayout({
             <div className="animate-smooth-in relative z-10 my-auto flex w-full max-w-md flex-col gap-6 pt-4 pb-8 sm:pt-20">
                 <div className="flex flex-col items-center gap-2">
                     <Link
-                        href={home()}
+                        href={backUrl}
                         className="flex items-center gap-2 transition-transform hover:scale-105"
+                        title={
+                            user ? 'Ke Dashboard' : 'Honda Customer Rewards'
+                        }
                     >
                         <img
                             src="/images/logo/anper_sartika_logo_red.png"

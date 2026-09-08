@@ -162,6 +162,7 @@ html {
         opacity: 0;
         transform: translateY(12px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -173,6 +174,7 @@ html {
         opacity: 0;
         transform: scale(0.96) translateY(8px);
     }
+
     to {
         opacity: 1;
         transform: scale(1) translateY(0);
@@ -183,6 +185,7 @@ html {
     from {
         opacity: 0;
     }
+
     to {
         opacity: 1;
     }
@@ -193,6 +196,7 @@ html {
         opacity: 0;
         transform: translateY(16px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -204,6 +208,7 @@ html {
         opacity: 0;
         transform: translateY(-12px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -215,6 +220,7 @@ html {
         opacity: 0;
         transform: translateX(-16px);
     }
+
     to {
         opacity: 1;
         transform: translateX(0);
@@ -226,6 +232,7 @@ html {
         opacity: 0;
         transform: translateX(16px);
     }
+
     to {
         opacity: 1;
         transform: translateX(0);
@@ -241,6 +248,7 @@ html {
         opacity: 0;
         transform: translate(-50%, calc(-50% + 22px)) scale(0.95);
     }
+
     100% {
         opacity: 1;
         transform: translate(-50%, -50%) scale(1);
@@ -252,6 +260,7 @@ html {
         opacity: 1;
         transform: translate(-50%, -50%) scale(1);
     }
+
     100% {
         opacity: 0;
         transform: translate(-50%, calc(-50% + 12px)) scale(0.97);
@@ -264,6 +273,7 @@ html {
         backdrop-filter: blur(0px);
         -webkit-backdrop-filter: blur(0px);
     }
+
     100% {
         opacity: 1;
         backdrop-filter: blur(4px);
@@ -277,6 +287,7 @@ html {
         backdrop-filter: blur(4px);
         -webkit-backdrop-filter: blur(4px);
     }
+
     100% {
         opacity: 0;
         backdrop-filter: blur(0px);
@@ -386,30 +397,38 @@ html {
 .stagger-1 {
     animation-delay: 50ms;
 }
+
 .stagger-2 {
     animation-delay: 100ms;
 }
+
 .stagger-3 {
     animation-delay: 150ms;
 }
+
 .stagger-4 {
     animation-delay: 200ms;
 }
+
 .stagger-5 {
     animation-delay: 250ms;
 }
+
 .stagger-6 {
     animation-delay: 300ms;
 }
+
 .stagger-7 {
     animation-delay: 350ms;
 }
+
 .stagger-8 {
     animation-delay: 400ms;
 }
 
 /* Accessibility */
 @media (prefers-reduced-motion: reduce) {
+
     *,
     ::before,
     ::after {
@@ -434,7 +453,7 @@ html {
 }
 
 /* Radix Portal root wrappers — covers Dialog, Sheet, AlertDialog, Drawer overlays  */
-[data-radix-portal] > * {
+[data-radix-portal]>* {
     z-index: 200 !important;
 }
 
@@ -446,6 +465,5 @@ html {
 /* Settings layout navigation sidebar (z-[60] above blur overlay z-55) */
 .settings-sidebar-nav {
     position: relative;
-    z-index: 60;
+    z-index: 60 !important;
 }
-

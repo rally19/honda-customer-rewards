@@ -478,9 +478,13 @@ export default function CustomerLayout({
             {/* MAIN CONTENT CONTAINER                                                    */}
             {/* ========================================================================= */}
             <main className="relative mx-auto w-full max-w-5xl flex-1 px-4 pt-5 sm:px-6">
-                <div key={pathname} className="animate-smooth-in">
-                    {children}
-                </div>
+                {pathname.startsWith('/settings') ? (
+                    children
+                ) : (
+                    <div key={pathname} className="animate-smooth-in">
+                        {children}
+                    </div>
+                )}
             </main>
 
             {/* ========================================================================= */}
@@ -495,8 +499,8 @@ export default function CustomerLayout({
                     <Link
                         href="/dashboard"
                         className={`flex flex-col items-center gap-1 px-3 py-1 transition-colors ${activeTab === 'home'
-                                ? 'font-bold text-red-600 dark:text-red-500'
-                                : 'font-medium text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-200'
+                            ? 'font-bold text-red-600 dark:text-red-500'
+                            : 'font-medium text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-200'
                             }`}
                     >
                         <Home className="size-5" />
@@ -508,9 +512,9 @@ export default function CustomerLayout({
                         href="/activities"
                         prefetch
                         className={`flex flex-col items-center gap-1 px-3 py-1 transition-colors ${activeTab === 'history' ||
-                                activeTab === 'activities'
-                                ? 'font-bold text-red-600 dark:text-red-500'
-                                : 'font-medium text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-200'
+                            activeTab === 'activities'
+                            ? 'font-bold text-red-600 dark:text-red-500'
+                            : 'font-medium text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-200'
                             }`}
                     >
                         <Clock className="size-5" />
@@ -536,8 +540,8 @@ export default function CustomerLayout({
                         href="/rewards"
                         prefetch
                         className={`flex flex-col items-center gap-1 px-3 py-1 transition-colors ${activeTab === 'rewards'
-                                ? 'font-bold text-red-600 dark:text-red-500'
-                                : 'font-medium text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-200'
+                            ? 'font-bold text-red-600 dark:text-red-500'
+                            : 'font-medium text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-200'
                             }`}
                     >
                         <Gift className="size-5" />
@@ -548,8 +552,8 @@ export default function CustomerLayout({
                     <Link
                         href="/settings/profile"
                         className={`flex flex-col items-center gap-1 px-3 py-1 transition-colors ${activeTab === 'profile'
-                                ? 'font-bold text-red-600 dark:text-red-500'
-                                : 'font-medium text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-200'
+                            ? 'font-bold text-red-600 dark:text-red-500'
+                            : 'font-medium text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-200'
                             }`}
                     >
                         <UserIcon className="size-5" />
