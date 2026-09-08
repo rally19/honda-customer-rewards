@@ -1,22 +1,14 @@
-import { Link, router, usePage } from '@inertiajs/react';
+import { Link, usePage } from '@inertiajs/react';
 import { useState, type PropsWithChildren } from 'react';
 import Heading from '@/components/heading';
+import { LogoutConfirmDialog } from '@/components/logout-confirm-dialog';
 import { Button } from '@/components/ui/button';
-import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
-} from '@/components/ui/dialog';
 import { Separator } from '@/components/ui/separator';
 import { useCurrentUrl } from '@/hooks/use-current-url';
 import { cn, toUrl } from '@/lib/utils';
 import { edit as editAppearance } from '@/routes/appearance';
 import { edit } from '@/routes/profile';
 import { edit as editSecurity } from '@/routes/security';
-import { logout } from '@/routes';
 import type { NavItem, User as AuthUser } from '@/types';
 import {
     User,
@@ -54,10 +46,6 @@ export default function SettingsLayout({ children }: PropsWithChildren) {
     const isAdmin = role === 'admin';
     const { isCurrentOrParentUrl } = useCurrentUrl();
     const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
-
-    const handleLogout = () => {
-        router.post(logout().url);
-    };
 
     return (
         <div className="px-2 py-4 sm:px-4 sm:py-6">
@@ -163,44 +151,10 @@ export default function SettingsLayout({ children }: PropsWithChildren) {
             </div>
 
             {/* Modal Konfirmasi Logout */}
-            <Dialog
+            <LogoutConfirmDialog
                 open={showLogoutConfirm}
                 onOpenChange={setShowLogoutConfirm}
-            >
-                <DialogContent className="rounded-3xl border-zinc-200 bg-white p-6 sm:max-w-md dark:border-zinc-800 dark:bg-zinc-900">
-                    <DialogHeader className="space-y-2">
-                        <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-rose-100 text-rose-600 dark:bg-rose-950 dark:text-rose-400">
-                            <LogOut className="size-6" />
-                        </div>
-                        <DialogTitle className="text-center text-lg font-bold text-zinc-900 dark:text-white">
-                            Konfirmasi Keluar
-                        </DialogTitle>
-                        <DialogDescription className="text-center text-xs text-zinc-500 dark:text-zinc-400">
-                            Apakah Anda yakin ingin keluar dari akun Honda
-                            Customer Rewards? Anda perlu memasukkan kredensial
-                            Anda kembali untuk masuk.
-                        </DialogDescription>
-                    </DialogHeader>
-
-                    <DialogFooter className="mt-4 flex flex-col gap-2 sm:flex-row">
-                        <Button
-                            type="button"
-                            variant="outline"
-                            onClick={() => setShowLogoutConfirm(false)}
-                            className="flex-1 rounded-xl text-xs font-semibold"
-                        >
-                            Batal
-                        </Button>
-                        <Button
-                            type="button"
-                            onClick={handleLogout}
-                            className="flex-1 rounded-xl bg-rose-600 text-xs font-semibold text-white hover:bg-rose-700"
-                        >
-                            Ya, Keluar Sekarang
-                        </Button>
-                    </DialogFooter>
-                </DialogContent>
-            </Dialog>
+            />
         </div>
     );
 }

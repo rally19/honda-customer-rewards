@@ -1,8 +1,10 @@
 import { Link, usePage } from '@inertiajs/react';
 import { BookOpen, Folder, LayoutGrid, Menu, Search } from 'lucide-react';
+import { useState } from 'react';
 import AppLogo from '@/components/app-logo';
 import AppLogoIcon from '@/components/app-logo-icon';
 import { Breadcrumbs } from '@/components/breadcrumbs';
+import { LogoutConfirmDialog } from '@/components/logout-confirm-dialog';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import {
@@ -62,6 +64,7 @@ export function AppHeader({ breadcrumbs = [] }: Props) {
     const getInitials = useInitials();
     const { isCurrentUrl, whenCurrentUrl } = useCurrentUrl();
     const dashboardUrl = dashboard();
+    const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
     const mainNavItems: NavItem[] = [
         {
@@ -235,7 +238,12 @@ export function AppHeader({ breadcrumbs = [] }: Props) {
                                 </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent className="w-56" align="end">
-                                <UserMenuContent user={auth.user} />
+                                <UserMenuContent
+                                    user={auth.user}
+                                    onLogoutClick={() =>
+                                        setShowLogoutConfirm(true)
+                                    }
+                                />
                             </DropdownMenuContent>
                         </DropdownMenu>
                     </div>
@@ -248,6 +256,11 @@ export function AppHeader({ breadcrumbs = [] }: Props) {
                     </div>
                 </div>
             )}
+
+            <LogoutConfirmDialog
+                open={showLogoutConfirm}
+                onOpenChange={setShowLogoutConfirm}
+            />
         </>
     );
 }

@@ -14,9 +14,10 @@ import type { User } from '@/types';
 
 type Props = {
     user: User;
+    onLogoutClick?: () => void;
 };
 
-export function UserMenuContent({ user }: Props) {
+export function UserMenuContent({ user, onLogoutClick }: Props) {
     const cleanup = useMobileNavigation();
 
     const handleLogout = () => {
@@ -57,18 +58,34 @@ export function UserMenuContent({ user }: Props) {
                 </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem asChild>
-                <Link
-                    className="block w-full cursor-pointer"
-                    href={logout()}
-                    as="button"
-                    onClick={handleLogout}
+            {onLogoutClick ? (
+                <DropdownMenuItem
+                    className="cursor-pointer text-rose-600 focus:bg-rose-50 focus:text-rose-700 dark:text-rose-400 dark:focus:bg-rose-950/50"
+                    onSelect={() => {
+                        cleanup();
+                        setTimeout(() => {
+                            onLogoutClick();
+                        }, 0);
+                    }}
                     data-test="logout-button"
                 >
                     <LogOut className="mr-2" />
                     Log out
-                </Link>
-            </DropdownMenuItem>
+                </DropdownMenuItem>
+            ) : (
+                <DropdownMenuItem asChild>
+                    <Link
+                        className="block w-full cursor-pointer text-rose-600 focus:bg-rose-50 focus:text-rose-700 dark:text-rose-400 dark:focus:bg-rose-950/50"
+                        href={logout()}
+                        as="button"
+                        onClick={handleLogout}
+                        data-test="logout-button"
+                    >
+                        <LogOut className="mr-2" />
+                        Log out
+                    </Link>
+                </DropdownMenuItem>
+            )}
         </>
     );
 }
