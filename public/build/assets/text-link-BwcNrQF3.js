@@ -1,1 +1,0 @@
-import{i as e,l as t,r as n}from"./wayfinder-KgM3b60j.js";var r=n();function i({className:n=``,children:i,...a}){return(0,r.jsx)(t,{className:e(`text-foreground underline decoration-neutral-300 underline-offset-4 transition-colors duration-300 ease-out hover:decoration-current! dark:decoration-neutral-500`,n),...a,children:i})}export{i as t};
