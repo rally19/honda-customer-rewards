@@ -540,7 +540,7 @@ export default function AdminDashboard({
 
                 {/* Primary Navigation Tabs */}
                 <div className="flex flex-col justify-between gap-4 border-b border-zinc-200 pb-2 md:flex-row md:items-center dark:border-zinc-800">
-                    <div className="no-scrollbar flex items-center gap-2 overflow-x-auto py-1">
+                    <div className="flex items-center gap-2 overflow-x-auto py-1">
                         <button
                             type="button"
                             onClick={() => setActiveTab('overview')}

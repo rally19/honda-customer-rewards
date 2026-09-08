@@ -164,8 +164,8 @@ export default function CustomerDashboard({
         rewards && rewards.length > 0
             ? rewards
             : loyalty.rewards && loyalty.rewards.length > 0
-              ? loyalty.rewards
-              : [
+                ? loyalty.rewards
+                : [
                     {
                         id: '2039485704',
                         name: 'Voucher servis',
@@ -264,8 +264,8 @@ export default function CustomerDashboard({
         earningActivities && earningActivities.length > 0
             ? earningActivities
             : loyalty.earningActivities && loyalty.earningActivities.length > 0
-              ? loyalty.earningActivities
-              : [
+                ? loyalty.earningActivities
+                : [
                     {
                         id: '1029384751',
                         name: 'Servis berkala di AHASS',
@@ -321,8 +321,8 @@ export default function CustomerDashboard({
         rewardExchanges && rewardExchanges.length > 0
             ? rewardExchanges
             : loyalty.rewardExchanges && loyalty.rewardExchanges.length > 0
-              ? loyalty.rewardExchanges
-              : [];
+                ? loyalty.rewardExchanges
+                : [];
 
     const updateScrollButtons = () => {
         if (!sliderRef.current) return;
@@ -611,7 +611,7 @@ export default function CustomerDashboard({
                             >
                                 <div className="mb-1 flex items-center justify-between text-[11px] text-zinc-300">
                                     {loyalty.pointsToNextTier === 0 ||
-                                    loyalty.nextTier === 'Maksimal' ? (
+                                        loyalty.nextTier === 'Maksimal' ? (
                                         <>
                                             <span className="flex items-center gap-1 font-semibold text-amber-300">
                                                 <Sparkles className="size-3 animate-pulse text-amber-400" />
@@ -781,9 +781,8 @@ export default function CustomerDashboard({
                     <div className="relative">
                         {/* Left Fade Overlay (appears when content is scrolled to the right) */}
                         <div
-                            className={`pointer-events-none absolute top-0 bottom-0 -left-1.5 z-10 w-5 bg-gradient-to-r from-zinc-50 via-zinc-50/80 to-transparent transition-opacity duration-300 sm:-left-2 sm:w-6 md:w-8 dark:from-zinc-950 dark:via-zinc-950/80 dark:to-transparent ${
-                                canScrollLeft ? 'opacity-100' : 'opacity-0'
-                            }`}
+                            className={`pointer-events-none absolute top-0 bottom-0 -left-1.5 z-10 w-5 bg-gradient-to-r from-zinc-50 via-zinc-50/80 to-transparent transition-opacity duration-300 sm:-left-2 sm:w-6 md:w-8 dark:from-zinc-950 dark:via-zinc-950/80 dark:to-transparent ${canScrollLeft ? 'opacity-100' : 'opacity-0'
+                                }`}
                             aria-hidden="true"
                         />
 
@@ -836,9 +835,8 @@ export default function CustomerDashboard({
 
                         {/* Right Fade Overlay (appears when there is more content to scroll) */}
                         <div
-                            className={`pointer-events-none absolute top-0 -right-1.5 bottom-0 z-10 w-5 bg-gradient-to-l from-zinc-50 via-zinc-50/80 to-transparent transition-opacity duration-300 sm:-right-2 sm:w-6 md:w-8 dark:from-zinc-950 dark:via-zinc-950/80 dark:to-transparent ${
-                                canScrollRight ? 'opacity-100' : 'opacity-0'
-                            }`}
+                            className={`pointer-events-none absolute top-0 -right-1.5 bottom-0 z-10 w-5 bg-gradient-to-l from-zinc-50 via-zinc-50/80 to-transparent transition-opacity duration-300 sm:-right-2 sm:w-6 md:w-8 dark:from-zinc-950 dark:via-zinc-950/80 dark:to-transparent ${canScrollRight ? 'opacity-100' : 'opacity-0'
+                                }`}
                             aria-hidden="true"
                         />
                     </div>
@@ -900,11 +898,10 @@ export default function CustomerDashboard({
                     <div className="relative">
                         {/* Left Fade Overlay (appears when content is scrolled to the right) */}
                         <div
-                            className={`pointer-events-none absolute top-0 bottom-0 -left-1.5 z-10 w-5 bg-gradient-to-r from-zinc-50 via-zinc-50/80 to-transparent transition-opacity duration-300 sm:-left-2 sm:w-6 md:w-8 dark:from-zinc-950 dark:via-zinc-950/80 dark:to-transparent ${
-                                canScrollRewardLeft
+                            className={`pointer-events-none absolute top-0 bottom-0 -left-1.5 z-10 w-5 bg-gradient-to-r from-zinc-50 via-zinc-50/80 to-transparent transition-opacity duration-300 sm:-left-2 sm:w-6 md:w-8 dark:from-zinc-950 dark:via-zinc-950/80 dark:to-transparent ${canScrollRewardLeft
                                     ? 'opacity-100'
                                     : 'opacity-0'
-                            }`}
+                                }`}
                             aria-hidden="true"
                         />
 
@@ -1001,11 +998,10 @@ export default function CustomerDashboard({
 
                         {/* Right Fade Overlay (appears when there is more content to scroll) */}
                         <div
-                            className={`pointer-events-none absolute top-0 -right-1.5 bottom-0 z-10 w-5 bg-gradient-to-l from-zinc-50 via-zinc-50/80 to-transparent transition-opacity duration-300 sm:-right-2 sm:w-6 md:w-8 dark:from-zinc-950 dark:via-zinc-950/80 dark:to-transparent ${
-                                canScrollRewardRight
+                            className={`pointer-events-none absolute top-0 -right-1.5 bottom-0 z-10 w-5 bg-gradient-to-l from-zinc-50 via-zinc-50/80 to-transparent transition-opacity duration-300 sm:-right-2 sm:w-6 md:w-8 dark:from-zinc-950 dark:via-zinc-950/80 dark:to-transparent ${canScrollRewardRight
                                     ? 'opacity-100'
                                     : 'opacity-0'
-                            }`}
+                                }`}
                             aria-hidden="true"
                         />
                     </div>
@@ -1083,32 +1079,32 @@ export default function CustomerDashboard({
                                                     </span>
                                                     {exchange.status ===
                                                         'claimed' && (
-                                                        <span className="inline-flex items-center gap-0.5 text-[10px] font-bold text-emerald-600 dark:text-emerald-400">
-                                                            <CheckCircle2 className="size-3" />
-                                                            Disetujui
-                                                        </span>
-                                                    )}
+                                                            <span className="inline-flex items-center gap-0.5 text-[10px] font-bold text-emerald-600 dark:text-emerald-400">
+                                                                <CheckCircle2 className="size-3" />
+                                                                Disetujui
+                                                            </span>
+                                                        )}
                                                     {exchange.status ===
                                                         'hold' && (
-                                                        <span className="inline-flex items-center gap-0.5 text-[10px] font-bold text-amber-600 dark:text-amber-400">
-                                                            <Clock className="size-3" />
-                                                            Diproses
-                                                        </span>
-                                                    )}
+                                                            <span className="inline-flex items-center gap-0.5 text-[10px] font-bold text-amber-600 dark:text-amber-400">
+                                                                <Clock className="size-3" />
+                                                                Diproses
+                                                            </span>
+                                                        )}
                                                     {exchange.status ===
                                                         'rejected' && (
-                                                        <span className="inline-flex items-center gap-0.5 text-[10px] font-bold text-rose-600 dark:text-rose-400">
-                                                            <XCircle className="size-3" />
-                                                            Ditolak
-                                                        </span>
-                                                    )}
+                                                            <span className="inline-flex items-center gap-0.5 text-[10px] font-bold text-rose-600 dark:text-rose-400">
+                                                                <XCircle className="size-3" />
+                                                                Ditolak
+                                                            </span>
+                                                        )}
                                                     {exchange.status ===
                                                         'cancelled' && (
-                                                        <span className="inline-flex items-center gap-0.5 text-[10px] font-bold text-zinc-500">
-                                                            <RotateCcw className="size-3" />
-                                                            Dibatalkan
-                                                        </span>
-                                                    )}
+                                                            <span className="inline-flex items-center gap-0.5 text-[10px] font-bold text-zinc-500">
+                                                                <RotateCcw className="size-3" />
+                                                                Dibatalkan
+                                                            </span>
+                                                        )}
                                                     {![
                                                         'claimed',
                                                         'hold',
@@ -1117,11 +1113,11 @@ export default function CustomerDashboard({
                                                     ].includes(
                                                         exchange.status,
                                                     ) && (
-                                                        <span className="text-[10px] font-semibold text-zinc-500">
-                                                            {exchange.status_label ||
-                                                                exchange.status}
-                                                        </span>
-                                                    )}
+                                                            <span className="text-[10px] font-semibold text-zinc-500">
+                                                                {exchange.status_label ||
+                                                                    exchange.status}
+                                                            </span>
+                                                        )}
                                                 </div>
                                             </div>
                                         </div>
@@ -1205,11 +1201,10 @@ export default function CustomerDashboard({
                                 >
                                     <div className="flex items-center gap-3">
                                         <div
-                                            className={`flex size-9 items-center justify-center rounded-xl ${
-                                                tx.type === 'credit'
+                                            className={`flex size-9 items-center justify-center rounded-xl ${tx.type === 'credit'
                                                     ? 'bg-emerald-50 text-emerald-600 dark:bg-emerald-950/60 dark:text-emerald-400'
                                                     : 'bg-rose-50 text-rose-600 dark:bg-rose-950/60 dark:text-rose-400'
-                                            }`}
+                                                }`}
                                         >
                                             {tx.type === 'credit' ? (
                                                 <ArrowUpRight className="size-4.5" />
@@ -1229,11 +1224,10 @@ export default function CustomerDashboard({
 
                                     <div className="text-right">
                                         <span
-                                            className={`font-mono text-sm font-bold ${
-                                                tx.type === 'credit'
+                                            className={`font-mono text-sm font-bold ${tx.type === 'credit'
                                                     ? 'text-emerald-600 dark:text-emerald-400'
                                                     : 'text-rose-600 dark:text-rose-400'
-                                            }`}
+                                                }`}
                                         >
                                             {tx.points > 0
                                                 ? `+${tx.points}`
@@ -1567,13 +1561,12 @@ export default function CustomerDashboard({
                             return (
                                 <div
                                     key={tierItem.tier}
-                                    className={`rounded-2xl border p-3.5 transition-all ${
-                                        isCurrent
+                                    className={`rounded-2xl border p-3.5 transition-all ${isCurrent
                                             ? 'border-red-500 bg-red-500/5 ring-1 ring-red-500/30 dark:bg-red-950/30'
                                             : isReached
-                                              ? 'border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900/60'
-                                              : 'border-dashed border-zinc-200 bg-zinc-50/50 opacity-75 dark:border-zinc-800 dark:bg-zinc-950/30'
-                                    }`}
+                                                ? 'border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900/60'
+                                                : 'border-dashed border-zinc-200 bg-zinc-50/50 opacity-75 dark:border-zinc-800 dark:bg-zinc-950/30'
+                                        }`}
                                 >
                                     <div className="flex items-center justify-between gap-2">
                                         <div className="flex items-center gap-2">

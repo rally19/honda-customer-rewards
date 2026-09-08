@@ -15,7 +15,7 @@ export default function AppSidebarLayout({
     return (
         <AppShell variant="sidebar">
             <AppSidebar />
-            <AppContent variant="sidebar" className="min-w-0 overflow-x-clip">
+            <AppContent variant="sidebar" className="min-w-0 w-full">
                 <AppSidebarHeader breadcrumbs={breadcrumbs} />
                 <div key={pathname} className="animate-smooth-in flex-1">
                     {children}

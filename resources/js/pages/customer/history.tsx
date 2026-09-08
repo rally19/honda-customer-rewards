@@ -543,7 +543,7 @@ export default function CustomerHistoryPage({
                             </form>
 
                             {/* Filter Periode Pills */}
-                            <div className="no-scrollbar flex items-center gap-1.5 overflow-x-auto pt-1 pb-1 text-xs">
+                            <div className="flex items-center gap-1.5 overflow-x-auto pt-1 pb-1 text-xs">
                                 <span className="mr-1 flex shrink-0 items-center gap-1 text-[11px] font-semibold text-zinc-400">
                                     <Filter className="size-3" /> Periode:
                                 </span>
