@@ -7,14 +7,13 @@
 
         {{-- PWA Manifest & App Identity --}}
         <link rel="manifest" href="/site.webmanifest">
-        <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
-        <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
+        <meta name="theme-color" id="theme-color-meta" content="{{ ($appearance ?? 'system') === 'dark' ? '#000000' : '#ffffff' }}">
         <meta name="mobile-web-app-capable" content="yes">
         <meta name="apple-mobile-web-app-capable" content="yes">
-        <meta name="apple-mobile-web-app-status-bar-style" content="default">
+        <meta name="apple-mobile-web-app-status-bar-style" id="apple-status-bar-style" content="{{ ($appearance ?? 'system') === 'dark' ? 'black' : 'default' }}">
         <meta name="apple-mobile-web-app-title" content="Honda Rewards">
         <meta name="application-name" content="Honda Rewards">
-        <meta name="msapplication-TileColor" content="#ffffff">
+        <meta name="msapplication-TileColor" content="{{ ($appearance ?? 'system') === 'dark' ? '#000000' : '#ffffff' }}">
 
         {{-- Inline script to detect system dark mode preference and apply it immediately --}}
         <script>
@@ -30,13 +29,24 @@
 
                 if (isDark) {
                     document.documentElement.classList.add('dark');
+                    document.documentElement.style.colorScheme = 'dark';
+                } else {
+                    document.documentElement.classList.remove('dark');
+                    document.documentElement.style.colorScheme = 'light';
                 }
 
-                if (appearance !== 'system') {
-                    const color = isDark ? '#000000' : '#ffffff';
-                    document.querySelectorAll('meta[name="theme-color"]').forEach(function(el) {
-                        el.setAttribute('content', color);
-                    });
+                const color = isDark ? '#000000' : '#ffffff';
+                const appleStyle = isDark ? 'black' : 'default';
+
+                const meta = document.getElementById('theme-color-meta');
+                if (meta) {
+                    meta.removeAttribute('media');
+                    meta.setAttribute('content', color);
+                }
+
+                const appleMeta = document.getElementById('apple-status-bar-style');
+                if (appleMeta) {
+                    appleMeta.setAttribute('content', appleStyle);
                 }
             })();
         </script>
