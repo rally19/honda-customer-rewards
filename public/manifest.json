@@ -7,21 +7,27 @@
     "scope": "/",
     "display": "standalone",
     "display_override": ["window-controls-overlay", "standalone", "minimal-ui"],
-    "background_color": "#09090b",
-    "theme_color": "#DC2626",
+    "background_color": "#DD0101",
+    "theme_color": "#DD0101",
     "orientation": "portrait-primary",
     "lang": "id",
     "dir": "ltr",
     "icons": [
         {
-            "src": "/icons/pwa-192x192.png",
-            "sizes": "192x192",
+            "src": "/images/logo/anper_sartika_logo_redbg_white_1x1_512.png",
+            "sizes": "512x512",
             "type": "image/png",
             "purpose": "any"
         },
         {
             "src": "/icons/pwa-512x512.png",
             "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any"
+        },
+        {
+            "src": "/icons/pwa-192x192.png",
+            "sizes": "192x192",
             "type": "image/png",
             "purpose": "any"
         },

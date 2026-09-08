@@ -186,11 +186,11 @@ export function PwaPrompt() {
                 <div className="absolute inset-x-0 top-0 h-1 bg-linear-to-r from-red-600 via-amber-500 to-red-600" />
 
                 <div className="flex items-start gap-3.5">
-                    <div className="flex size-11 shrink-0 items-center justify-center rounded-2xl bg-red-600 text-white shadow-md shadow-red-600/30">
+                    <div className="size-11 shrink-0 overflow-hidden rounded-2xl shadow-md shadow-red-600/30">
                         <img
-                            src="/images/logo/anper_sartika_logo_white.png"
-                            alt="Logo Anper"
-                            className="size-8 object-contain"
+                            src="/images/logo/anper_sartika_logo_redbg_white_1x1_512.png"
+                            alt="Logo Honda Rewards"
+                            className="size-full object-cover"
                             onError={(e) => {
                                 // Fallback icon if image fails
                                 e.currentTarget.style.display = 'none';

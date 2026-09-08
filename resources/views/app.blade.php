@@ -40,19 +40,20 @@
 
     {{-- PWA Manifest & App Identity --}}
     <link rel="manifest" href="/site.webmanifest">
-    <meta name="theme-color" content="#DC2626" media="(prefers-color-scheme: light)">
-    <meta name="theme-color" content="#DC2626" media="(prefers-color-scheme: dark)">
+    <meta name="theme-color" content="#DD0101" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#DD0101" media="(prefers-color-scheme: dark)">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Honda Rewards">
     <meta name="application-name" content="Honda Rewards">
-    <meta name="msapplication-TileColor" content="#DC2626">
+    <meta name="msapplication-TileColor" content="#DD0101">
 
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
     <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
     <link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/icons/favicon-16x16.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/icons/pwa-192x192.png">
     <link rel="icon" type="image/png" sizes="512x512" href="/images/logo/anper_sartika_logo_redbg_white_1x1_512.png">
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 
