@@ -38,11 +38,13 @@ export default function CustomerLayout({
     children,
     activeTab = 'home',
 }: CustomerLayoutProps) {
-    const { auth, notifications = [] } = usePage<{
+    const page = usePage<{
         auth: { user: User };
         notifications?: NotificationItem[];
-    }>().props;
+    }>();
+    const { auth, notifications = [] } = page.props;
     const user = auth.user;
+    const pathname = page.url.split('?')[0];
 
     const [qrModalOpen, setQrModalOpen] = useState(false);
     const [copiedId, setCopiedId] = useState(false);
@@ -476,7 +478,9 @@ export default function CustomerLayout({
             {/* MAIN CONTENT CONTAINER                                                    */}
             {/* ========================================================================= */}
             <main className="relative mx-auto w-full max-w-5xl flex-1 px-4 pt-5 sm:px-6">
-                {children}
+                <div key={pathname} className="animate-smooth-in">
+                    {children}
+                </div>
             </main>
 
             {/* ========================================================================= */}
