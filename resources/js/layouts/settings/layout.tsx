@@ -55,7 +55,7 @@ export default function SettingsLayout({ children }: PropsWithChildren) {
             />
 
             <div className="mt-6 flex flex-col lg:flex-row lg:space-x-10">
-                <aside className="settings-sidebar-nav relative z-[60] w-full max-w-xl rounded-2xl border border-zinc-200/80 bg-white/95 p-3 shadow-xs backdrop-blur-md sm:p-3.5 lg:w-60 lg:border-zinc-200/80 lg:bg-white/90 lg:p-3.5 lg:shadow-xs dark:border-zinc-800/80 dark:bg-zinc-900/95 lg:dark:bg-zinc-900/90">
+                <aside className="settings-sidebar-nav relative z-[60] w-full max-w-xl lg:w-56">
                     <nav
                         className="flex flex-col gap-1.5"
                         aria-label="Pengaturan"
