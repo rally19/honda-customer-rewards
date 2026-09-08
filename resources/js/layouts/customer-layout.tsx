@@ -562,7 +562,7 @@ export default function CustomerLayout({
             {/* MODAL QR ID MEMBER DIGITAL (POPUP SAAT SCAN ID DIKLIK)                    */}
             {/* ========================================================================= */}
             <Dialog open={qrModalOpen} onOpenChange={setQrModalOpen}>
-                <DialogContent className="max-h-[90vh] w-[92vw] max-w-sm gap-3 overflow-y-auto rounded-3xl border-zinc-200 bg-white p-4 shadow-2xl sm:max-w-md sm:p-5 dark:border-zinc-800 dark:bg-zinc-900">
+                <DialogContent className="z-[100] max-h-[90vh] w-[92vw] max-w-sm gap-3 overflow-y-auto rounded-3xl border-zinc-200 bg-white p-4 shadow-2xl sm:max-w-md sm:p-5 dark:border-zinc-800 dark:bg-zinc-900">
                     <DialogHeader className="space-y-1 pb-1 text-center">
                         <div className="mx-auto inline-flex items-center justify-center gap-1.5 rounded-full border border-red-200/80 bg-red-50 px-2.5 py-0.5 text-[10px] font-bold text-red-600 dark:border-red-900/50 dark:bg-red-950/60 dark:text-red-400">
                             <QrCodeIcon className="size-3" />
