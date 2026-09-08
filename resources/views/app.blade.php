@@ -81,15 +81,19 @@
 
             // Sync theme-color & iOS status bar with app dark mode toggle (watches html.dark class)
             (function() {
-                var metaTheme = document.querySelector('meta[name="theme-color"]');
                 var metaStatusBar = document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"]');
 
                 function applyTheme() {
                     var isDark = document.documentElement.classList.contains('dark');
-                    // Android: theme-color controls status bar background; browser auto-picks contrasting icon color
-                    if (metaTheme) {
-                        metaTheme.setAttribute('content', isDark ? '#09090b' : '#ffffff');
-                    }
+                    var color = isDark ? '#09090b' : '#ffffff';
+
+                    // Remove & recreate meta — Chrome Android doesn't reliably respond to setAttribute
+                    document.querySelectorAll('meta[name="theme-color"]').forEach(function(m) { m.remove(); });
+                    var meta = document.createElement('meta');
+                    meta.name = 'theme-color';
+                    meta.content = color;
+                    document.head.appendChild(meta);
+
                     // iOS PWA: 'black' = dark status bar + white icons, 'default' = light + dark icons
                     if (metaStatusBar) {
                         metaStatusBar.setAttribute('content', isDark ? 'black' : 'default');
