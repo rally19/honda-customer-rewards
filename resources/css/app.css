@@ -418,3 +418,27 @@ html {
         scroll-behavior: auto !important;
     }
 }
+
+/* ─── Navigation Progress: keep chrome elements above the blur overlay (z-55) ─── */
+/* ShadCN sidebar fixed wrapper z-index raised to z-[60] directly in ui/sidebar.tsx */
+/* Admin sticky top-header */
+.app-header-sticky {
+    z-index: 60;
+}
+
+/* Radix UI popper content wrappers (DropdownMenu, Popover, Tooltip, Select, etc.)  */
+/* Must be above the sidebar (z-[60]) so dropdowns inside sidebar are always visible */
+[data-radix-popper-content-wrapper] {
+    z-index: 200 !important;
+}
+
+/* Radix Portal root wrappers — covers Dialog, Sheet, AlertDialog, Drawer overlays  */
+[data-radix-portal] > * {
+    z-index: 200 !important;
+}
+
+/* PWA prompt — fixed bottom, needs to stay above blur overlay */
+.pwa-prompt-above-blur {
+    z-index: 200 !important;
+}
+

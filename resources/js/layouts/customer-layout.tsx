@@ -198,7 +198,7 @@ export default function CustomerLayout({
             {/* ========================================================================= */}
             {/* TOP BAR (HEADER DIGITAL BANKING STYLE)                                    */}
             {/* ========================================================================= */}
-            <header className="sticky top-0 z-40 w-full border-b border-zinc-200/80 bg-white/95 shadow-xs backdrop-blur-md transition-colors dark:border-zinc-800/80 dark:bg-zinc-950/90">
+            <header className="sticky top-0 z-[60] w-full border-b border-zinc-200/80 bg-white/95 shadow-xs backdrop-blur-md transition-colors dark:border-zinc-800/80 dark:bg-zinc-950/90">
                 <div className="mx-auto flex h-16 max-w-5xl items-center justify-between px-4 sm:px-6">
                     {/* Left: Brand & User Greeting */}
                     <div className="flex items-center gap-3">
@@ -269,7 +269,7 @@ export default function CustomerLayout({
 
                             {/* Notification Dropdown Preview */}
                             {notifOpen && (
-                                <div className="animate-smooth-scale absolute right-0 z-50 mt-2 w-84 origin-top-right rounded-2xl border border-zinc-200/90 bg-white/95 p-4 shadow-2xl backdrop-blur-xl sm:w-96 dark:border-zinc-800 dark:bg-zinc-900/95">
+                                <div className="animate-smooth-scale absolute right-0 z-[200] mt-2 w-84 origin-top-right rounded-2xl border border-zinc-200/90 bg-white/95 p-4 shadow-2xl backdrop-blur-xl sm:w-96 dark:border-zinc-800 dark:bg-zinc-900/95">
                                     <div className="flex items-center justify-between border-b border-zinc-100 pb-2.5 dark:border-zinc-800">
                                         <div className="flex items-center gap-2">
                                             <h4 className="text-xs font-bold tracking-wider text-zinc-900 uppercase dark:text-zinc-100">
@@ -483,7 +483,7 @@ export default function CustomerLayout({
             {/* BOTTOM NAVIGATION BAR (MODERN FLOATING DOCK - E-WALLET STYLE)             */}
             {/* ========================================================================= */}
             <nav
-                className="fixed inset-x-0 bottom-3 z-40 mx-auto w-[94%] max-w-md rounded-3xl border border-zinc-200/90 bg-white/95 px-3 py-2 shadow-2xl shadow-zinc-950/15 backdrop-blur-xl transition-colors sm:max-w-lg md:max-w-xl dark:border-zinc-800 dark:bg-zinc-900/95 dark:shadow-black/60"
+                className="fixed inset-x-0 bottom-3 z-[60] mx-auto w-[94%] max-w-md rounded-3xl border border-zinc-200/90 bg-white/95 px-3 py-2 shadow-2xl shadow-zinc-950/15 backdrop-blur-xl transition-colors sm:max-w-lg md:max-w-xl dark:border-zinc-800 dark:bg-zinc-900/95 dark:shadow-black/60"
                 aria-label="Navigasi Bawah"
             >
                 <div className="relative flex items-center justify-around">

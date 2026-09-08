@@ -179,7 +179,7 @@ export function PwaPrompt() {
     return (
         <aside
             aria-label="Pemasangan Aplikasi Honda Rewards"
-            className="animate-smooth-up pointer-events-auto fixed right-4 bottom-20 left-4 z-50 sm:right-6 sm:bottom-6 sm:left-auto sm:max-w-md"
+            className="animate-smooth-up pointer-events-auto fixed right-4 bottom-20 left-4 z-[200] sm:right-6 sm:bottom-6 sm:left-auto sm:max-w-md"
         >
             <div className="relative overflow-hidden rounded-2xl border border-red-500/30 bg-white/95 p-4 shadow-2xl shadow-red-500/10 backdrop-blur-xl sm:rounded-3xl dark:bg-zinc-900/95 dark:shadow-black/40">
                 {/* Subtle top brand accent line */}

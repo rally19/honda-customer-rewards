@@ -1101,7 +1101,7 @@ export default function AdminScanIndex({
                     <div className="space-y-6 lg:col-span-5">
                         <div
                             ref={memberCardRef}
-                            className="space-y-5 rounded-3xl border border-zinc-200 bg-white p-4 shadow-xs sm:p-5 md:p-6 lg:sticky lg:top-6 dark:border-zinc-800 dark:bg-zinc-900"
+                            className="space-y-5 rounded-3xl border border-zinc-200 bg-white p-4 shadow-xs sm:p-5 md:p-6 lg:sticky lg:top-[80px] dark:border-zinc-800 dark:bg-zinc-900"
                         >
                             <div className="flex items-center justify-between border-b border-zinc-100 pb-3 dark:border-zinc-800">
                                 <div className="flex items-center gap-2.5">

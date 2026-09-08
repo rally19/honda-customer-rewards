@@ -1,6 +1,7 @@
 import { createInertiaApp } from '@inertiajs/react';
 import type { ReactNode } from 'react';
 import { createRoot, hydrateRoot, type Root } from 'react-dom/client';
+import { NavigationProgress } from '@/components/navigation-progress';
 import { PwaPrompt } from '@/components/pwa-prompt';
 import { Toaster } from '@/components/ui/sonner';
 import { TooltipProvider } from '@/components/ui/tooltip';
@@ -37,6 +38,7 @@ void createInertiaApp({
     setup({ el, App, props }) {
         const appElement = (
             <TooltipProvider delayDuration={0}>
+                <NavigationProgress />
                 <App {...props} />
                 <Toaster />
                 <PwaPrompt />
@@ -59,9 +61,7 @@ void createInertiaApp({
         }
         container.__reactRoot.render(appElement);
     },
-    progress: {
-        color: '#DC2626', // Honda Racing Red
-    },
+    progress: false,
 });
 
 // This will set light / dark mode on load...

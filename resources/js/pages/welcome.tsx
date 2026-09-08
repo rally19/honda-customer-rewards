@@ -660,7 +660,7 @@ export default function Welcome({
                                         className="inline-flex w-full items-center justify-center gap-2.5 rounded-xl bg-red-600 px-7 py-3.5 text-base font-bold text-white shadow-xl shadow-red-600/30 transition-all hover:-translate-y-0.5 hover:bg-red-700 hover:shadow-red-600/40 active:translate-y-0 active:scale-95 sm:w-auto"
                                     >
                                         <Sparkles className="size-5" />
-                                        <span>Buka Dashboard Member</span>
+                                        <span>Buka Dashboard</span>
                                     </Link>
                                 ) : (
                                     <Link
@@ -741,11 +741,10 @@ export default function Welcome({
                                     {HERO_SLIDES.map((slide, idx) => (
                                         <div
                                             key={idx}
-                                            className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
-                                                idx === currentSlide
+                                            className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${idx === currentSlide
                                                     ? 'z-10 opacity-100'
                                                     : 'z-0 opacity-0'
-                                            }`}
+                                                }`}
                                         >
                                             <img
                                                 src={slide.image}
@@ -796,11 +795,10 @@ export default function Welcome({
                                             key={idx}
                                             type="button"
                                             onClick={() => setCurrentSlide(idx)}
-                                            className={`h-2 rounded-full transition-all ${
-                                                idx === currentSlide
+                                            className={`h-2 rounded-full transition-all ${idx === currentSlide
                                                     ? 'w-7 bg-red-500'
                                                     : 'w-2 bg-white/50 hover:bg-white'
-                                            }`}
+                                                }`}
                                             aria-label={`Pindah ke slide ${idx + 1}`}
                                         />
                                     ))}
@@ -1068,11 +1066,10 @@ export default function Welcome({
                                     key={tab.key}
                                     type="button"
                                     onClick={() => setCatalogFilter(tab.key)}
-                                    className={`cursor-pointer rounded-full px-5 py-2 text-xs font-bold transition-all ${
-                                        catalogFilter === tab.key
+                                    className={`cursor-pointer rounded-full px-5 py-2 text-xs font-bold transition-all ${catalogFilter === tab.key
                                             ? 'bg-red-600 text-white shadow-md shadow-red-600/25'
                                             : 'border border-zinc-200 bg-white text-zinc-700 hover:bg-zinc-100 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-700'
-                                    }`}
+                                        }`}
                                 >
                                     {tab.label}
                                 </button>
@@ -1115,11 +1112,10 @@ export default function Welcome({
                                             <div className="flex items-center justify-between">
                                                 <Badge
                                                     variant="outline"
-                                                    className={`px-2 py-0.5 text-[10px] font-bold ${
-                                                        reward.stock > 0
+                                                    className={`px-2 py-0.5 text-[10px] font-bold ${reward.stock > 0
                                                             ? 'border-emerald-300 bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300'
                                                             : 'border-zinc-300 bg-zinc-100 text-zinc-600'
-                                                    }`}
+                                                        }`}
                                                 >
                                                     {reward.stock > 0
                                                         ? `Tersedia (${reward.stock} Unit)`
@@ -1543,19 +1539,17 @@ export default function Welcome({
                                                 onClick={() =>
                                                     toggleSimItem(item.id)
                                                 }
-                                                className={`flex cursor-pointer items-center justify-between rounded-xl border p-3.5 transition-all select-none ${
-                                                    isChecked
+                                                className={`flex cursor-pointer items-center justify-between rounded-xl border p-3.5 transition-all select-none ${isChecked
                                                         ? 'border-red-500/80 bg-red-50/50 text-zinc-900 shadow-xs dark:bg-red-950/30 dark:text-white'
                                                         : 'border-zinc-200 text-zinc-600 hover:border-zinc-300 dark:border-zinc-800 dark:text-zinc-400 dark:hover:border-zinc-700'
-                                                }`}
+                                                    }`}
                                             >
                                                 <div className="flex items-center gap-3">
                                                     <div
-                                                        className={`flex size-5 items-center justify-center rounded border transition-colors ${
-                                                            isChecked
+                                                        className={`flex size-5 items-center justify-center rounded border transition-colors ${isChecked
                                                                 ? 'border-red-600 bg-red-600 text-white'
                                                                 : 'border-zinc-300 dark:border-zinc-600'
-                                                        }`}
+                                                            }`}
                                                     >
                                                         {isChecked && (
                                                             <CheckCircle2 className="size-3.5" />

@@ -512,7 +512,7 @@ export default function AdminScanUserIndex({
                 {/* Main 2-Column Content Layout */}
                 <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-12">
                     {/* Left Column: Scanner & Identifikasi Member (5 Cols) */}
-                    <div className="space-y-6 self-start lg:sticky lg:top-6 lg:col-span-5">
+                    <div className="space-y-6 self-start lg:sticky lg:top-[80px] lg:col-span-5">
                         {/* Box 1: Mode Identifikasi (Scan Kamera / Ketik Manual) */}
                         <div className="space-y-4 rounded-3xl border border-zinc-200 bg-white p-4 shadow-xs sm:p-5 md:p-6 dark:border-zinc-800 dark:bg-zinc-900">
                             <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-center">
@@ -929,7 +929,7 @@ export default function AdminScanUserIndex({
                     </div>
 
                     {/* Right Column: Detail Informasi Member & Riwayat Klaim Reward (7 Cols) */}
-                    <div className="space-y-6 self-start lg:sticky lg:top-6 lg:col-span-7">
+                    <div className="space-y-6 self-start lg:sticky lg:top-[80px] lg:col-span-7">
                         <div
                             ref={memberCardRef}
                             className="space-y-5 rounded-3xl border border-zinc-200 bg-white p-4 shadow-xs sm:p-5 md:p-6 dark:border-zinc-800 dark:bg-zinc-900"
