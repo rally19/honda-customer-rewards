@@ -50,6 +50,20 @@ const applyTheme = (appearance: Appearance): void => {
 
     document.documentElement.classList.toggle('dark', isDark);
     document.documentElement.style.colorScheme = isDark ? 'dark' : 'light';
+
+    // Update mobile status bar theme-color dynamically (#ffffff for light, #000000 for dark)
+    const color = isDark ? '#000000' : '#ffffff';
+    const metaThemeColors = document.querySelectorAll('meta[name="theme-color"]');
+    if (metaThemeColors.length > 0) {
+        metaThemeColors.forEach((meta) => {
+            meta.setAttribute('content', color);
+        });
+    } else {
+        const meta = document.createElement('meta');
+        meta.setAttribute('name', 'theme-color');
+        meta.setAttribute('content', color);
+        document.head.appendChild(meta);
+    }
 };
 
 const subscribe = (callback: () => void) => {

@@ -5,17 +5,38 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
+        {{-- PWA Manifest & App Identity --}}
+        <link rel="manifest" href="/site.webmanifest">
+        <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+        <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
+        <meta name="mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="default">
+        <meta name="apple-mobile-web-app-title" content="Honda Rewards">
+        <meta name="application-name" content="Honda Rewards">
+        <meta name="msapplication-TileColor" content="#ffffff">
+
         {{-- Inline script to detect system dark mode preference and apply it immediately --}}
         <script>
             (function() {
                 const appearance = '{{ $appearance ?? "system" }}';
+                let isDark = false;
 
-                if (appearance === 'system') {
-                    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                if (appearance === 'dark') {
+                    isDark = true;
+                } else if (appearance === 'system') {
+                    isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                }
 
-                    if (prefersDark) {
-                        document.documentElement.classList.add('dark');
-                    }
+                if (isDark) {
+                    document.documentElement.classList.add('dark');
+                }
+
+                if (appearance !== 'system') {
+                    const color = isDark ? '#000000' : '#ffffff';
+                    document.querySelectorAll('meta[name="theme-color"]').forEach(function(el) {
+                        el.setAttribute('content', color);
+                    });
                 }
             })();
         </script>
@@ -36,17 +57,6 @@
                 }
             }
         </style>
-
-        {{-- PWA Manifest & App Identity --}}
-        <link rel="manifest" href="/site.webmanifest">
-        <meta name="theme-color" content="#DC2626" media="(prefers-color-scheme: light)">
-        <meta name="theme-color" content="#09090b" media="(prefers-color-scheme: dark)">
-        <meta name="mobile-web-app-capable" content="yes">
-        <meta name="apple-mobile-web-app-capable" content="yes">
-        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-        <meta name="apple-mobile-web-app-title" content="Honda Rewards">
-        <meta name="application-name" content="Honda Rewards">
-        <meta name="msapplication-TileColor" content="#DC2626">
 
         <link rel="icon" type="image/x-icon" href="/favicon.ico">
         <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
