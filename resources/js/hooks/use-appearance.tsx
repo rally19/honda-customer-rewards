@@ -50,42 +50,6 @@ const applyTheme = (appearance: Appearance): void => {
 
     document.documentElement.classList.toggle('dark', isDark);
     document.documentElement.style.colorScheme = isDark ? 'dark' : 'light';
-
-    // Update mobile status bar background (#ffffff for light, #000000 for dark)
-    const color = isDark ? '#000000' : '#ffffff';
-    const appleStyle = isDark ? 'black' : 'default';
-
-    // 1. Single theme-color meta tag without media queries (ensures Android Chrome updates immediately)
-    let metaThemeColor = document.getElementById('theme-color-meta') || document.querySelector('meta[name="theme-color"]');
-    if (metaThemeColor) {
-        metaThemeColor.removeAttribute('media');
-        metaThemeColor.setAttribute('content', color);
-    } else {
-        metaThemeColor = document.createElement('meta');
-        metaThemeColor.setAttribute('id', 'theme-color-meta');
-        metaThemeColor.setAttribute('name', 'theme-color');
-        metaThemeColor.setAttribute('content', color);
-        document.head.appendChild(metaThemeColor);
-    }
-
-    // Clean up any extra theme-color tags with media queries so Chromium doesn't conflict
-    document.querySelectorAll('meta[name="theme-color"]').forEach((meta) => {
-        if (meta !== metaThemeColor) {
-            meta.remove();
-        }
-    });
-
-    // 2. Update apple-mobile-web-app-status-bar-style for iOS PWA ('black' for dark mode, 'default' for light mode)
-    let appleStatusBar = document.getElementById('apple-status-bar-style') || document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"]');
-    if (appleStatusBar) {
-        appleStatusBar.setAttribute('content', appleStyle);
-    } else {
-        appleStatusBar = document.createElement('meta');
-        appleStatusBar.setAttribute('id', 'apple-status-bar-style');
-        appleStatusBar.setAttribute('name', 'apple-mobile-web-app-status-bar-style');
-        appleStatusBar.setAttribute('content', appleStyle);
-        document.head.appendChild(appleStatusBar);
-    }
 };
 
 const subscribe = (callback: () => void) => {
