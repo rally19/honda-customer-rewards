@@ -136,8 +136,8 @@ export default function CustomerLayout({
                 typeof user.tier === 'string'
                     ? user.tier
                     : (user.tier as { value?: string; name?: string })?.value ||
-                      (user.tier as { value?: string; name?: string })?.name ||
-                      '';
+                    (user.tier as { value?: string; name?: string })?.name ||
+                    '';
             if (raw) {
                 const normalized = raw.trim().toLowerCase();
                 if (normalized === 'diamond') tierName = 'Diamond';
@@ -221,7 +221,7 @@ export default function CustomerLayout({
                             />
                         </Link>
 
-                        <div className="hidden h-6 w-px bg-zinc-200 sm:block dark:bg-zinc-800" />
+                        <div className=" h-6 w-px bg-zinc-200 dark:bg-zinc-800" />
 
                         {/* User Profile Pill */}
                         <div className="flex min-w-0 items-center gap-2 sm:gap-2.5">
@@ -394,8 +394,8 @@ export default function CustomerLayout({
                                                             ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-400 border-emerald-200'
                                                             : isRejected ||
                                                                 isCancelled
-                                                              ? 'bg-rose-100 text-rose-700 dark:bg-rose-950 dark:text-rose-400 border-rose-200'
-                                                              : 'bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-400 border-amber-200';
+                                                                ? 'bg-rose-100 text-rose-700 dark:bg-rose-950 dark:text-rose-400 border-rose-200'
+                                                                : 'bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-400 border-amber-200';
 
                                                     return (
                                                         <Link
@@ -494,11 +494,10 @@ export default function CustomerLayout({
                     {/* Tab 1: Beranda */}
                     <Link
                         href="/dashboard"
-                        className={`flex flex-col items-center gap-1 px-3 py-1 transition-colors ${
-                            activeTab === 'home'
+                        className={`flex flex-col items-center gap-1 px-3 py-1 transition-colors ${activeTab === 'home'
                                 ? 'font-bold text-red-600 dark:text-red-500'
                                 : 'font-medium text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-200'
-                        }`}
+                            }`}
                     >
                         <Home className="size-5" />
                         <span className="text-[10px]">Beranda</span>
@@ -508,12 +507,11 @@ export default function CustomerLayout({
                     <Link
                         href="/activities"
                         prefetch
-                        className={`flex flex-col items-center gap-1 px-3 py-1 transition-colors ${
-                            activeTab === 'history' ||
-                            activeTab === 'activities'
+                        className={`flex flex-col items-center gap-1 px-3 py-1 transition-colors ${activeTab === 'history' ||
+                                activeTab === 'activities'
                                 ? 'font-bold text-red-600 dark:text-red-500'
                                 : 'font-medium text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-200'
-                        }`}
+                            }`}
                     >
                         <Clock className="size-5" />
                         <span className="text-[10px]">Aktivitas</span>
@@ -537,11 +535,10 @@ export default function CustomerLayout({
                     <Link
                         href="/rewards"
                         prefetch
-                        className={`flex flex-col items-center gap-1 px-3 py-1 transition-colors ${
-                            activeTab === 'rewards'
+                        className={`flex flex-col items-center gap-1 px-3 py-1 transition-colors ${activeTab === 'rewards'
                                 ? 'font-bold text-red-600 dark:text-red-500'
                                 : 'font-medium text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-200'
-                        }`}
+                            }`}
                     >
                         <Gift className="size-5" />
                         <span className="text-[10px]">Reward</span>
@@ -550,11 +547,10 @@ export default function CustomerLayout({
                     {/* Tab 5: Akun / Pengaturan */}
                     <Link
                         href="/settings/profile"
-                        className={`flex flex-col items-center gap-1 px-3 py-1 transition-colors ${
-                            activeTab === 'profile'
+                        className={`flex flex-col items-center gap-1 px-3 py-1 transition-colors ${activeTab === 'profile'
                                 ? 'font-bold text-red-600 dark:text-red-500'
                                 : 'font-medium text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-200'
-                        }`}
+                            }`}
                     >
                         <UserIcon className="size-5" />
                         <span className="text-[10px]">Akun</span>
