@@ -39,8 +39,7 @@
 
         {{-- PWA Manifest & App Identity --}}
         <link rel="manifest" href="/site.webmanifest">
-        <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
-        <meta name="theme-color" content="#09090b" media="(prefers-color-scheme: dark)">
+        <meta name="theme-color" content="#ffffff">
         <meta name="mobile-web-app-capable" content="yes">
         <meta name="apple-mobile-web-app-capable" content="yes">
         <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -80,21 +79,32 @@
                 });
             }
 
-            // Sync status bar color with system color scheme (for iOS PWA & Android)
+            // Sync theme-color & iOS status bar with app dark mode toggle (watches html.dark class)
             (function() {
-                var metaTheme = document.querySelectorAll('meta[name="theme-color"]');
+                var metaTheme = document.querySelector('meta[name="theme-color"]');
                 var metaStatusBar = document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"]');
 
-                function applyTheme(isDark) {
-                    // iOS PWA: 'black' = dark bg + white icons, 'default' = light bg + dark icons
+                function applyTheme() {
+                    var isDark = document.documentElement.classList.contains('dark');
+                    // Android: theme-color controls status bar background; browser auto-picks contrasting icon color
+                    if (metaTheme) {
+                        metaTheme.setAttribute('content', isDark ? '#09090b' : '#ffffff');
+                    }
+                    // iOS PWA: 'black' = dark status bar + white icons, 'default' = light + dark icons
                     if (metaStatusBar) {
                         metaStatusBar.setAttribute('content', isDark ? 'black' : 'default');
                     }
                 }
 
-                var mq = window.matchMedia('(prefers-color-scheme: dark)');
-                applyTheme(mq.matches);
-                mq.addEventListener('change', function(e) { applyTheme(e.matches); });
+                // Run immediately (html.dark may already be set by inline script above)
+                applyTheme();
+
+                // Watch html element class changes (fires when app's own toggle runs)
+                new MutationObserver(function(mutations) {
+                    mutations.forEach(function(m) {
+                        if (m.attributeName === 'class') applyTheme();
+                    });
+                }).observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
             })();
         </script>
 
