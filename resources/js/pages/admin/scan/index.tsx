@@ -174,9 +174,18 @@ export default function AdminScanIndex({
         awarded || null,
     );
 
-    // 6. Refs
+    // 6. Mobile floating action bar visibility
+    const [showMobileBar, setShowMobileBar] = useState(true);
+
+    // 7. Refs
     const isScanningRef = useRef(false);
     const memberCardRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        if (member) {
+            setShowMobileBar(true);
+        }
+    }, [member?.id]);
 
     // Sync from sessionStorage ONLY after mounted on client
     useEffect(() => {
@@ -1560,10 +1569,15 @@ export default function AdminScanIndex({
                         </div>
                     )}
                 </div>
+
+                {/* Spacer on mobile so content is never covered by the floating action bar */}
+                {member && showMobileBar && (
+                    <div className="h-24 sm:h-28 lg:hidden" aria-hidden="true" />
+                )}
             </div>
 
             {/* FLOATING MOBILE STICKY ACTION BAR: Pops up when member is selected on phone screens */}
-            {member && (
+            {member && showMobileBar && (
                 <div className="fixed inset-x-3 bottom-4 z-30 sm:inset-x-6 lg:hidden">
                     <div className="flex items-center justify-between gap-3 rounded-2xl border border-white/10 bg-zinc-950/95 p-3 text-white shadow-2xl shadow-black/50 backdrop-blur-xl dark:bg-zinc-900/95">
                         <div className="min-w-0 flex-1">
@@ -1579,21 +1593,32 @@ export default function AdminScanIndex({
                                 {selectedActivity?.name}
                             </p>
                         </div>
-                        <Button
-                            type="button"
-                            onClick={handleProcessPoints}
-                            disabled={isSubmitting}
-                            className="h-10 shrink-0 cursor-pointer rounded-xl bg-red-600 px-4 text-xs font-bold text-white shadow-lg shadow-red-600/30 transition-all hover:bg-red-700 active:scale-95"
-                        >
-                            {isSubmitting ? (
-                                <RefreshCw className="size-4 animate-spin" />
-                            ) : (
-                                <>
-                                    <Zap className="size-3.5" />
-                                    Konfirmasi
-                                </>
-                            )}
-                        </Button>
+                        <div className="flex shrink-0 items-center gap-1.5">
+                            <Button
+                                type="button"
+                                onClick={handleProcessPoints}
+                                disabled={isSubmitting}
+                                className="h-10 shrink-0 cursor-pointer rounded-xl bg-red-600 px-4 text-xs font-bold text-white shadow-lg shadow-red-600/30 transition-all hover:bg-red-700 active:scale-95"
+                            >
+                                {isSubmitting ? (
+                                    <RefreshCw className="size-4 animate-spin" />
+                                ) : (
+                                    <>
+                                        <Zap className="size-3.5" />
+                                        Konfirmasi
+                                    </>
+                                )}
+                            </Button>
+                            <button
+                                type="button"
+                                onClick={() => setShowMobileBar(false)}
+                                className="flex size-8 cursor-pointer items-center justify-center rounded-xl text-zinc-400 transition-colors hover:bg-white/10 hover:text-white"
+                                title="Tutup bilah ringkasan"
+                                aria-label="Tutup bilah ringkasan"
+                            >
+                                <X className="size-4" />
+                            </button>
+                        </div>
                     </div>
                 </div>
             )}
