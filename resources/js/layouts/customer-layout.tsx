@@ -208,7 +208,7 @@ export default function CustomerLayout({
                             title="Ke Beranda"
                         >
                             <img
-                                src="/images/logo/anper_logo_red.png"
+                                src="/images/logo/anper_sartika_logo_red.png"
                                 alt="Honda Customer Rewards"
                                 className="h-8 w-auto object-contain dark:hidden"
                             />

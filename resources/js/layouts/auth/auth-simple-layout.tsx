@@ -45,7 +45,7 @@ export default function AuthSimpleLayout({
                             {/* Logo Anper - Auto switch on light / dark mode */}
                             <div className="relative flex h-14 items-center justify-center">
                                 <img
-                                    src="/images/logo/anper_logo_red.png"
+                                    src="/images/logo/anper_sartika_logo_red.png"
                                     alt="Honda Customer Rewards Logo"
                                     className="h-12 w-auto object-contain dark:hidden"
                                 />

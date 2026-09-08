@@ -49,7 +49,7 @@ export default function AuthCardLayout({
                         className="flex items-center gap-2 transition-transform hover:scale-105"
                     >
                         <img
-                            src="/images/logo/anper_logo_red.png"
+                            src="/images/logo/anper_sartika_logo_red.png"
                             alt="Honda Customer Rewards"
                             className="h-12 w-auto object-contain dark:hidden"
                         />

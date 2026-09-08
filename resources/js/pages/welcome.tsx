@@ -411,7 +411,7 @@ export default function Welcome({
                     >
                         <div className="relative flex h-10 items-center justify-center lg:h-12">
                             <img
-                                src="/images/logo/anper_logo_red.png"
+                                src="/images/logo/anper_sartika_logo_red.png"
                                 alt="Honda Customer Rewards"
                                 className="h-8 w-auto object-contain transition-transform group-hover:scale-105 sm:h-9 lg:h-10 dark:hidden"
                             />

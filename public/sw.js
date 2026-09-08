@@ -3,7 +3,7 @@
  * CV Anugerah Perdana
  */
 
-const CACHE_NAME = 'honda-rewards-v1.0.1';
+const CACHE_NAME = 'honda-rewards-v1.0.2';
 const OFFLINE_URL = '/offline.html';
 
 const PRECACHE_ASSETS = [
@@ -16,7 +16,7 @@ const PRECACHE_ASSETS = [
     '/apple-touch-icon.png',
     '/images/logo/anper_sartika_logo_white.png',
     '/images/logo/anper_sartika_logo_white_1x1.png',
-    '/images/logo/anper_logo_red.png',
+    '/images/logo/anper_sartika_logo_red.png',
     '/images/logo/honda_logo_red.png',
     '/images/logo/honda_logo_white.png',
 ];

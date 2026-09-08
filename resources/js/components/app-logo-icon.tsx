@@ -11,7 +11,7 @@ export default function AppLogoIcon(
     return (
         <>
             <img
-                src="/images/logo/anper_logo_red.png"
+                src="/images/logo/anper_sartika_logo_red.png"
                 alt={alt}
                 className={`${className} dark:hidden`}
                 {...rest}
