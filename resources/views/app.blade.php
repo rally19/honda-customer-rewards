@@ -39,7 +39,9 @@
 
         {{-- PWA Manifest & App Identity --}}
         <link rel="manifest" href="/site.webmanifest">
-        <meta name="theme-color" content="#ffffff">
+        {{-- Initial theme-color set server-side; JS below corrects it for 'system' mode before browser paints --}}
+        <meta name="theme-color" content="{{ ($appearance ?? 'system') === 'dark' ? '#09090b' : '#ffffff' }}">
+        <script>document.querySelector('meta[name="theme-color"]').content=document.documentElement.classList.contains('dark')?'#09090b':'#ffffff';</script>
         <meta name="mobile-web-app-capable" content="yes">
         <meta name="apple-mobile-web-app-capable" content="yes">
         <meta name="apple-mobile-web-app-status-bar-style" content="default">
