@@ -51,11 +51,11 @@
 
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
     <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="icon" type="image/png" sizes="512x512" href="/images/logo/anper_sartika_logo_redbg_white_1x1_512.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/images/logo/anper_sartika_logo_redbg_white_1x1_512.png">
     <link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/icons/favicon-16x16.png">
-    <link rel="icon" type="image/png" sizes="192x192" href="/icons/pwa-192x192.png">
-    <link rel="icon" type="image/png" sizes="512x512" href="/images/logo/anper_sartika_logo_redbg_white_1x1_512.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/logo/anper_sartika_logo_redbg_white_1x1_512.png">
 
     {{-- PWA Service Worker Registration --}}
     <script>

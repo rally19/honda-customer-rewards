@@ -3,7 +3,7 @@
  * CV Anugerah Perdana
  */
 
-const CACHE_NAME = 'honda-rewards-v1.0.3';
+const CACHE_NAME = 'honda-rewards-v1.0.4';
 const OFFLINE_URL = '/offline.html';
 
 const PRECACHE_ASSETS = [
