@@ -496,7 +496,7 @@ export default function CustomerDashboard({
                     <div className="pointer-events-none absolute inset-0 z-20 rounded-3xl border border-red-500/40 ring-1 ring-white/15 ring-inset" />
 
                     {/* Watermark Logo Honda Wing */}
-                    <div className="pointer-events-none absolute right-5 -bottom-10 z-0 opacity-15 select-none">
+                    <div className="pointer-events-none absolute right-0 -bottom-10 z-0 opacity-15 select-none">
                         <img
                             src="/images/logo/honda_logo_white.png"
                             alt="Honda"
@@ -506,8 +506,8 @@ export default function CustomerDashboard({
 
                     <div className="relative z-10 flex flex-col justify-between space-y-6">
                         {/* Card Top: Logo & Tier */}
-                        <div className="flex items-start justify-between">
-                            <div className="space-y-1">
+                        <div className="flex flex-wrap-reverse items-start justify-between gap-3">
+                            <div className="min-w-0 space-y-1">
                                 <div className="flex items-center gap-2">
                                     <span className="font-mono text-[10px] tracking-widest text-zinc-300 uppercase">
                                         Honda Loyalty E-Wallet
@@ -536,7 +536,7 @@ export default function CustomerDashboard({
                             <button
                                 type="button"
                                 onClick={() => setShowTierModal(true)}
-                                className="group flex cursor-pointer items-center gap-1.5 rounded-full border border-white/15 bg-black/40 px-3.5 py-1.5 text-xs font-bold text-red-200 shadow-sm backdrop-blur-md transition-all hover:border-white/30 hover:bg-black/60 active:scale-95"
+                                className="group flex shrink-0 cursor-pointer items-center gap-1.5 rounded-full border border-white/15 bg-black/40 px-3.5 py-1.5 text-xs font-bold text-red-200 shadow-sm backdrop-blur-md transition-all hover:border-white/30 hover:bg-black/60 active:scale-95"
                                 title="Klik untuk melihat Roadmap & Benefit Level Member"
                             >
                                 <Award className="size-3.5 text-amber-400 transition-transform group-hover:scale-110" />
@@ -899,8 +899,8 @@ export default function CustomerDashboard({
                         {/* Left Fade Overlay (appears when content is scrolled to the right) */}
                         <div
                             className={`pointer-events-none absolute top-0 bottom-0 -left-1.5 z-10 w-5 bg-gradient-to-r from-zinc-50 via-zinc-50/80 to-transparent transition-opacity duration-300 sm:-left-2 sm:w-6 md:w-8 dark:from-zinc-950 dark:via-zinc-950/80 dark:to-transparent ${canScrollRewardLeft
-                                    ? 'opacity-100'
-                                    : 'opacity-0'
+                                ? 'opacity-100'
+                                : 'opacity-0'
                                 }`}
                             aria-hidden="true"
                         />
@@ -999,8 +999,8 @@ export default function CustomerDashboard({
                         {/* Right Fade Overlay (appears when there is more content to scroll) */}
                         <div
                             className={`pointer-events-none absolute top-0 -right-1.5 bottom-0 z-10 w-5 bg-gradient-to-l from-zinc-50 via-zinc-50/80 to-transparent transition-opacity duration-300 sm:-right-2 sm:w-6 md:w-8 dark:from-zinc-950 dark:via-zinc-950/80 dark:to-transparent ${canScrollRewardRight
-                                    ? 'opacity-100'
-                                    : 'opacity-0'
+                                ? 'opacity-100'
+                                : 'opacity-0'
                                 }`}
                             aria-hidden="true"
                         />
@@ -1202,8 +1202,8 @@ export default function CustomerDashboard({
                                     <div className="flex items-center gap-3">
                                         <div
                                             className={`flex size-9 items-center justify-center rounded-xl ${tx.type === 'credit'
-                                                    ? 'bg-emerald-50 text-emerald-600 dark:bg-emerald-950/60 dark:text-emerald-400'
-                                                    : 'bg-rose-50 text-rose-600 dark:bg-rose-950/60 dark:text-rose-400'
+                                                ? 'bg-emerald-50 text-emerald-600 dark:bg-emerald-950/60 dark:text-emerald-400'
+                                                : 'bg-rose-50 text-rose-600 dark:bg-rose-950/60 dark:text-rose-400'
                                                 }`}
                                         >
                                             {tx.type === 'credit' ? (
@@ -1225,8 +1225,8 @@ export default function CustomerDashboard({
                                     <div className="text-right">
                                         <span
                                             className={`font-mono text-sm font-bold ${tx.type === 'credit'
-                                                    ? 'text-emerald-600 dark:text-emerald-400'
-                                                    : 'text-rose-600 dark:text-rose-400'
+                                                ? 'text-emerald-600 dark:text-emerald-400'
+                                                : 'text-rose-600 dark:text-rose-400'
                                                 }`}
                                         >
                                             {tx.points > 0
@@ -1562,10 +1562,10 @@ export default function CustomerDashboard({
                                 <div
                                     key={tierItem.tier}
                                     className={`rounded-2xl border p-3.5 transition-all ${isCurrent
-                                            ? 'border-red-500 bg-red-500/5 ring-1 ring-red-500/30 dark:bg-red-950/30'
-                                            : isReached
-                                                ? 'border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900/60'
-                                                : 'border-dashed border-zinc-200 bg-zinc-50/50 opacity-75 dark:border-zinc-800 dark:bg-zinc-950/30'
+                                        ? 'border-red-500 bg-red-500/5 ring-1 ring-red-500/30 dark:bg-red-950/30'
+                                        : isReached
+                                            ? 'border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900/60'
+                                            : 'border-dashed border-zinc-200 bg-zinc-50/50 opacity-75 dark:border-zinc-800 dark:bg-zinc-950/30'
                                         }`}
                                 >
                                     <div className="flex items-center justify-between gap-2">
