@@ -128,15 +128,77 @@ export default function AdminScanUserIndex({
     // 1. Input Mode ('scanner' | 'manual')
     const [inputMode, setInputMode] = useState<'scanner' | 'manual'>('scanner');
     const [scannerError, setScannerError] = useState<string | null>(null);
-    const [isCameraActive, setIsCameraActive] = useState(false);
+    const [isCameraActive, setIsCameraActive] = useState(true);
     const [facingMode, setFacingMode] = useState<'environment' | 'user'>(
         'environment',
     );
+    const [isSwitchingCamera, setIsSwitchingCamera] = useState(false);
 
-    const toggleFacingMode = () => {
-        setFacingMode((prev) =>
-            prev === 'environment' ? 'user' : 'environment',
-        );
+    const toggleFacingMode = async () => {
+        if (isSwitchingCamera) return;
+        setIsSwitchingCamera(true);
+        setScannerError(null);
+
+        const nextMode = facingMode === 'environment' ? 'user' : 'environment';
+
+        // 1. Temporarily deactivate to ensure stream tracks are stopped and mobile camera lock released
+        setIsCameraActive(false);
+
+        // 2. Wait 350ms for mobile OS camera HAL to fully release the hardware sensor
+        await new Promise((resolve) => setTimeout(resolve, 350));
+
+        // 3. Switch facing mode
+        setFacingMode(nextMode);
+
+        // 4. Reactivate camera
+        setIsCameraActive(true);
+
+        // 5. Cooldown to prevent spam tapping
+        setTimeout(() => {
+            setIsSwitchingCamera(false);
+        }, 500);
+    };
+
+    const handleScannerError = (err: any) => {
+        console.warn('QR Scanner notice:', err);
+        if (isSwitchingCamera) {
+            return;
+        }
+
+        const isDeviceBusy =
+            err?.kind === 'in-use' ||
+            err?.name === 'NotReadableError' ||
+            err?.name === 'TrackStartError' ||
+            err?.message?.toLowerCase().includes('in use') ||
+            err?.message?.toLowerCase().includes('could not start') ||
+            err?.message?.toLowerCase().includes('starting video failed');
+
+        if (isDeviceBusy) {
+            // Camera hardware was still busy releasing; automatically recover once
+            setTimeout(() => {
+                setScannerError(null);
+                setIsCameraActive(false);
+                setTimeout(() => {
+                    setIsCameraActive(true);
+                }, 300);
+            }, 400);
+            return;
+        }
+
+        const isPermissionDenied =
+            err?.kind === 'permission-denied' ||
+            err?.name === 'NotAllowedError' ||
+            err?.name === 'PermissionDeniedError';
+
+        if (isPermissionDenied) {
+            setScannerError(
+                'Izin akses kamera belum diberikan atau diblokir. Harap izinkan akses kamera di pengaturan browser.',
+            );
+        } else {
+            setScannerError(
+                err?.message || 'Kamera tidak dapat diakses saat ini.',
+            );
+        }
     };
 
     // 2. Manual Input Query
@@ -618,22 +680,31 @@ export default function AdminScanUserIndex({
                                                 </div>
                                             )}
                                         >
-                                            {isCameraActive && isMounted ? (
+                                            {isMounted && isCameraActive ? (
                                                 <div className="relative h-full w-full">
                                                     <Scanner
-                                                        key={facingMode}
                                                         onScan={handleQrScan}
+                                                        scanDelay={1200}
+                                                        paused={
+                                                            isSearching ||
+                                                            Boolean(member) ||
+                                                            isSwitchingCamera
+                                                        }
                                                         constraints={{
-                                                            facingMode,
+                                                            facingMode: {
+                                                                ideal: facingMode,
+                                                            },
+                                                            width: {
+                                                                ideal: 1280,
+                                                            },
+                                                            height: {
+                                                                ideal: 720,
+                                                            },
                                                         }}
-                                                        onError={(error) => {
-                                                            setScannerError(
-                                                                error instanceof
-                                                                    Error
-                                                                    ? error.message
-                                                                    : 'Gagal membuka video stream kamera',
-                                                            );
-                                                        }}
+                                                        startTimeoutMs={8000}
+                                                        onError={
+                                                            handleScannerError
+                                                        }
                                                         formats={['qr_code']}
                                                         styles={{
                                                             container: {
@@ -654,15 +725,24 @@ export default function AdminScanUserIndex({
                                                             onClick={
                                                                 toggleFacingMode
                                                             }
-                                                            className="flex cursor-pointer items-center gap-1.5 rounded-full border border-white/20 bg-black/65 px-2.5 py-1.5 text-[11px] font-semibold text-white shadow-lg backdrop-blur-md transition-all hover:bg-black/85 active:scale-95"
+                                                            disabled={
+                                                                isSwitchingCamera
+                                                            }
+                                                            className="flex cursor-pointer items-center gap-1.5 rounded-full border border-white/20 bg-black/65 px-2.5 py-1.5 text-[11px] font-semibold text-white shadow-lg backdrop-blur-md transition-all hover:bg-black/85 active:scale-95 disabled:pointer-events-none disabled:opacity-75"
                                                             title={`Beralih ke Kamera ${facingMode === 'environment' ? 'Depan' : 'Belakang'}`}
                                                         >
-                                                            <SwitchCamera className="size-3.5 text-amber-400" />
+                                                            {isSwitchingCamera ? (
+                                                                <RefreshCw className="size-3.5 animate-spin text-amber-400" />
+                                                            ) : (
+                                                                <SwitchCamera className="size-3.5 text-amber-400" />
+                                                            )}
                                                             <span>
-                                                                {facingMode ===
-                                                                'environment'
-                                                                    ? 'Kamera Belakang'
-                                                                    : 'Kamera Depan'}
+                                                                {isSwitchingCamera
+                                                                    ? 'Beralih Kamera...'
+                                                                    : facingMode ===
+                                                                        'environment'
+                                                                      ? 'Kamera Belakang'
+                                                                      : 'Kamera Depan'}
                                                             </span>
                                                         </button>
                                                     </div>
@@ -693,18 +773,27 @@ export default function AdminScanUserIndex({
                                                                 onClick={
                                                                     toggleFacingMode
                                                                 }
-                                                                className="flex cursor-pointer items-center gap-1 text-[11px] text-zinc-300 hover:text-white"
+                                                                disabled={
+                                                                    isSwitchingCamera
+                                                                }
+                                                                className="flex cursor-pointer items-center gap-1 text-[11px] text-zinc-300 hover:text-white disabled:opacity-50"
                                                                 title={`Beralih ke Kamera ${facingMode === 'environment' ? 'Depan' : 'Belakang'}`}
                                                             >
-                                                                <SwitchCamera className="size-3 text-amber-400" />
+                                                                {isSwitchingCamera ? (
+                                                                    <RefreshCw className="size-3 animate-spin text-amber-400" />
+                                                                ) : (
+                                                                    <SwitchCamera className="size-3 text-amber-400" />
+                                                                )}
                                                                 <span className="hidden sm:inline">
                                                                     Kamera:
                                                                 </span>
                                                                 <span>
-                                                                    {facingMode ===
-                                                                    'environment'
-                                                                        ? 'Belakang'
-                                                                        : 'Depan'}
+                                                                    {isSwitchingCamera
+                                                                        ? 'Beralih...'
+                                                                        : facingMode ===
+                                                                            'environment'
+                                                                          ? 'Belakang'
+                                                                          : 'Depan'}
                                                                 </span>
                                                             </button>
                                                             <span className="text-zinc-600">
@@ -723,6 +812,20 @@ export default function AdminScanUserIndex({
                                                             </button>
                                                         </div>
                                                     </div>
+                                                </div>
+                                            ) : isSwitchingCamera ? (
+                                                <div className="flex flex-col items-center justify-center gap-2.5 p-6 text-center text-zinc-300">
+                                                    <RefreshCw className="size-8 animate-spin text-amber-400 opacity-90" />
+                                                    <p className="text-xs font-semibold text-zinc-200">
+                                                        Menghubungkan Kamera...
+                                                    </p>
+                                                    <p className="text-[11px] text-zinc-500">
+                                                        Mengalihkan sensor ke Kamera{' '}
+                                                        {facingMode ===
+                                                        'environment'
+                                                            ? 'Depan'
+                                                            : 'Belakang'}
+                                                    </p>
                                                 </div>
                                             ) : (
                                                 <div className="space-y-3 p-6 text-center">
