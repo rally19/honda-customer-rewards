@@ -146,7 +146,7 @@ export default function AdminScanIndex({
     // 2. Input Mode ('scanner' | 'manual')
     const [inputMode, setInputMode] = useState<'scanner' | 'manual'>('scanner');
     const [scannerError, setScannerError] = useState<string | null>(null);
-    const [isCameraActive, setIsCameraActive] = useState(true);
+    const [isCameraActive, setIsCameraActive] = useState(false);
     const [facingMode, setFacingMode] = useState<'environment' | 'user'>(
         'environment',
     );
