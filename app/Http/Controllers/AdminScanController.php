@@ -47,6 +47,7 @@ class AdminScanController extends Controller
                 'user_tier' => $history->user?->tier instanceof MemberTier
                     ? $history->user->tier->value
                     : (string) ($history->user?->tier ?? 'Bronze'),
+                'admin_id' => $history->admin_id ? (string) $history->admin_id : null,
                 'admin_name' => $history->admin?->name ?? 'Admin',
                 'time_ago' => $history->created_at?->diffForHumans() ?? '-',
                 'created_at' => $history->created_at?->format('d M Y, H:i') ?? '-',
@@ -208,6 +209,8 @@ class AdminScanController extends Controller
                 'points_added' => $points,
                 'current_points' => (int) $freshUser->points,
                 'lifetime_points' => (int) $freshUser->lifetime_points,
+                'admin_id' => (string) ($history->admin_id ?? $request->user()->id),
+                'admin_name' => $history->admin?->name ?? $request->user()->name,
                 'tier' => $newTier->value,
                 'tier_upgraded' => $isUpgrade,
                 'old_tier' => $oldTier->value,

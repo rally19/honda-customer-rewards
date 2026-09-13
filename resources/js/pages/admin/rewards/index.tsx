@@ -79,6 +79,7 @@ type PointExchangeItem = {
     user_phone: string;
     user_address: string;
     status: 'hold' | 'claimed' | 'rejected' | 'cancelled';
+    admin_id?: string | null;
     admin_name: string;
     admin_notes: string;
     created_at: string;
@@ -336,6 +337,7 @@ export default function AdminRewardsPage({
             'No Telepon',
             'Alamat',
             'Status',
+            'ID Admin',
             'Petugas',
             'Catatan Admin',
             'Tanggal Transaksi',
@@ -350,6 +352,7 @@ export default function AdminRewardsPage({
             ex.user_phone,
             `"${(ex.user_address || '').replace(/"/g, '""')}"`,
             ex.status.toUpperCase(),
+            `"${ex.admin_id || '-'}"`,
             `"${ex.admin_name.replace(/"/g, '""')}"`,
             `"${(ex.admin_notes || '').replace(/"/g, '""')}"`,
             ex.created_at,
@@ -1526,8 +1529,15 @@ export default function AdminRewardsPage({
 
                                                     {/* Petugas & Catatan */}
                                                     <td className="max-w-xs px-4 py-3.5">
-                                                        <div className="text-[11px] font-semibold text-zinc-800 dark:text-zinc-200">
-                                                            {ex.admin_name}
+                                                        <div className="flex flex-col">
+                                                            <span className="text-[11px] font-semibold text-zinc-800 dark:text-zinc-200">
+                                                                {ex.admin_name}
+                                                            </span>
+                                                            {ex.admin_id && (
+                                                                <span className="font-mono text-[10px] text-zinc-400">
+                                                                    ID: #{ex.admin_id}
+                                                                </span>
+                                                            )}
                                                         </div>
                                                         <p
                                                             className="truncate text-[11px] text-zinc-500"
@@ -2711,10 +2721,13 @@ export default function AdminRewardsPage({
                                 </div>
                                 <div className="flex justify-between">
                                     <span className="text-zinc-500">
-                                        Petugas Terakhir:
+                                        Petugas / ID Admin:
                                     </span>
-                                    <span className="font-semibold">
+                                    <span className="font-semibold text-zinc-900 dark:text-zinc-100">
                                         {selectedExchange.admin_name}
+                                        {selectedExchange.admin_id
+                                            ? ` (ID: #${selectedExchange.admin_id})`
+                                            : ''}
                                     </span>
                                 </div>
                                 {selectedExchange.admin_notes && (

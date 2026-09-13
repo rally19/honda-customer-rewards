@@ -83,6 +83,7 @@ type ClaimItem = {
     user_phone: string;
     user_address: string;
     status: 'hold' | 'claimed' | 'rejected' | 'cancelled' | string;
+    admin_id?: string | null;
     admin_name: string;
     admin_notes?: string;
     time_ago: string;
@@ -96,6 +97,7 @@ type ScanItem = {
     points: number;
     user_id: string;
     user_name: string;
+    admin_id?: string | null;
     admin_name: string;
     time_ago: string;
     created_at: string;
@@ -797,6 +799,19 @@ export default function AdminDashboard({
                                                                             claim.user_id
                                                                         }
                                                                     </span>
+                                                                    {claim.status !== 'hold' && claim.admin_name && (
+                                                                        <>
+                                                                            <span>&bull;</span>
+                                                                            <span>
+                                                                                Petugas: {claim.admin_name}
+                                                                                {claim.admin_id && (
+                                                                                    <span className="font-mono text-[10px] text-zinc-400">
+                                                                                        {' '}(ID: #{claim.admin_id})
+                                                                                    </span>
+                                                                                )}
+                                                                            </span>
+                                                                        </>
+                                                                    )}
                                                                 </div>
 
                                                                 <div className="flex items-center gap-2 text-[11px] text-zinc-400">
@@ -1509,7 +1524,8 @@ export default function AdminDashboard({
                                                 <div className="rounded-xl border border-zinc-200/70 bg-white p-2.5 text-[11px] text-zinc-500 italic dark:border-zinc-800 dark:bg-zinc-900">
                                                     Catatan Admin:{' '}
                                                     {claim.admin_notes} (
-                                                    {claim.admin_name})
+                                                    {claim.admin_name}
+                                                    {claim.admin_id && ` [ID: #${claim.admin_id}]`})
                                                 </div>
                                             )}
                                         </div>
@@ -1567,6 +1583,7 @@ export default function AdminDashboard({
                                                 <span className="font-mono text-xs text-zinc-400">
                                                     Diproses oleh:{' '}
                                                     {claim.admin_name}
+                                                    {claim.admin_id && ` (ID: #${claim.admin_id})`}
                                                 </span>
                                             )}
                                         </div>
@@ -1672,7 +1689,12 @@ export default function AdminDashboard({
                                                     </span>
                                                 </td>
                                                 <td className="px-4 py-3.5 text-zinc-600 dark:text-zinc-400">
-                                                    {scan.admin_name}
+                                                    <div>{scan.admin_name}</div>
+                                                    {scan.admin_id && (
+                                                        <span className="font-mono text-[10px] text-zinc-400">
+                                                            ID: #{scan.admin_id}
+                                                        </span>
+                                                    )}
                                                 </td>
                                                 <td className="px-4 py-3.5 whitespace-nowrap text-zinc-500">
                                                     {scan.created_at} (
@@ -2878,6 +2900,21 @@ export default function AdminDashboard({
                                             )}
                                         </div>
                                     </div>
+                                    {inspectedClaim.status !== 'hold' && (
+                                        <div className="col-span-2 border-t border-zinc-200 pt-2 text-[11px] dark:border-zinc-800">
+                                            <span className="block text-[9px] font-bold text-zinc-400 uppercase">
+                                                PEMERIKSA / PETUGAS ADMIN
+                                            </span>
+                                            <span className="text-zinc-700 dark:text-zinc-300">
+                                                {inspectedClaim.admin_name}
+                                                {inspectedClaim.admin_id && (
+                                                    <span className="font-mono text-[10px] text-zinc-400">
+                                                        {' '}(ID: #{inspectedClaim.admin_id})
+                                                    </span>
+                                                )}
+                                            </span>
+                                        </div>
+                                    )}
                                 </div>
 
                                 {inspectedClaim.admin_notes && (
@@ -2887,7 +2924,8 @@ export default function AdminDashboard({
                                         </span>
                                         <p className="text-zinc-600 italic dark:text-zinc-400">
                                             {inspectedClaim.admin_notes} (Oleh:{' '}
-                                            {inspectedClaim.admin_name})
+                                            {inspectedClaim.admin_name}
+                                            {inspectedClaim.admin_id && ` [ID: #${inspectedClaim.admin_id}]`})
                                         </p>
                                     </div>
                                 )}

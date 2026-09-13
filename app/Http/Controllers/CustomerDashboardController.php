@@ -38,6 +38,8 @@ class CustomerDashboardController extends Controller
                 'id' => (string) $h->id,
                 'title' => $h->activity_name,
                 'dealer' => $h->admin?->name ? 'AHASS (Petugas: '.$h->admin->name.')' : 'Bengkel AHASS Resmi',
+                'admin_id' => $h->admin_id ? (string) $h->admin_id : null,
+                'admin_name' => $h->admin?->name ?? 'Staf Kasir AHASS',
                 'points' => (int) $h->points,
                 'type' => 'credit',
                 'date' => $h->created_at?->format('d M Y, H:i') ?? '-',
@@ -81,6 +83,8 @@ class CustomerDashboardController extends Controller
                 'reward_image' => $c->reward_image ?? $c->reward?->image_url ?? '',
                 'points_cost' => (int) $c->points_cost,
                 'status' => $c->status,
+                'admin_id' => $c->admin_id ? (string) $c->admin_id : null,
+                'admin_name' => $c->admin?->name,
                 'status_label' => match ($c->status) {
                     'claimed' => 'Disetujui',
                     'hold' => 'Diproses',

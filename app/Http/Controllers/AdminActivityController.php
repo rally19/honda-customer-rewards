@@ -74,7 +74,8 @@ class AdminActivityController extends Controller
             'user_email' => $h->user_email,
             'user_phone' => $h->user_phone ?? '-',
             'user_address' => $h->user_address ?? '-',
-            'admin_name' => $h->admin?->name ?? 'Admin AHASS',
+            'admin_id' => $h->admin_id ? (string) $h->admin_id : null,
+            'admin_name' => $h->admin?->name ?? ($h->admin_id ? 'Admin #'.$h->admin_id : 'Admin AHASS'),
             'notes' => $h->notes ?? '-',
             'created_at' => $h->created_at?->format('d M Y, H:i') ?? '-',
         ]);

@@ -58,6 +58,7 @@ class CustomerRewardController extends Controller
                 'reward_image' => $c->reward_image ?? $c->reward?->image_url ?? '',
                 'points_cost' => (int) $c->points_cost,
                 'status' => $c->status,
+                'admin_id' => $c->admin_id ? (string) $c->admin_id : null,
                 'admin_name' => $c->admin?->name,
                 'admin_notes' => $c->admin_notes,
                 'date' => $c->created_at?->format('d M Y, H:i') ?? '-',
@@ -135,6 +136,7 @@ class CustomerRewardController extends Controller
                     'user_phone' => $lockedUser->phone_number,
                     'user_address' => $lockedUser->address,
                     'status' => 'hold',
+                    'admin_id' => $user->isAdmin() ? $user->id : null,
                 ]);
             });
         } catch (HttpException $e) {

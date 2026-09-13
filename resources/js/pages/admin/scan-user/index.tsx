@@ -68,6 +68,7 @@ type ClaimItem = {
     user_phone: string;
     user_address: string;
     status: 'hold' | 'claimed' | 'rejected' | 'cancelled';
+    admin_id?: string | null;
     admin_name: string;
     admin_notes: string;
     time_ago: string;
@@ -1613,10 +1614,13 @@ export default function AdminScanUserIndex({
                                 </div>
                                 <div className="flex items-center justify-between">
                                     <span className="text-zinc-500">
-                                        Pemeriksa
+                                        Pemeriksa / ID Admin
                                     </span>
-                                    <span className="text-zinc-700 dark:text-zinc-300">
+                                    <span className="font-semibold text-zinc-800 dark:text-zinc-200">
                                         {selectedClaimDetail.admin_name}
+                                        {selectedClaimDetail.admin_id
+                                            ? ` (ID: #${selectedClaimDetail.admin_id})`
+                                            : ''}
                                     </span>
                                 </div>
                                 {selectedClaimDetail.admin_notes && (

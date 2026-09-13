@@ -56,6 +56,7 @@ type RecentScan = {
     user_id: string;
     user_name: string;
     user_tier: string;
+    admin_id?: string | null;
     admin_name: string;
     time_ago: string;
     created_at: string;
@@ -1635,7 +1636,12 @@ export default function AdminScanIndex({
                                                     </Badge>
                                                 </td>
                                                 <td className="py-3 text-zinc-600 dark:text-zinc-400">
-                                                    {scan.admin_name}
+                                                    <div className="flex flex-col">
+                                                        <span className="font-medium">{scan.admin_name}</span>
+                                                        {scan.admin_id && (
+                                                            <span className="font-mono text-[10px] text-zinc-400">ID: #{scan.admin_id}</span>
+                                                        )}
+                                                    </div>
                                                 </td>
                                                 <td className="py-3 font-mono text-[11px] text-zinc-500">
                                                     {scan.created_at}

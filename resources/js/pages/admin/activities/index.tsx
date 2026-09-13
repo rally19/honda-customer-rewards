@@ -60,6 +60,7 @@ type HistoryItem = {
     user_email: string;
     user_phone: string;
     user_address: string;
+    admin_id?: string | null;
     admin_name: string;
     notes: string;
     created_at: string;
@@ -922,11 +923,11 @@ export default function AdminActivitiesIndex({
                                             const csv = histories.data
                                                 .map(
                                                     (h) =>
-                                                        `"${h.id}","${h.created_at}","${h.activity_name}","${h.points}","${h.user_id}","${h.user_name}","${h.user_email}","${h.user_phone}","${h.admin_name}"`,
+                                                        `"${h.id}","${h.created_at}","${h.activity_name}","${h.points}","${h.user_id}","${h.user_name}","${h.user_email}","${h.user_phone}","${h.admin_id || '-'}","${h.admin_name}"`,
                                                 )
                                                 .join('\n');
                                             const header =
-                                                '"ID Riwayat","Waktu Transaksi","Aktivitas Layanan","Poin Diberikan","ID Member","Nama Member","Email","No Telepon","Petugas Admin"\n';
+                                                '"ID Riwayat","Waktu Transaksi","Aktivitas Layanan","Poin Diberikan","ID Member","Nama Member","Email","No Telepon","ID Admin","Petugas Admin"\n';
                                             exportCsv(
                                                 'riwayat-poin-honda.csv',
                                                 header + csv,
@@ -1176,7 +1177,14 @@ export default function AdminActivitiesIndex({
                                                         </div>
                                                     </td>
                                                     <td className="px-4 py-3.5 whitespace-nowrap text-zinc-600 dark:text-zinc-400">
-                                                        {h.admin_name}
+                                                        <div className="flex flex-col">
+                                                            <span>{h.admin_name}</span>
+                                                            {h.admin_id && (
+                                                                <span className="font-mono text-[10px] text-zinc-400">
+                                                                    ID: #{h.admin_id}
+                                                                </span>
+                                                            )}
+                                                        </div>
                                                     </td>
                                                     <td className="px-4 py-3.5 text-right whitespace-nowrap">
                                                         <Button
@@ -1822,9 +1830,16 @@ export default function AdminActivitiesIndex({
                                     <span className="text-zinc-500">
                                         Petugas Admin:
                                     </span>
-                                    <span className="font-semibold text-zinc-800 dark:text-zinc-200">
-                                        {selectedHistory.admin_name}
-                                    </span>
+                                    <div className="text-right">
+                                        <span className="font-semibold text-zinc-800 dark:text-zinc-200">
+                                            {selectedHistory.admin_name}
+                                        </span>
+                                        {selectedHistory.admin_id && (
+                                            <span className="block font-mono text-[11px] text-zinc-400">
+                                                ID Admin: #{selectedHistory.admin_id}
+                                            </span>
+                                        )}
+                                    </div>
                                 </div>
                             </div>
 

@@ -50,6 +50,7 @@ class CustomerHistoryController extends Controller
                 'activity_id' => (string) $h->activity_id,
                 'title' => $h->activity_name,
                 'dealer' => $h->admin?->name ? 'AHASS (Petugas: '.$h->admin->name.')' : 'Bengkel AHASS Resmi',
+                'admin_id' => $h->admin_id ? (string) $h->admin_id : null,
                 'admin_name' => $h->admin?->name ?? 'Staf Kasir AHASS',
                 'points' => (int) $h->points,
                 'type' => 'credit',

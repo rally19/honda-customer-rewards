@@ -137,6 +137,8 @@ class User extends Authenticatable implements MustVerifyEmail, PasskeyUser
             $this->tier = MemberTier::calculate($this->lifetime_points);
             $this->save();
 
+            $adminUser = $admin ?? (auth()->check() ? auth()->user() : null);
+
             return ActivityHistory::create([
                 'activity_id' => $activity->id,
                 'activity_name' => $activity->name,
@@ -146,7 +148,7 @@ class User extends Authenticatable implements MustVerifyEmail, PasskeyUser
                 'user_email' => $this->email,
                 'user_phone' => $this->phone_number,
                 'user_address' => $this->address,
-                'admin_id' => $admin?->id,
+                'admin_id' => $adminUser?->id,
                 'notes' => $notes,
             ]);
         });
