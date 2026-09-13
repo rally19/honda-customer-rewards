@@ -114,4 +114,3 @@ test('unauthenticated guest can verify email directly from signed link', functio
     $this->assertAuthenticatedAs($user);
     $response->assertRedirect('/dashboard?verified=1');
 });
-

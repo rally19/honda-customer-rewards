@@ -9,6 +9,10 @@ export type LiveEventType =
     | 'CLAIM_STATUS_UPDATED'
     | 'ACTIVITY_MUTATED'
     | 'MEMBER_MUTATED'
+    | 'QR_POINT_GENERATED'
+    | 'QR_POINT_SCANNED'
+    | 'QR_POINT_CLAIMED'
+    | 'QR_POINT_CONFIRMED'
     | 'FORCE_SYNC';
 
 export interface LiveEvent<T = Record<string, unknown>> {

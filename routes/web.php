@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AdminActivityController;
 use App\Http\Controllers\AdminDashboardController;
+use App\Http\Controllers\AdminQrPointController;
 use App\Http\Controllers\AdminRewardController;
 use App\Http\Controllers\AdminScanController;
 use App\Http\Controllers\AdminScanUserController;
@@ -10,6 +11,7 @@ use App\Http\Controllers\Auth\TwoFactorEmailController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use App\Http\Controllers\CustomerDashboardController;
 use App\Http\Controllers\CustomerHistoryController;
+use App\Http\Controllers\CustomerQrPointController;
 use App\Http\Controllers\CustomerRewardController;
 use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Route;
@@ -24,6 +26,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('rewards', [CustomerRewardController::class, 'index'])->name('customer.rewards');
     Route::post('rewards/{reward}/claim', [CustomerRewardController::class, 'claim'])->name('customer.rewards.claim');
     Route::post('rewards/exchanges/{exchange}/cancel', [CustomerRewardController::class, 'cancel'])->name('customer.rewards.cancel');
+    Route::post('customer/qr-poin/claim', [CustomerQrPointController::class, 'claim'])->name('customer.qr-poin.claim');
 
     // Admin Portal & Management
     Route::get('admin/dashboard', AdminDashboardController::class)->name('admin.dashboard');
@@ -31,6 +34,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('admin/users', [AdminUserController::class, 'store'])->name('admin.users.store');
     Route::put('admin/users/{user}', [AdminUserController::class, 'update'])->name('admin.users.update');
     Route::delete('admin/users/{user}', [AdminUserController::class, 'destroy'])->name('admin.users.destroy');
+
+    // Time-based One-time QR Poin Management
+    Route::get('admin/qr-poin', [AdminQrPointController::class, 'index'])->name('admin.qr-poin.index');
+    Route::post('admin/qr-poin/generate', [AdminQrPointController::class, 'generate'])->name('admin.qr-poin.generate');
+    Route::post('admin/qr-poin/{token}/cancel', [AdminQrPointController::class, 'cancel'])->name('admin.qr-poin.cancel');
+    Route::post('admin/qr-poin/{token}/confirm', [AdminQrPointController::class, 'confirm'])->name('admin.qr-poin.confirm');
+    Route::post('admin/qr-poin/{token}/reject', [AdminQrPointController::class, 'reject'])->name('admin.qr-poin.reject');
 
     // Scan & Input Member Point Rewards
     Route::get('admin/scan', [AdminScanController::class, 'index'])->name('admin.scan.index');

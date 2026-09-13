@@ -1,10 +1,16 @@
 import { Link, usePage } from '@inertiajs/react';
 import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { Scanner } from '@yudiel/react-qr-scanner';
+import { broadcastLiveEvent } from '@/lib/live-sync';
+import { toast } from 'sonner';
 import {
+    AlertCircle,
     ArrowRight,
     Award,
     Bell,
+    Camera,
     Check,
+    CheckCircle2,
     Clock,
     Coins,
     Copy,
@@ -12,12 +18,17 @@ import {
     Gift,
     Home,
     QrCode as QrCodeIcon,
+    RefreshCw,
     Shield,
     Sparkles,
+    SwitchCamera,
     User as UserIcon,
     X,
+    Zap,
 } from 'lucide-react';
+import { ErrorBoundary } from '@/components/error-boundary';
 import QrCode, { type QrCodeHandle } from '@/components/qr-code';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
     Dialog,
@@ -47,10 +58,125 @@ export default function CustomerLayout({
     const pathname = page.url.split('?')[0];
 
     const [qrModalOpen, setQrModalOpen] = useState(false);
+    const [activeModalTab, setActiveModalTab] = useState<'id_card' | 'scanner'>('id_card');
+    const [facingMode, setFacingMode] = useState<'environment' | 'user'>('environment');
+    const [isClaiming, setIsClaiming] = useState(false);
+    const [claimResult, setClaimResult] = useState<{
+        activity_name: string;
+        points: number;
+        status: string;
+        message: string;
+        total_points?: number;
+    } | null>(null);
+    const [isMounted, setIsMounted] = useState(false);
     const [copiedId, setCopiedId] = useState(false);
     const [notifOpen, setNotifOpen] = useState(false);
     const qrCodeRef = useRef<QrCodeHandle>(null);
     const notifRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        setIsMounted(true);
+    }, []);
+
+    // Web Audio API chime helper for scan confirmation
+    const playSuccessChime = () => {
+        try {
+            const AudioCtx =
+                window.AudioContext ||
+                (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+            if (!AudioCtx) return;
+            const ctx = new AudioCtx();
+            const now = ctx.currentTime;
+
+            const osc1 = ctx.createOscillator();
+            const gain1 = ctx.createGain();
+            osc1.type = 'sine';
+            osc1.frequency.setValueAtTime(587.33, now);
+            gain1.gain.setValueAtTime(0.2, now);
+            gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+            osc1.connect(gain1);
+            gain1.connect(ctx.destination);
+            osc1.start(now);
+            osc1.stop(now + 0.25);
+
+            const osc2 = ctx.createOscillator();
+            const gain2 = ctx.createGain();
+            osc2.type = 'sine';
+            osc2.frequency.setValueAtTime(880, now + 0.12);
+            gain2.gain.setValueAtTime(0.25, now + 0.12);
+            gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.45);
+            osc2.connect(gain2);
+            gain2.connect(ctx.destination);
+            osc2.start(now + 0.12);
+            osc2.stop(now + 0.45);
+        } catch {
+            // Audio context not supported
+        }
+    };
+
+    // Handle scan QR point from camera
+    const handleScanQrPoint = async (detectedCodes: Array<{ rawValue: string }>) => {
+        if (isClaiming || Boolean(claimResult) || !detectedCodes || detectedCodes.length === 0) {
+            return;
+        }
+
+        const rawCode = detectedCodes[0]?.rawValue?.trim();
+        if (!rawCode) return;
+
+        // Check if customer is accidentally scanning their own ID
+        if (rawCode.includes('HND-MEMBER-')) {
+            toast.info('Ini adalah QR Kartu ID Member Anda. Arahkan kamera ke QR Poin dari staf kasir.');
+            return;
+        }
+
+        setIsClaiming(true);
+        try {
+            const response = await fetch('/customer/qr-poin/claim', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN':
+                        (document.querySelector('meta[name="csrf-token"]') as HTMLMetaElement)?.content ||
+                        '',
+                    Accept: 'application/json',
+                },
+                body: JSON.stringify({ token: rawCode }),
+            });
+
+            const result = await response.json();
+
+            if (!response.ok || !result.success) {
+                toast.error(result.message || 'QR Poin tidak dapat diproses.');
+                setIsClaiming(false);
+                return;
+            }
+
+            playSuccessChime();
+            broadcastLiveEvent('QR_POINT_SCANNED', {
+                activity_name: result.activity_name,
+                points: result.points,
+            });
+
+            setClaimResult({
+                activity_name: result.activity_name,
+                points: result.points,
+                status: result.status,
+                message: result.message,
+                total_points: result.total_points,
+            });
+
+            if (result.status === 'claimed') {
+                toast.success(result.message);
+                broadcastLiveEvent('POINTS_AWARDED');
+            } else {
+                toast.info(result.message);
+            }
+        } catch {
+            toast.error('Gagal memproses scan QR Poin. Coba lagi.');
+        } finally {
+            setIsClaiming(false);
+        }
+    };
 
     // Track read notifications locally
     const [readIds, setReadIds] = useState<string[]>(() => {
@@ -563,142 +689,378 @@ export default function CustomerLayout({
             </nav>
 
             {/* ========================================================================= */}
-            {/* MODAL QR ID MEMBER DIGITAL (POPUP SAAT SCAN ID DIKLIK)                    */}
+            {/* MODAL QR & SCANNER (TAB SWITCH ANTARA KARTU DIGITAL ID DAN SCAN QR POIN) */}
             {/* ========================================================================= */}
-            <Dialog open={qrModalOpen} onOpenChange={setQrModalOpen}>
+            <Dialog
+                open={qrModalOpen}
+                onOpenChange={(open) => {
+                    setQrModalOpen(open);
+                    if (!open) {
+                        setClaimResult(null);
+                        setActiveModalTab('id_card');
+                    }
+                }}
+            >
                 <DialogContent className="z-[100] max-h-[90vh] w-[92vw] max-w-sm gap-3 overflow-y-auto rounded-3xl border-zinc-200 bg-white p-4 shadow-2xl sm:max-w-md sm:p-5 dark:border-zinc-800 dark:bg-zinc-900">
-                    <DialogHeader className="space-y-1 pb-1 text-center">
+                    <DialogHeader className="pb-0 text-center">
                         <div className="mx-auto inline-flex items-center justify-center gap-1.5 rounded-full border border-red-200/80 bg-red-50 px-2.5 py-0.5 text-[10px] font-bold text-red-600 dark:border-red-900/50 dark:bg-red-950/60 dark:text-red-400">
-                            <QrCodeIcon className="size-3" />
-                            <span>KARTU DIGITAL ID</span>
-                        </div>
-                        <DialogTitle className="text-base font-black tracking-tight text-zinc-900 sm:text-lg dark:text-white">
-                            Digital ID Member
-                        </DialogTitle>
-                        <DialogDescription className="mx-auto max-w-xs text-[11px] text-zinc-500">
-                            Tunjukkan QR ini ke staf kasir AHASS atau dealer
-                            saat transaksi
-                        </DialogDescription>
-                    </DialogHeader>
-
-                    <div className="flex flex-col items-center space-y-3 text-center">
-                        {/* Member Identity Preview - Compact */}
-                        <div className="w-full rounded-2xl border border-zinc-200 bg-zinc-50/90 p-2.5 text-left sm:p-3 dark:border-zinc-800 dark:bg-zinc-950/60">
-                            <div className="flex items-center justify-between gap-2">
-                                <div className="min-w-0">
-                                    <span className="mb-1 block text-[9px] leading-none font-bold text-zinc-400 uppercase dark:text-zinc-500">
-                                        Nama Member
-                                    </span>
-                                    <span className="block truncate text-xs font-bold text-zinc-900 dark:text-white">
-                                        {user?.name}
-                                    </span>
-                                </div>
-                                <span
-                                    className={`inline-flex shrink-0 items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-extrabold ${tierInfo.badgeClass}`}
-                                >
-                                    <Award className="size-2.5 shrink-0" />
-                                    {tierInfo.name} Member
-                                </span>
-                            </div>
-                            <div className="mt-2 flex items-center justify-between border-t border-zinc-200/70 pt-2 dark:border-zinc-800/80">
-                                <div>
-                                    <span className="mb-0.5 block text-[9px] leading-none font-bold text-zinc-400 uppercase dark:text-zinc-500">
-                                        10-Digit ID Member
-                                    </span>
-                                    <span className="font-mono text-xs font-black tracking-wider text-red-600 sm:text-sm dark:text-red-500">
-                                        {formattedMemberId}
-                                    </span>
-                                </div>
-                                <button
-                                    type="button"
-                                    onClick={handleCopyId}
-                                    className="inline-flex items-center gap-1 rounded-lg bg-zinc-200/60 px-2 py-1 text-[10px] font-semibold text-zinc-600 transition-colors hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-700"
-                                    title="Salin ID"
-                                >
-                                    {copiedId ? (
-                                        <>
-                                            <Check className="size-3 text-emerald-500" />
-                                            <span className="font-bold text-emerald-600 dark:text-emerald-400">
-                                                Disalin
-                                            </span>
-                                        </>
-                                    ) : (
-                                        <>
-                                            <Copy className="size-3" />
-                                            <span>Salin</span>
-                                        </>
-                                    )}
-                                </button>
-                            </div>
-                        </div>
-
-                        {/* Interactive QR Code Visual (qr-code-styling) */}
-                        <div className="relative mx-auto flex w-full max-w-[280px] flex-col items-center justify-center rounded-3xl border-2 border-red-500/20 bg-white p-3 shadow-xl shadow-red-500/10 sm:max-w-[320px] sm:p-4">
-                            <div className="flex aspect-square w-full items-center justify-center">
-                                <QrCode
-                                    ref={qrCodeRef}
-                                    data={`HND-MEMBER-${rawId}`}
-                                    width={320}
-                                    height={320}
-                                    className="flex h-full w-full items-center justify-center"
-                                    image="/images/logo/honda_logo_red.png"
-                                    dotsColor="#DC2626"
-                                    dotsType="rounded"
-                                    cornersSquareType="extra-rounded"
-                                    cornersDotType="dot"
-                                />
-                            </div>
-                            <div className="mt-2 font-mono text-[11px] font-bold tracking-wider text-zinc-600 sm:text-xs">
-                                SCAN ID: HND-{rawId}
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Action Buttons: 2 cols on mobile, 1 flex row on sm+ */}
-                    <div className="grid grid-cols-2 gap-2 pt-1 sm:flex sm:items-center">
-                        <Button
-                            type="button"
-                            onClick={() =>
-                                qrCodeRef.current?.download(
-                                    `honda-member-${rawId}`,
-                                    'png',
-                                )
-                            }
-                            variant="outline"
-                            size="sm"
-                            className="h-9 rounded-xl border-zinc-300 text-xs font-semibold hover:border-red-500 hover:text-red-600 dark:border-zinc-700 dark:hover:border-red-500 dark:hover:text-red-400"
-                        >
-                            <Download className="mr-1 size-3.5" />
-                            Unduh QR
-                        </Button>
-                        <Button
-                            type="button"
-                            onClick={handleCopyId}
-                            variant="outline"
-                            size="sm"
-                            className="h-9 rounded-xl border-zinc-300 text-xs font-semibold dark:border-zinc-700"
-                        >
-                            {copiedId ? (
+                            {activeModalTab === 'id_card' ? (
                                 <>
-                                    <Check className="mr-1 size-3.5 text-emerald-500" />
-                                    Tersalin!
+                                    <QrCodeIcon className="size-3" />
+                                    <span>KARTU DIGITAL ID</span>
                                 </>
                             ) : (
                                 <>
-                                    <Copy className="mr-1 size-3.5" />
-                                    Salin ID
+                                    <Camera className="size-3" />
+                                    <span>SCAN QR POIN KASIR</span>
                                 </>
                             )}
-                        </Button>
-                        <Button
+                        </div>
+                        <DialogTitle className="sr-only">
+                            {activeModalTab === 'id_card'
+                                ? 'Digital ID Member'
+                                : 'Pindai QR Poin AHASS'}
+                        </DialogTitle>
+                        <DialogDescription className="sr-only">
+                            {activeModalTab === 'id_card'
+                                ? 'Tunjukkan QR ini ke staf kasir AHASS atau dealer saat transaksi'
+                                : 'Arahkan kamera ke layar kasir untuk mendapatkan poin reward'}
+                        </DialogDescription>
+                    </DialogHeader>
+
+                    {/* Tab Switcher */}
+                    <div className="grid grid-cols-2 rounded-2xl bg-zinc-100 p-1 dark:bg-zinc-800/80">
+                        <button
                             type="button"
-                            onClick={() => setQrModalOpen(false)}
-                            size="sm"
-                            className="col-span-2 h-9 rounded-xl bg-red-600 px-4 text-xs font-bold text-white shadow-sm shadow-red-600/20 hover:bg-red-700 sm:col-span-1"
+                            onClick={() => {
+                                setActiveModalTab('id_card');
+                                setClaimResult(null);
+                            }}
+                            className={`flex cursor-pointer items-center justify-center gap-1.5 rounded-xl py-2 text-xs font-bold transition-all ${activeModalTab === 'id_card'
+                                    ? 'bg-white text-zinc-900 shadow-xs dark:bg-zinc-900 dark:text-white'
+                                    : 'text-zinc-500 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-200'
+                                }`}
                         >
-                            Tutup
-                        </Button>
+                            <QrCodeIcon className="size-3.5" />
+                            <span>Kartu ID Saya</span>
+                        </button>
+                        <button
+                            type="button"
+                            onClick={() => {
+                                setActiveModalTab('scanner');
+                                setClaimResult(null);
+                            }}
+                            className={`flex cursor-pointer items-center justify-center gap-1.5 rounded-xl py-2 text-xs font-bold transition-all ${activeModalTab === 'scanner'
+                                    ? 'bg-red-600 text-white shadow-xs'
+                                    : 'text-zinc-500 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-200'
+                                }`}
+                        >
+                            <Camera className="size-3.5" />
+                            <span>Scan QR Poin</span>
+                        </button>
                     </div>
+
+                    {/* TAB 1: KARTU DIGITAL ID */}
+                    {activeModalTab === 'id_card' && (
+                        <>
+                            <div className="space-y-1 pb-1 text-center">
+                                <h3 className="text-base font-black tracking-tight text-zinc-900 sm:text-lg dark:text-white">
+                                    Digital ID Member
+                                </h3>
+                                <p className="mx-auto max-w-xs text-[11px] text-zinc-500">
+                                    Tunjukkan QR ini ke staf kasir AHASS atau dealer saat transaksi
+                                </p>
+                            </div>
+
+                            <div className="flex flex-col items-center space-y-3 text-center">
+                                {/* Member Identity Preview - Compact */}
+                                <div className="w-full rounded-2xl border border-zinc-200 bg-zinc-50/90 p-2.5 text-left sm:p-3 dark:border-zinc-800 dark:bg-zinc-950/60">
+                                    <div className="flex items-center justify-between gap-2">
+                                        <div className="min-w-0">
+                                            <span className="mb-1 block text-[9px] leading-none font-bold text-zinc-400 uppercase dark:text-zinc-500">
+                                                Nama Member
+                                            </span>
+                                            <span className="block truncate text-xs font-bold text-zinc-900 dark:text-white">
+                                                {user?.name}
+                                            </span>
+                                        </div>
+                                        <span
+                                            className={`inline-flex shrink-0 items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-extrabold ${tierInfo.badgeClass}`}
+                                        >
+                                            <Award className="size-2.5 shrink-0" />
+                                            {tierInfo.name} Member
+                                        </span>
+                                    </div>
+                                    <div className="mt-2 flex items-center justify-between border-t border-zinc-200/70 pt-2 dark:border-zinc-800/80">
+                                        <div>
+                                            <span className="mb-0.5 block text-[9px] leading-none font-bold text-zinc-400 uppercase dark:text-zinc-500">
+                                                10-Digit ID Member
+                                            </span>
+                                            <span className="font-mono text-xs font-black tracking-wider text-red-600 sm:text-sm dark:text-red-500">
+                                                {formattedMemberId}
+                                            </span>
+                                        </div>
+                                        <button
+                                            type="button"
+                                            onClick={handleCopyId}
+                                            className="inline-flex cursor-pointer items-center gap-1 rounded-lg bg-zinc-200/60 px-2 py-1 text-[10px] font-semibold text-zinc-600 transition-colors hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-700"
+                                            title="Salin ID"
+                                        >
+                                            {copiedId ? (
+                                                <>
+                                                    <Check className="size-3 text-emerald-500" />
+                                                    <span className="font-bold text-emerald-600 dark:text-emerald-400">
+                                                        Disalin
+                                                    </span>
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <Copy className="size-3" />
+                                                    <span>Salin</span>
+                                                </>
+                                            )}
+                                        </button>
+                                    </div>
+                                </div>
+
+                                {/* Interactive QR Code Visual (qr-code-styling) */}
+                                <div className="relative mx-auto flex w-full max-w-[280px] flex-col items-center justify-center rounded-3xl border-2 border-red-500/20 bg-white p-3 shadow-xl shadow-red-500/10 sm:max-w-[320px] sm:p-4">
+                                    <div className="flex aspect-square w-full items-center justify-center">
+                                        <QrCode
+                                            ref={qrCodeRef}
+                                            data={`HND-MEMBER-${rawId}`}
+                                            width={320}
+                                            height={320}
+                                            className="flex h-full w-full items-center justify-center"
+                                            image="/images/logo/honda_logo_red.png"
+                                            dotsColor="#DC2626"
+                                            dotsType="rounded"
+                                            cornersSquareType="extra-rounded"
+                                            cornersDotType="dot"
+                                        />
+                                    </div>
+                                    <div className="mt-2 font-mono text-[11px] font-bold tracking-wider text-zinc-600 sm:text-xs">
+                                        SCAN ID: HND-{rawId}
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Action Buttons: 2 cols on mobile, 1 flex row on sm+ */}
+                            <div className="grid grid-cols-2 gap-2 pt-1 sm:flex sm:items-center">
+                                <Button
+                                    type="button"
+                                    onClick={() =>
+                                        qrCodeRef.current?.download(
+                                            `honda-member-${rawId}`,
+                                            'png'
+                                        )
+                                    }
+                                    variant="outline"
+                                    size="sm"
+                                    className="h-9 cursor-pointer rounded-xl border-zinc-300 text-xs font-semibold hover:border-red-500 hover:text-red-600 dark:border-zinc-700 dark:hover:border-red-500 dark:hover:text-red-400"
+                                >
+                                    <Download className="mr-1 size-3.5" />
+                                    Unduh QR
+                                </Button>
+                                <Button
+                                    type="button"
+                                    onClick={handleCopyId}
+                                    variant="outline"
+                                    size="sm"
+                                    className="h-9 cursor-pointer rounded-xl border-zinc-300 text-xs font-semibold dark:border-zinc-700"
+                                >
+                                    {copiedId ? (
+                                        <>
+                                            <Check className="mr-1 size-3.5 text-emerald-500" />
+                                            Tersalin!
+                                        </>
+                                    ) : (
+                                        <>
+                                            <Copy className="mr-1 size-3.5" />
+                                            Salin ID
+                                        </>
+                                    )}
+                                </Button>
+                                <Button
+                                    type="button"
+                                    onClick={() => setQrModalOpen(false)}
+                                    size="sm"
+                                    className="col-span-2 h-9 cursor-pointer rounded-xl bg-red-600 px-4 text-xs font-bold text-white shadow-xs shadow-red-600/20 hover:bg-red-700 sm:col-span-1"
+                                >
+                                    Tutup
+                                </Button>
+                            </div>
+                        </>
+                    )}
+
+                    {/* TAB 2: SCAN QR POIN */}
+                    {activeModalTab === 'scanner' && (
+                        <div className="space-y-3">
+                            <div className="space-y-1 pb-1 text-center">
+                                <h3 className="text-base font-black tracking-tight text-zinc-900 sm:text-lg dark:text-white">
+                                    Pindai QR Poin AHASS
+                                </h3>
+                                <p className="mx-auto max-w-xs text-[11px] text-zinc-500">
+                                    Arahkan kamera ke layar kasir untuk mendapatkan poin reward
+                                </p>
+                            </div>
+
+                            {/* SUCCESS RESULT CARD */}
+                            {claimResult ? (
+                                <div className="flex flex-col items-center space-y-4 py-2 text-center">
+                                    <div
+                                        className={`flex size-16 items-center justify-center rounded-2xl ${claimResult.status === 'claimed'
+                                                ? 'bg-emerald-500/10 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-400'
+                                                : 'bg-amber-500/10 text-amber-600 dark:bg-amber-500/20 dark:text-amber-400'
+                                            }`}
+                                    >
+                                        {claimResult.status === 'claimed' ? (
+                                            <CheckCircle2 className="size-9 animate-bounce" />
+                                        ) : (
+                                            <Shield className="size-9 animate-pulse" />
+                                        )}
+                                    </div>
+
+                                    <div className="space-y-1">
+                                        <Badge
+                                            className={`px-3 py-1 font-mono text-xs font-black ${claimResult.status === 'claimed'
+                                                    ? 'bg-emerald-600 text-white'
+                                                    : 'bg-amber-500 text-white'
+                                                }`}
+                                        >
+                                            +{claimResult.points} POIN REWARDS
+                                        </Badge>
+                                        <h3 className="text-base font-black text-zinc-900 sm:text-lg dark:text-white">
+                                            {claimResult.status === 'claimed'
+                                                ? 'Poin Berhasil Diterima!'
+                                                : 'Menunggu Konfirmasi Kasir'}
+                                        </h3>
+                                        <p className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">
+                                            {claimResult.activity_name}
+                                        </p>
+                                    </div>
+
+                                    <div className="rounded-xl border border-zinc-200 bg-zinc-50 p-3 text-xs text-zinc-600 dark:border-zinc-800 dark:bg-zinc-800/60 dark:text-zinc-300">
+                                        {claimResult.message}
+                                    </div>
+
+                                    <div className="flex w-full items-center gap-2 pt-2">
+                                        <Button
+                                            type="button"
+                                            variant="outline"
+                                            onClick={() => setClaimResult(null)}
+                                            className="h-10 flex-1 cursor-pointer rounded-xl text-xs font-bold"
+                                        >
+                                            Scan Lagi
+                                        </Button>
+                                        <Button
+                                            type="button"
+                                            onClick={() => {
+                                                setQrModalOpen(false);
+                                                setClaimResult(null);
+                                            }}
+                                            className="h-10 flex-1 cursor-pointer rounded-xl bg-red-600 text-xs font-bold text-white hover:bg-red-700"
+                                        >
+                                            Selesai
+                                        </Button>
+                                    </div>
+                                </div>
+                            ) : (
+                                /* ACTIVE CAMERA SCANNER */
+                                <div className="flex flex-col items-center space-y-3 text-center">
+                                    <div className="relative aspect-square w-full max-w-[280px] overflow-hidden rounded-3xl border-2 border-red-500/40 bg-zinc-950 shadow-xl shadow-red-500/10 sm:max-w-[300px]">
+                                        {isMounted && qrModalOpen && activeModalTab === 'scanner' && (
+                                            <ErrorBoundary
+                                                fallback={
+                                                    <div className="flex h-full w-full flex-col items-center justify-center p-4 text-center text-xs text-red-400">
+                                                        <AlertCircle className="mb-2 size-6" />
+                                                        <span>Kamera tidak dapat diakses atau izin ditolak oleh browser.</span>
+                                                    </div>
+                                                }
+                                            >
+                                                <Scanner
+                                                    onScan={handleScanQrPoint}
+                                                    scanDelay={1200}
+                                                    paused={isClaiming || Boolean(claimResult)}
+                                                    constraints={{
+                                                        facingMode: { ideal: facingMode },
+                                                        width: { ideal: 1280 },
+                                                        height: { ideal: 720 },
+                                                    }}
+                                                    formats={['qr_code']}
+                                                    styles={{
+                                                        container: { width: '100%', height: '100%' },
+                                                        video: { width: '100%', height: '100%', objectFit: 'cover' },
+                                                    }}
+                                                />
+                                            </ErrorBoundary>
+                                        )}
+
+                                        {/* Viewfinder Target corners & Laser Line */}
+                                        <div className="pointer-events-none absolute inset-0 flex items-center justify-center p-6">
+                                            <div className="relative size-44 rounded-2xl border-2 border-dashed border-white/60 sm:size-48">
+                                                <div className="absolute -top-1 -left-1 size-4 border-t-2 border-l-2 border-red-500" />
+                                                <div className="absolute -top-1 -right-1 size-4 border-t-2 border-r-2 border-red-500" />
+                                                <div className="absolute -bottom-1 -left-1 size-4 border-b-2 border-l-2 border-red-500" />
+                                                <div className="absolute -bottom-1 -right-1 size-4 border-b-2 border-r-2 border-red-500" />
+                                                {/* Animated Scanning Laser Line */}
+                                                <div className="absolute inset-x-0 top-0 h-0.5 bg-gradient-to-r from-transparent via-red-500 to-transparent shadow-[0_0_8px_#EF4444] animate-pulse" />
+                                            </div>
+                                        </div>
+
+                                        {/* Switch Camera Button */}
+                                        <button
+                                            type="button"
+                                            onClick={() =>
+                                                setFacingMode((prev) =>
+                                                    prev === 'environment' ? 'user' : 'environment'
+                                                )
+                                            }
+                                            className="absolute top-3 right-3 z-10 flex size-9 cursor-pointer items-center justify-center rounded-full bg-black/60 text-white backdrop-blur-xs transition-colors hover:bg-black/80"
+                                            title="Ganti Kamera Depan/Belakang"
+                                        >
+                                            <SwitchCamera className="size-4" />
+                                        </button>
+
+                                        {/* Loading Indicator when claiming */}
+                                        {isClaiming && (
+                                            <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-black/75 p-4 text-white backdrop-blur-xs">
+                                                <RefreshCw className="size-7 animate-spin text-red-500" />
+                                                <span className="mt-2 text-xs font-bold">
+                                                    Memvalidasi QR Poin...
+                                                </span>
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    <div className="flex w-full items-center justify-between gap-2 pt-1">
+                                        <button
+                                            type="button"
+                                            onClick={() =>
+                                                setFacingMode((prev) =>
+                                                    prev === 'environment' ? 'user' : 'environment'
+                                                )
+                                            }
+                                            className="inline-flex cursor-pointer items-center gap-1.5 rounded-xl border border-zinc-200 bg-zinc-50 px-3 py-2 text-[11px] font-semibold text-zinc-700 hover:bg-zinc-100 dark:border-zinc-800 dark:bg-zinc-800 dark:text-zinc-300"
+                                        >
+                                            <SwitchCamera className="size-3.5" />
+                                            <span>Kamera: {facingMode === 'environment' ? 'Belakang' : 'Depan'}</span>
+                                        </button>
+
+                                        <Button
+                                            type="button"
+                                            variant="outline"
+                                            size="sm"
+                                            onClick={() => setQrModalOpen(false)}
+                                            className="h-9 cursor-pointer rounded-xl text-xs"
+                                        >
+                                            Tutup
+                                        </Button>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    )}
                 </DialogContent>
             </Dialog>
         </div>

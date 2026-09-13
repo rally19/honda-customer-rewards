@@ -6,6 +6,7 @@ import {
     QrCode,
     Shield,
     Smartphone,
+    Sparkles,
     UserCheck,
     Users,
     Wrench,
@@ -49,6 +50,11 @@ export function AppSidebar() {
                           title: 'Scan / Input Poin',
                           href: '/admin/scan',
                           icon: QrCode,
+                      },
+                      {
+                          title: 'QR Poin',
+                          href: '/admin/qr-poin',
+                          icon: Sparkles,
                       },
                       {
                           title: 'Scan / Input User',
