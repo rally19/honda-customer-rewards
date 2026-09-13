@@ -1,4 +1,6 @@
 import { Head, Link, router } from '@inertiajs/react';
+import { useLiveSync } from '@/hooks/use-live-sync';
+import { broadcastLiveEvent } from '@/lib/live-sync';
 import {
     AlertCircle,
     ArrowLeft,
@@ -86,6 +88,8 @@ export default function CustomerRewardsPage({
     stats,
     memberId,
 }: Props) {
+    useLiveSync();
+
     const [activeTab, setActiveTab] = useState<'catalog' | 'my-claims'>(
         'catalog',
     );
@@ -139,6 +143,10 @@ export default function CustomerRewardsPage({
             {
                 preserveScroll: true,
                 onSuccess: () => {
+                    broadcastLiveEvent('REWARD_CLAIMED', {
+                        rewardId: selectedRewardToClaim.id,
+                        rewardName: selectedRewardToClaim.name,
+                    });
                     setSelectedRewardToClaim(null);
                     setIsSubmitting(false);
                     setActiveTab('my-claims');
@@ -162,6 +170,10 @@ export default function CustomerRewardsPage({
             {
                 preserveScroll: true,
                 onSuccess: () => {
+                    broadcastLiveEvent('CLAIM_STATUS_UPDATED', {
+                        exchangeId: selectedClaimToCancel.id,
+                        status: 'cancelled',
+                    });
                     setSelectedClaimToCancel(null);
                     setIsSubmitting(false);
                 },

@@ -1,4 +1,5 @@
 import { Head, Link, router } from '@inertiajs/react';
+import { useLiveSync } from '@/hooks/use-live-sync';
 import {
     ArrowDownRight,
     ArrowLeft,
@@ -107,6 +108,8 @@ export default function CustomerHistoryPage({
     filters,
     memberId,
 }: Props) {
+    useLiveSync();
+
     const [search, setSearch] = useState(filters.search || '');
     const [selectedPeriod, setSelectedPeriod] = useState(
         filters.period || 'all',

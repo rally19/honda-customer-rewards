@@ -1,4 +1,5 @@
 import { Head, Link, router, useForm } from '@inertiajs/react';
+import { useLiveSync } from '@/hooks/use-live-sync';
 import {
     AlertCircle,
     ArrowLeft,
@@ -103,6 +104,8 @@ export default function AdminActivitiesIndex({
     stats,
     filters,
 }: Props) {
+    useLiveSync();
+
     const [activeTab, setActiveTab] = useState<'activities' | 'histories'>(
         'activities',
     );

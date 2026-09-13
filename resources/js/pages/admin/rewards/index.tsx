@@ -1,4 +1,6 @@
 import { Head, Link, router } from '@inertiajs/react';
+import { useLiveSync } from '@/hooks/use-live-sync';
+import { broadcastLiveEvent } from '@/lib/live-sync';
 import {
     AlertCircle,
     ArrowLeft,
@@ -123,6 +125,8 @@ export default function AdminRewardsPage({
     stats,
     filters,
 }: Props) {
+    useLiveSync();
+
     const [currentTab, setCurrentTab] = useState<'rewards' | 'exchanges'>(
         'rewards',
     );
@@ -507,6 +511,11 @@ export default function AdminRewardsPage({
             },
             {
                 onSuccess: () => {
+                    broadcastLiveEvent('CLAIM_STATUS_UPDATED', {
+                        exchangeId: selectedExchange.id,
+                        userId: selectedExchange.user_id,
+                        status: 'claimed',
+                    });
                     setApproveModalOpen(false);
                     setIsSubmitting(false);
                     setAdminNoteInput('');
@@ -536,6 +545,11 @@ export default function AdminRewardsPage({
             },
             {
                 onSuccess: () => {
+                    broadcastLiveEvent('CLAIM_STATUS_UPDATED', {
+                        exchangeId: selectedExchange.id,
+                        userId: selectedExchange.user_id,
+                        status: 'rejected',
+                    });
                     setRejectModalOpen(false);
                     setIsSubmitting(false);
                     setAdminNoteInput('');

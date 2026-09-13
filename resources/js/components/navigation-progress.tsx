@@ -18,10 +18,50 @@ export function NavigationProgress() {
     const progressRef = useRef<ReturnType<typeof setInterval> | null>(null);
     const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+    const isNavigatingRef = useRef(false);
+
     useEffect(() => {
-        const startProgress = () => {
+        const startProgress = (event: any) => {
+            const visit = event?.detail?.visit;
+
+            // 1. If visit is missing, ignore
+            if (!visit) return;
+
+            // 2. Ignore background polling or visits with showProgress explicitly false
+            if (visit.showProgress === false || visit.poll || visit.prefetch) {
+                return;
+            }
+
+            // 3. Ignore partial reloads or background data refresh on the same URL
+            const currentPath =
+                typeof window !== 'undefined'
+                    ? window.location.pathname + window.location.search
+                    : '';
+            const targetPath = visit.url
+                ? visit.url.pathname + visit.url.search
+                : '';
+            const isSameUrl = Boolean(targetPath && currentPath === targetPath);
+
+            // If it's reloading the same URL with preserveState and preserveScroll (like live sync / background reload)
+            if (isSameUrl && visit.preserveState && visit.preserveScroll) {
+                return;
+            }
+
+            if (
+                visit.headers &&
+                (visit.headers['X-Inertia-Partial-Data'] ||
+                    visit.headers['x-inertia-partial-data'])
+            ) {
+                return;
+            }
+
+            // Valid page navigation: trigger progress bar and blur overlay
+            isNavigatingRef.current = true;
             setNavigating(true);
             setProgress(5);
+
+            if (progressRef.current) clearInterval(progressRef.current);
+            if (timeoutRef.current) clearTimeout(timeoutRef.current);
 
             // Animate progress bar from 5 → 85 over ~1.2 s
             let current = 5;
@@ -36,6 +76,9 @@ export function NavigationProgress() {
         };
 
         const finishProgress = () => {
+            if (!isNavigatingRef.current) return;
+            isNavigatingRef.current = false;
+
             if (progressRef.current) clearInterval(progressRef.current);
             setProgress(100);
             timeoutRef.current = setTimeout(() => {

@@ -1,4 +1,5 @@
 import { Head, Link, router } from '@inertiajs/react';
+import { useLiveSync } from '@/hooks/use-live-sync';
 import {
     Activity as ActivityIcon,
     AlertCircle,
@@ -151,6 +152,8 @@ export default function AdminDashboard({
     rewards = [],
     topActivities = [],
 }: Props) {
+    useLiveSync();
+
     const [activeTab, setActiveTab] = useState<
         'overview' | 'members' | 'claims' | 'scans' | 'rewards' | 'policy'
     >('overview');

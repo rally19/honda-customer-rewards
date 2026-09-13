@@ -1,4 +1,5 @@
 import { Head, Link, router } from '@inertiajs/react';
+import { useLiveSync } from '@/hooks/use-live-sync';
 import { Scanner } from '@yudiel/react-qr-scanner';
 import {
     AlertCircle,
@@ -122,6 +123,8 @@ export default function AdminScanUserIndex({
     initialClaims = [],
     initialMemberStats = null,
 }: Props) {
+    useLiveSync();
+
     // 0. Mounted state
     const [isMounted, setIsMounted] = useState(false);
 

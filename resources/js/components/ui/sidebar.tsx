@@ -1,4 +1,5 @@
 import { Slot } from "@radix-ui/react-slot"
+import { router } from "@inertiajs/react"
 import type { VariantProps} from "class-variance-authority";
 import { cva } from "class-variance-authority"
 import { PanelLeftCloseIcon, PanelLeftOpenIcon } from "lucide-react"
@@ -88,8 +89,23 @@ function SidebarProvider({
 
   // Helper to toggle the sidebar.
   const toggleSidebar = React.useCallback(() => {
-    return isMobile ? setOpenMobile((open) => !open) : setOpen((open) => !open)
+    const isMobileViewport =
+      typeof window !== "undefined"
+        ? window.innerWidth < 768
+        : isMobile;
+
+    return (isMobile || isMobileViewport)
+      ? setOpenMobile((open) => !open)
+      : setOpen((open) => !open);
   }, [isMobile, setOpen, setOpenMobile])
+
+  // Automatically close mobile sidebar when navigating to a new page
+  React.useEffect(() => {
+    const unsub = router.on("navigate", () => {
+      setOpenMobile(false);
+    });
+    return unsub;
+  }, []);
 
   // Adds a keyboard shortcut to toggle the sidebar.
   React.useEffect(() => {
@@ -181,7 +197,11 @@ function Sidebar({
     )
   }
 
-  if (mounted && isMobile) {
+  const isMobileEffective =
+    mounted &&
+    (isMobile || (typeof window !== "undefined" && window.innerWidth < 768));
+
+  if (isMobileEffective) {
     return (
       <Sheet open={openMobile} onOpenChange={setOpenMobile} {...props}>
         <SheetHeader className="sr-only">
@@ -192,7 +212,7 @@ function Sidebar({
           data-sidebar="sidebar"
           data-slot="sidebar"
           data-mobile="true"
-          className="bg-sidebar text-sidebar-foreground w-(--sidebar-width) p-0 [&>button]:hidden"
+          className="bg-sidebar text-sidebar-foreground w-[18rem] max-w-[85vw] p-0 [&>button]:hidden z-[100]"
           style={
             {
               "--sidebar-width": SIDEBAR_WIDTH_MOBILE,
@@ -257,6 +277,8 @@ function SidebarTrigger({
   ...props
 }: React.ComponentProps<typeof Button>) {
   const { toggleSidebar, isMobile, state } = useSidebar()
+  const isMobileEffective =
+    isMobile || (typeof window !== "undefined" && window.innerWidth < 768)
 
   return (
     <Button
@@ -264,14 +286,18 @@ function SidebarTrigger({
       data-slot="sidebar-trigger"
       variant="ghost"
       size="icon"
-      className={cn("h-7 w-7", className)}
+      className={cn("h-8 w-8 cursor-pointer", className)}
       onClick={(event) => {
         onClick?.(event)
         toggleSidebar()
       }}
       {...props}
     >
-      {isMobile || state === "collapsed" ? <PanelLeftOpenIcon /> : <PanelLeftCloseIcon />}
+      {isMobileEffective || state === "collapsed" ? (
+        <PanelLeftOpenIcon />
+      ) : (
+        <PanelLeftCloseIcon />
+      )}
       <span className="sr-only">Toggle sidebar</span>
     </Button>
   )

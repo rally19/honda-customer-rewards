@@ -1,5 +1,6 @@
 import { Head, Link } from '@inertiajs/react';
 import { useState, useRef, useEffect } from 'react';
+import { useLiveSync } from '@/hooks/use-live-sync';
 import {
     ArrowDownRight,
     ArrowUpRight,
@@ -145,6 +146,8 @@ export default function CustomerDashboard({
     rewards,
     rewardExchanges,
 }: Props) {
+    useLiveSync();
+
     const [showPoints, setShowPoints] = useState(true);
     const [copiedId, setCopiedId] = useState(false);
     const [selectedReward, setSelectedReward] = useState<RewardItem | null>(

@@ -1,4 +1,5 @@
 import { Head, Link, router, useForm, usePage } from '@inertiajs/react';
+import { useLiveSync } from '@/hooks/use-live-sync';
 import {
     AlertCircle,
     ArrowLeft,
@@ -89,6 +90,8 @@ type Props = {
 };
 
 export default function AdminUsersIndex({ users, filters, stats }: Props) {
+    useLiveSync();
+
     const { auth } = usePage<{ auth: { user: AuthUser } }>().props;
     const currentAdminId = String(auth?.user?.id);
 

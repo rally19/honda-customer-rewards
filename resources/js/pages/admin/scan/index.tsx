@@ -1,4 +1,6 @@
 import { Head, Link, router } from '@inertiajs/react';
+import { useLiveSync } from '@/hooks/use-live-sync';
+import { broadcastLiveEvent } from '@/lib/live-sync';
 import { Scanner } from '@yudiel/react-qr-scanner';
 import {
     AlertCircle,
@@ -112,6 +114,8 @@ export default function AdminScanIndex({
     stats,
     initialMember = null,
 }: Props) {
+    useLiveSync();
+
     // 0. Mounted state to guarantee 100% SSR hydration match
     const [isMounted, setIsMounted] = useState(false);
 
@@ -458,6 +462,14 @@ export default function AdminScanIndex({
                     if (sessionAwarded) {
                         setLastAwarded(sessionAwarded);
                     }
+                    broadcastLiveEvent('POINTS_AWARDED', {
+                        userId: member.id,
+                        points:
+                            customPoints !== ''
+                                ? customPoints
+                                : selectedActivity.points,
+                        activityName: selectedActivity.name,
+                    });
                     toast.success(
                         `Sukses! Poin berhasil ditambahkan ke ${member.name}.`,
                     );
